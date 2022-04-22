@@ -1,0 +1,36 @@
+- name: Install and upgrade pip to pip3
+  pip:
+    name: pip
+    extra_args: --upgrade
+    executable: pip3
+
+- name: Install paramiko
+  pip:
+    name: paramiko
+
+- name: Generate an OpenSSH keypair with the default values (won't overwrite!)
+  community.crypto.openssh_keypair:
+    regenerate: never
+    path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa"
+
+# -----------------------------------------
+# Install SSH Pass
+
+- name: Homebrew - Install sshpass
+  include_role:
+    name: geerlingguy.mac.homebrew
+  vars:
+    homebrew_installed_packages:
+      - hudochenkov/sshpass/sshpass
+  when: ansible_distribution == 'MacOSX'
+    
+- name: Apt - Install sshpass
+  become: true
+  apt:
+    name: sshpass
+    update_cache: yes
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+
+# -----------------------------------------

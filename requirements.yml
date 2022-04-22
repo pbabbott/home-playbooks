@@ -1,0 +1,5 @@
+roles:
+  - ryankwilliams.ssh_copy_id
+collections:
+  - community.crypto
+  - geerlingguy.mac

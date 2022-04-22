@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Ensure local computer is ready for ssh communication
+  
