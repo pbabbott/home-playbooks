@@ -1,0 +1,17 @@
+
+# echo $SHELL | awk -F"/" '{print $NF}' 
+- name: What is the name of user's $SHELL ?
+  shell: "echo $SHELL | awk -F\"/\" '{print $NF}'"
+  register: shell_name
+
+- name: Read variables
+  with_first_found:
+    - "vars/{{shell_name.stdout}}.yml"
+    - "vars/bash.yml"
+  include_vars: "{{ item }}"
+
+- name: Set stats
+  set_fact:
+    shell_name: "{{shell_name.stdout}}"
+    shell_interactive: "{{interactive}}"
+    shell_nonInteractive: "{{nonInteractive}}"

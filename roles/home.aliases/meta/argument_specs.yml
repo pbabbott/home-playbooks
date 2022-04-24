@@ -1,0 +1,19 @@
+argument_specs:
+  main:
+    short_description: The main entrypoint for the home.aliases.role
+    options:
+      alias_section_name:
+        type: "str"
+        description: "Name of the section where all the aliases go"
+        required: false
+      exports_section_name:
+        type: "str"
+        description: "Name of the section where all the exports go"
+      exports:
+        type: "list"
+        description: "List of objects of type: { key, value }"
+        required: false
+      aliases:
+        type: "list"
+        description: "List of objects of type: { alias, command }"
+        requried: false

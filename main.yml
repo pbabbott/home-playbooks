@@ -1,11 +1,47 @@
 
-
-- name: Set up SSH keys everywhere
+- name: Try working with facts
   hosts: localhost
   roles:
-    - home.ssh_readiness
-    - home.ssh_keys
-  vars:
-    temp: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"
+    - home.detect_shell
   tasks:
-    - debug: msg={{temp}}
+    - debug:
+        msg: "{{ shell_name }}"
+
+
+- name: Try working with lists
+  hosts: localhost
+  roles:
+    - home.aliases
+  vars:
+    aliases:
+      - alias: ll
+        command: ls -lh
+      - alias: k
+        command: kubectl
+    exports: 
+      - key: PATH
+        value: "$PATH:$HOME/.local/bin"
+
+# - name: Set up SSH keys everywhere
+#   hosts: localhost
+#   # roles:
+#   #   - home.ssh_readiness
+#   #   - home.ssh_keys
+#   vars:
+#     temp: "{{ lookup('env', 'SHELL') }}"
+#   tasks:
+#     - debug: msg={{temp}}
+#     - include_role:
+#         name: home.aliases
+#       vars:
+#         alias_name: k
+#         alias_command: kubectl
+#     - include_role:
+#         name: home.aliases
+#       vars:
+#         alias_name: ll
+#         alias_command: ls -lh
+
+
+
+

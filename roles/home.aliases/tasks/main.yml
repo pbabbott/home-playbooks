@@ -1,0 +1,33 @@
+
+
+- name: Does {{config_file_path}} file exist?
+  stat:
+    path: "{{config_file_path}}"
+  register:
+    stat_result
+
+- name: Create {{config_file_path}} file if not exists
+  file:
+    path: "{{config_file_path}}"
+    state: touch
+  when: not stat_result.stat.exists
+
+- name: Add block section to target file
+  blockinfile:
+    path: "{{config_file_path}}"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED SECTION"
+    block: |
+      {{section_divider}}
+      # {{exports_section_name}}
+      {{section_divider}}
+      {% for item in exports %}
+      export {{ item.key }}='{{item.value}}'
+      {% endfor %}
+
+      {{section_divider}}
+      # {{alias_section_name}}
+      {{section_divider}}
+      {% for item in aliases %}
+      alias {{ item.alias }}='{{item.command}}'
+      {% endfor %}
