@@ -22,7 +22,7 @@
       # {{exports_section_name}}
       {{section_divider}}
       {% for item in exports %}
-      export {{ item.key }}='{{item.value}}'
+      export {{ item.key }}="{{item.value}}"
       {% endfor %}
 
       {{section_divider}}
@@ -30,4 +30,11 @@
       {{section_divider}}
       {% for item in aliases %}
       alias {{ item.alias }}='{{item.command}}'
+      {% endfor %}
+
+      {{section_divider}}
+      # {{ssh_section_name}}
+      {{section_divider}}
+      {% for item in ssh_targets %}
+      alias {{ item.shortcut }}='ssh {{item.username}}@{{item.hostname}}'
       {% endfor %}

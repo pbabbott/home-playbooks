@@ -2,6 +2,9 @@ argument_specs:
   main:
     short_description: The main entrypoint for the home.aliases.role
     options:
+      config_file_name:
+        type: "str"
+        description: "The location of the config file to write to: (eg. .zshrc, .zprofile, etc..)"
       alias_section_name:
         type: "str"
         description: "Name of the section where all the aliases go"
@@ -17,3 +20,7 @@ argument_specs:
         type: "list"
         description: "List of objects of type: { alias, command }"
         requried: false
+      ssh_targets:
+        type: "list"
+        description:: "List of objects of type: { shortcut, username, hostname }"
+        required: false

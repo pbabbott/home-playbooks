@@ -1,9 +1,11 @@
 aliases: []
 exports: []
+ssh_targets: []
 
 config_file_name: .bashrc
 config_file_path: "{{ lookup('env', 'HOME') }}/{{ config_file_name }}"
 
 alias_section_name: "CUSTOM ALIASES"
 exports_section_name: "CUSTOM EXPORTS"
+ssh_section_name: "SSH TARGETS"
 section_divider: "##############################################"

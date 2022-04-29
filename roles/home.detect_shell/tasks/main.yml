@@ -14,4 +14,4 @@
   set_fact:
     shell_name: "{{shell_name.stdout}}"
     shell_interactive: "{{interactive}}"
-    shell_nonInteractive: "{{nonInteractive}}"
+    shell_non_interactive: "{{non_interactive}}"

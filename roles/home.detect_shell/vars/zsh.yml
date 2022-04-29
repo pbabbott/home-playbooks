@@ -1,2 +1,2 @@
 interactive: .zprofile
-nonInteractive: .zshrc
+non_interactive: .zshrc

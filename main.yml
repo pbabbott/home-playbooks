@@ -1,47 +1,59 @@
-
-- name: Try working with facts
+- name: Configure Local Computer
   hosts: localhost
   roles:
-    - home.detect_shell
-  tasks:
-    - debug:
-        msg: "{{ shell_name }}"
+    - name: Configure Oh-My-ZSH
+      role: gantsign.antigen_bundles
+      users:
+        - username: "{{ lookup('env', 'USER') }}"
+          antigen_libraries:
+            - name: oh-my-zsh
+          antigen_theme:
+            name: gallois
+          antigen_bundles:
+            - name: git
+            - name: command-not-found
+            - name: you-should-use
+            - name: autojump
+            - name: zsh-autosuggestions
+
+    - role: home.detect_shell
+
+    - role: home.shell_config
+      config_file_name: "{{ shell_interactive }}"
+      aliases:
+        - alias: ll
+          command: ls -lh
+        - alias: k
+          command: kubectl
+        - alias: python
+          command: python3
+      exports: 
+        - key: PATH
+          value: "$PATH:$HOME/.local/bin"
+      ssh_targets:
+        - shortcut: rpi
+          username: "{{ hostvars.rpi.ansible_user }}"
+          hostname: "{{ hostvars.rpi.ansible_host }}"
 
 
-- name: Try working with lists
-  hosts: localhost
-  roles:
-    - home.aliases
-  vars:
-    aliases:
-      - alias: ll
-        command: ls -lh
-      - alias: k
-        command: kubectl
-    exports: 
-      - key: PATH
-        value: "$PATH:$HOME/.local/bin"
+              
 
-# - name: Set up SSH keys everywhere
+# - name: Local Computer Configuration
 #   hosts: localhost
-#   # roles:
-#   #   - home.ssh_readiness
-#   #   - home.ssh_keys
+#   roles:
+#     # - home.ssh_readiness
+#     # - home.ssh_keys
+#     - home.shell_config
 #   vars:
-#     temp: "{{ lookup('env', 'SHELL') }}"
+
+        
+
+
+
+# - name: Try working with facts
+#   hosts: localhost
+#   roles:
+#     - home.detect_shell
 #   tasks:
-#     - debug: msg={{temp}}
-#     - include_role:
-#         name: home.aliases
-#       vars:
-#         alias_name: k
-#         alias_command: kubectl
-#     - include_role:
-#         name: home.aliases
-#       vars:
-#         alias_name: ll
-#         alias_command: ls -lh
-
-
-
-
+#     - debug:
+#         msg: "{{ shell_name }}"
