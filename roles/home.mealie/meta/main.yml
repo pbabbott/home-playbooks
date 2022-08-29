@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Install mealie using docker-compose.  Data is located at /home/pi/mealie_data
+  
