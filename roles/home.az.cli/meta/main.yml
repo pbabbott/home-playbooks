@@ -1,0 +1,6 @@
+# https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-linux?pivots=apt#option-2-step-by-step-installation-instructions
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Install azure CLI
+  

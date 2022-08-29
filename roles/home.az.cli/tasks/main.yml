@@ -1,0 +1,20 @@
+- name: Apt - Install prerequsites
+  ansible.builtin.apt:
+    update_cache: yes
+    name: 
+      - ca-certificates
+      - curl
+      - apt-transport-https
+      - gnupg
+      - lsb-release
+    state: present
+
+- name: Install the azure CLI using a script
+  ansible.builtin.script: ./files/install.sh
+
+- name: Apt - Install azure-cli
+  ansible.builtin.apt:
+    update_cache: yes
+    name: 
+      - azure-cli
+    state: present
