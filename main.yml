@@ -1,59 +1,96 @@
-- name: Configure Local Computer
-  hosts: localhost
-  roles:
-    - name: Configure Oh-My-ZSH
-      role: gantsign.antigen_bundles
-      users:
-        - username: "{{ lookup('env', 'USER') }}"
-          antigen_libraries:
-            - name: oh-my-zsh
-          antigen_theme:
-            name: gallois
-          antigen_bundles:
-            - name: git
-            - name: command-not-found
-            - name: you-should-use
-            - name: autojump
-            - name: zsh-autosuggestions
+- hosts: rpi
+  name: Hello World
+  tasks:
+    - debug:
+        msg: "hello user: {{ansible_user}}"
+    - debug:
+        msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 
-    - role: home.detect_shell
+# https://docs.docker.com/engine/install/debian/
+- name: Install docker on debian
+  hosts: rpi
+  become: true
+  tasks:
+    - name: Apt - Install prerequsites
+      apt:
+        update_cache: yes
+        name: 
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
 
-    - role: home.shell_config
-      config_file_name: "{{ shell_interactive }}"
-      aliases:
-        - alias: ll
-          command: ls -lh
-        - alias: k
-          command: kubectl
-        - alias: python
-          command: python3
-      exports: 
-        - key: PATH
-          value: "$PATH:$HOME/.local/bin"
-      ssh_targets:
-        - shortcut: rpi
-          username: "{{ hostvars.rpi.ansible_user }}"
-          hostname: "{{ hostvars.rpi.ansible_host }}"
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+    - name: Install Docker CE
+      apt:
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        update_cache: yes
+
+    - name: Ensure user account has access to run docker commands
+      vars:
+        username: "{{ ansible_user }}"
+      become: true
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
 
 
-              
+# - hosts: rpi
+#   name: Install Mealie
+#   roles:
+#     - name: home.mealie
 
-# - name: Local Computer Configuration
+# - name: Install Tools
+#   hosts: all
+#   roles:
+#     - role: home.neofetch
+#     - name: Configure Oh-My-ZSH
+#       role: gantsign.antigen_bundles
+#       users:
+#         - username: 
+#           antigen_libraries:
+#             - name: oh-my-zsh
+#           antigen_theme:
+#             name: gallois
+#           antigen_bundles:
+#             - name: git
+#             - name: command-not-found
+#             - name: you-should-use
+#             - name: autojump
+#             - name: zsh-autosuggestions
+
+# - name: Configure Local Computer
 #   hosts: localhost
 #   roles:
-#     # - home.ssh_readiness
-#     # - home.ssh_keys
-#     - home.shell_config
-#   vars:
-
-        
-
-
-
-# - name: Try working with facts
-#   hosts: localhost
-#   roles:
-#     - home.detect_shell
-#   tasks:
-#     - debug:
-#         msg: "{{ shell_name }}"
+#     - role: home.detect_shell
+#     - role: home.shell_config
+#       config_file_name: "{{ shell_interactive }}"
+#       aliases:
+#         - alias: ll
+#           command: ls -lh
+#         - alias: k
+#           command: kubectl
+#         - alias: python
+#           command: python3
+#       exports: 
+#         - key: PATH
+#           value: "$PATH:$HOME/.local/bin"
+#       ssh_targets:
+#         - shortcut: rpi
+#           username: "{{ hostvars.rpi.ansible_user }}"
+#           hostname: "{{ hostvars.rpi.ansible_host }}"
+#     - role: home.ssh_readiness
+#     - role: home.ssh_keys

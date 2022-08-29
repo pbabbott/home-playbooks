@@ -1,0 +1,17 @@
+- debug:
+    msg: "{{ansible_distribution}}"
+
+- name: Install neofetch using apt
+  become: true
+  apt:
+    name: neofetch
+    update_cache: true
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install neofetch using brew
+  include_role:
+    name: geerlingguy.mac.homebrew
+  vars:
+    homebrew_installed_packages:
+      - neofetch
+  when: ansible_distribution == 'MacOSX'

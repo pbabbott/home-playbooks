@@ -1,0 +1,26 @@
+
+
+- name: install libseccomp2
+  apt:
+    deb: "{{ package_url }}"
+
+
+# - name: Check if package is installed
+#   command: dpkg-query -W libseccomp2
+#   register: my_package_check_deb
+#   failed_when: my_package_check_deb.rc > 1
+#   changed_when: my_package_check_deb.rc == 1
+
+# - debug:
+#     msg: "{{ my_package_check_deb }}"
+# # - name: Download my_package
+#   get_url: 
+#     url="{{ package_url }}"
+#     dest="/tmp/{{ my_package_name }}.deb"
+#   when: my_package_check_deb.rc == 1
+
+# - name: Install my_package
+#   apt: deb="/tmp/{{ my_package_name }}.deb"
+#   become: true
+#   when: my_package_check_deb.rc == 1
+

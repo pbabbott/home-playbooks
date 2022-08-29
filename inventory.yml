@@ -7,3 +7,4 @@ all:
       ansible_host: 192.168.4.24
       ansible_user: pi
       ansible_password: "{{ inventoryPasswords.rpi }}"
+      ansible_sudo_pass: "{{ inventoryPasswords.rpi }}"
