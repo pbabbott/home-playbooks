@@ -1,0 +1,37 @@
+
+
+
+- name: Create backup jobs directory
+  ansible.builtin.file:
+    path: /home/pi/backup_jobs
+    state: directory
+    mode: '0755'  
+
+- name: Copy backup.sh to remote
+  ansible.builtin.copy:
+    src: ./files/backup.sh
+    dest: "/home/pi/backup_jobs/{{ job_name }}.sh"
+
+- name: Changing perm of "/home/pi/backup_jobs/{{ job_name }}.sh", adding "+x"
+  ansible.builtin.file: 
+    dest: "/home/pi/backup_jobs/{{ job_name }}.sh" 
+    mode: a+x
+
+- name: Ensure block exists in new file
+  ansible.builtin.blockinfile:
+    path: "/home/pi/backup_jobs/{{ job_name }}.sh"
+    block: |
+      path={{path}}
+      dest={{dest}}
+      username={{username}}
+      password={{password}}
+      tenant={{tenant}}
+      subscriptionId={{subscriptionId}}
+
+- name: Setup cron job to copy on Sundays at 10pm
+  ansible.builtin.cron:
+    name: "Backup job {{ job_name }}"
+    job: "/home/pi/backup_jobs/{{ job_name }}.sh"
+    minute: 0
+    hour: 22
+    weekday: 0
