@@ -22,11 +22,6 @@
     - ansible.builtin.pip:
         name: docker-compose
 
-- hosts: rpi
-  name: Install Mealie
-  roles:
-    - role: home.mealie
-
 - name: Install Azure CLI, and pip packages
   hosts: rpi
   become: true
@@ -36,9 +31,11 @@
     - ansible.builtin.pip:
         name: azure-cli
 
-- name: Ensure mealie data is backed up to azure storage account
-  hosts: rpi
+
+- hosts: rpi
+  name: Install Mealie & Ensure mealie data is backed up to azure storage account
   roles:
+    - role: home.mealie
     - role: home.zip.backup
       path: /home/pi/mealie_data
       dest: /home/pi/mealie_data.tar.gz
@@ -48,3 +45,7 @@
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: mealie_data
 
+- hosts: rpi
+  name: Install duckdns using linuxserver/duckdns docker image
+  roles:
+    - role: home.duckdns
