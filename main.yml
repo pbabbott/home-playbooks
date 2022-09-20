@@ -1,13 +1,3 @@
-# - hosts: rpi
-#   name: Hello World
-#   tasks:
-#     - debug:
-#         msg: "hello user: {{ansible_user}}"
-#     - debug:
-#         msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
-#     - debug:
-#         msg: "{{ playbook_dir }}"
-    
 
 ## ------------------------------------
 ## RPI
@@ -58,49 +48,3 @@
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: mealie_data
 
-
-
-## ------------------------------------
-
-
-# # - name: Install Tools
-# #   hosts: all
-# #   roles:
-# #     - role: home.neofetch
-# #     - name: Configure Oh-My-ZSH
-# #       role: gantsign.antigen_bundles
-# #       users:
-# #         - username: 
-# #           antigen_libraries:
-# #             - name: oh-my-zsh
-# #           antigen_theme:
-# #             name: gallois
-# #           antigen_bundles:
-# #             - name: git
-# #             - name: command-not-found
-# #             - name: you-should-use
-# #             - name: autojump
-# #             - name: zsh-autosuggestions
-
-# # - name: Configure Local Computer
-# #   hosts: localhost
-# #   roles:
-# #     - role: home.detect_shell
-# #     - role: home.shell_config
-# #       config_file_name: "{{ shell_interactive }}"
-# #       aliases:
-# #         - alias: ll
-# #           command: ls -lh
-# #         - alias: k
-# #           command: kubectl
-# #         - alias: python
-# #           command: python3
-# #       exports: 
-# #         - key: PATH
-# #           value: "$PATH:$HOME/.local/bin"
-# #       ssh_targets:
-# #         - shortcut: rpi
-# #           username: "{{ hostvars.rpi.ansible_user }}"
-# #           hostname: "{{ hostvars.rpi.ansible_host }}"
-# #     - role: home.ssh_readiness
-# #     - role: home.ssh_keys

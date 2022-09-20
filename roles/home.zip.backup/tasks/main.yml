@@ -28,10 +28,11 @@
       tenant={{tenant}}
       subscriptionId={{subscriptionId}}
 
+
 - name: Setup cron job to copy on Sundays at 10pm
   ansible.builtin.cron:
     name: "Backup job {{ job_name }}"
-    job: "/home/pi/backup_jobs/{{ job_name }}.sh"
+    job: "/home/pi/backup_jobs/{{ job_name }}.sh > /home/pi/backup_jobs/{{ job_name}}.log 2>&1"
     minute: 0
     hour: 22
     weekday: 0
