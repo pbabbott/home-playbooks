@@ -10,6 +10,10 @@
     
     definition:
       version: "2.1"
+      networks:
+        default:
+          name: lsio
+          external: true
       services:
         duckdns:
           container_name: duckdns

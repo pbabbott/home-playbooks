@@ -10,12 +10,22 @@
     src: ./files/nginx.conf
     dest: "/home/pi/swag/nginx/site-confs/default"
 
+- name: Enable mealie configuration
+  ansible.builtin.copy:
+    src: /home/pi/swag/nginx/proxy-confs/mealie.subdomain.conf.sample
+    dest: /home/pi/swag/nginx/proxy-confs/mealie.subdomain.conf
+    remote_src: true
+
 # https://hub.docker.com/r/linuxserver/swag
 - community.docker.docker_compose:
     project_name: swag
     
     definition:
       version: "2.1"
+      networks:
+        default:
+          name: lsio
+          external: true
       services:
         swag:
           image: linuxserver/swag
@@ -37,4 +47,7 @@
             - 80:80
           restart: unless-stopped
 
+
+
 # TODO: add restart for swag
+
