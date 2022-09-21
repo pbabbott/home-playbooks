@@ -1,0 +1,7 @@
+
+
+# https://hub.docker.com/r/linuxserver/duckdns/
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Ensure target host linuxserver/nginx up and running on it with a config file

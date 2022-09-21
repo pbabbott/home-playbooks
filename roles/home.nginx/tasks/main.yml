@@ -1,0 +1,40 @@
+
+
+- ansible.builtin.file:
+    path: /home/pi/swag/nginx/site-confs
+    state: directory
+    mode: '0755'  
+
+- name: Copy nginx.conf to remote
+  ansible.builtin.copy:
+    src: ./files/nginx.conf
+    dest: "/home/pi/swag/nginx/site-confs/default"
+
+# https://hub.docker.com/r/linuxserver/swag
+- community.docker.docker_compose:
+    project_name: swag
+    
+    definition:
+      version: "2.1"
+      services:
+        swag:
+          image: linuxserver/swag
+          container_name: swag
+          cap_add:
+            - NET_ADMIN
+          environment:
+            PUID: 1000
+            PGID: 1000
+            TZ: America/Los_Angeles
+            URL: abbottland.duckdns.org
+            SUBDOMAINS: wildcard
+            VALIDATION: duckdns
+            DUCKDNSTOKEN: "{{ duckdns.token }}"
+          volumes:
+            - /home/pi/swag:/config
+          ports:
+            - 443:443
+            - 80:80
+          restart: unless-stopped
+
+# TODO: add restart for swag

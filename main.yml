@@ -5,6 +5,9 @@
   hosts: rpi
   become: true
   tasks:
+    - apt:
+        upgrade: yes
+        update_cache: yes
     - name: Install Python3 pip
       apt:
         name: 
@@ -49,3 +52,8 @@
   name: Install duckdns using linuxserver/duckdns docker image
   roles:
     - role: home.duckdns
+
+- hosts: rpi
+  name: Install nginx using linuxserver/nginx docker image
+  roles:
+    - role: home.nginx
