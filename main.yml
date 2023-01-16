@@ -55,18 +55,13 @@
       job_name: mealie_data
 
 - hosts: rpi
-  name: Install duckdns using linuxserver/duckdns docker image
+  name: Install services on RPI host
+  roles:
+    - role: cloudalchemy.node_exporter
+
+- hosts: rpi
+  name: Install services with docker
   roles:
     - role: home.duckdns
-
-- hosts: rpi
-  name: Install Secure Web Application Gateway (swag)
-  roles:
     - role: home.swag
-
-- hosts: rpi
-  name: Install Prometheus
-  roles:
     - role: home.prometheus-server
-
-# TODO: https://github.com/cloudalchemy/ansible-node-exporter

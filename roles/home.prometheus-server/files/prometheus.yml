@@ -6,12 +6,20 @@ global:
   external_labels:
     monitor: 'codelab-monitor'
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
+
 scrape_configs:
+  # Gaming PC
   - job_name: 'elder_wand'
     static_configs:
       - targets: ['192.168.4.90:9182']
+
+  # Raspberry pi node exporter
+  # Note: 172.17.0.1 is how we access the host from within docker (works on linux, whereas host.docker.internal works with docker-desktop)
+  - job_name: 'raspberrypi'
+    static_configs:
+      - targets: ['172.17.0.1:9100']      
+
+  # Prometheus server instance
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
