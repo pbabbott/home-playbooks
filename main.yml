@@ -1,38 +1,38 @@
 
-## ------------------------------------
-## RPI
-# - name: Install Prerequsites
-#   hosts: rpi
-#   become: true
-#   tasks:
-#     - apt:
-#         upgrade: yes
-#         update_cache: yes
-#     - name: Install Python3 pip
-#       apt:
-#         name: 
-#           - python3-pip
-#         update_cache: yes
+# ------------------------------------
+# RPI
+- name: Install Prerequsites
+  hosts: rpi
+  become: true
+  tasks:
+    - apt:
+        upgrade: yes
+        update_cache: yes
+    - name: Install Python3 pip
+      apt:
+        name: 
+          - python3-pip
+        update_cache: yes
 
-# - name: Install docker, and pip packages
-#   hosts: rpi
-#   become: true
-#   roles:
-#     - role: home.docker
-#   tasks:
-#     - ansible.builtin.pip:
-#         name: docker
-#     - ansible.builtin.pip:
-#         name: docker-compose
+- name: Install docker, and pip packages
+  hosts: rpi
+  become: true
+  roles:
+    - role: home.docker
+  tasks:
+    - ansible.builtin.pip:
+        name: docker
+    - ansible.builtin.pip:
+        name: docker-compose
 
-# - name: Install Azure CLI, and pip packages
-#   hosts: rpi
-#   become: true
-#   roles:
-#     - name: home.az.cli
-#   tasks:
-#     - ansible.builtin.pip:
-#         name: azure-cli
+- name: Install Azure CLI, and pip packages
+  hosts: rpi
+  become: true
+  roles:
+    - name: home.az.cli
+  tasks:
+    - ansible.builtin.pip:
+        name: azure-cli
 
 - name: Setup a docker network
   hosts: rpi
@@ -45,14 +45,14 @@
   name: Install Mealie & Ensure mealie data is backed up to azure storage account
   roles:
     - role: home.mealie
-#     - role: home.zip.backup
-#       path: /home/pi/mealie_data
-#       dest: /home/pi/mealie_data.tar.gz
-#       username: "{{ azure.homeSPN.username }}"
-#       password: "{{ azure.homeSPN.password }}"
-#       tenant: "{{ azure.homeSPN.tenant }}"
-#       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
-#       job_name: mealie_data
+    - role: home.zip.backup
+      path: /home/pi/mealie_data
+      dest: /home/pi/mealie_data.tar.gz
+      username: "{{ azure.homeSPN.username }}"
+      password: "{{ azure.homeSPN.password }}"
+      tenant: "{{ azure.homeSPN.tenant }}"
+      subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
+      job_name: mealie_data
 
 - hosts: rpi
   name: Install duckdns using linuxserver/duckdns docker image
@@ -63,3 +63,10 @@
   name: Install Secure Web Application Gateway (swag)
   roles:
     - role: home.swag
+
+- hosts: rpi
+  name: Install Prometheus
+  roles:
+    - role: home.prometheus-server
+
+# TODO: https://github.com/cloudalchemy/ansible-node-exporter
