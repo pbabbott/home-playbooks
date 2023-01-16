@@ -7,11 +7,9 @@
 #         msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 #     - debug:
 #         msg: "{{ playbook_dir }}"
-    
-
+  
 
 ## ------------------------------------
-
 
 # # - name: Install Tools
 # #   hosts: all
@@ -32,25 +30,4 @@
 # #             - name: autojump
 # #             - name: zsh-autosuggestions
 
-# # - name: Configure Local Computer
-# #   hosts: localhost
-# #   roles:
-# #     - role: home.detect_shell
-# #     - role: home.shell_config
-# #       config_file_name: "{{ shell_interactive }}"
-# #       aliases:
-# #         - alias: ll
-# #           command: ls -lh
-# #         - alias: k
-# #           command: kubectl
-# #         - alias: python
-# #           command: python3
-# #       exports: 
-# #         - key: PATH
-# #           value: "$PATH:$HOME/.local/bin"
-# #       ssh_targets:
-# #         - shortcut: rpi
-# #           username: "{{ hostvars.rpi.ansible_user }}"
-# #           hostname: "{{ hostvars.rpi.ansible_host }}"
-# #     - role: home.ssh_readiness
-# #     - role: home.ssh_keys
+

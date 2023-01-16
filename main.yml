@@ -1,6 +1,43 @@
 
 # ------------------------------------
-# RPI
+# localhost
+# ------------------------------------
+
+- name: Configure Local Computer
+  hosts: localhost
+  roles:
+    - role: home.detect_shell
+    - role: home.shell_config
+      config_file_name: "{{ shell_interactive }}"
+      aliases:
+        - alias: ll
+          command: ls -lh
+        - alias: k
+          command: kubectl
+        - alias: python
+          command: python3
+      exports: 
+        - key: PATH
+          value: "$PATH:$HOME/.local/bin"
+      ssh_targets:
+        - shortcut: rpi
+          username: "{{ hostvars.rpi.ansible_user }}"
+          hostname: "{{ hostvars.rpi.ansible_host }}"
+        - shortcut: ror
+          username: "{{ hostvars.room_of_requirement.ansible_user }}"
+          hostname: "{{ hostvars.room_of_requirement.ansible_host }}"
+    - role: home.ssh_readiness
+  tasks:
+    - name: ssh_copy_id local public key to remote host
+      include_role: 
+        name: home.copy_ssh_keys
+      vars:
+        target: "{{ hostvars[item] }}"
+      loop: "{{ groups['remote'] }}"
+
+# ------------------------------------
+# rpi
+# ------------------------------------
 - name: Install Prerequsites
   hosts: rpi
   become: true
@@ -65,3 +102,7 @@
     - role: home.duckdns
     - role: home.swag
     - role: home.prometheus-server
+
+# ------------------------------------
+
+
