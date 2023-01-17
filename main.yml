@@ -44,49 +44,38 @@
 # ------------------------------------
 # rpi
 # ------------------------------------
-- name: Install Prerequsites
+- name: Install python, docker, azure cli, and pip packages on RPI host
   hosts: rpi
   become: true
-  tasks:
-    - apt:
+  pre_tasks:
+    - name: Update Apt
+      ansible.builtin.apt:
         upgrade: yes
         update_cache: yes
     - name: Install Python3 pip
-      apt:
+      ansible.builtin.apt:
         name: 
           - python3-pip
         update_cache: yes
-
-- name: Install docker, and pip packages
-  hosts: rpi
-  become: true
   roles:
     - role: home.docker
     - role: home.docker_permissions
+    - role: home.az.cli
+    - role: cloudalchemy.node_exporter
   tasks:
     - ansible.builtin.pip:
         name: docker
     - ansible.builtin.pip:
         name: docker-compose
-
-- name: Install Azure CLI, and pip packages
-  hosts: rpi
-  become: true
-  roles:
-    - name: home.az.cli
-  tasks:
     - ansible.builtin.pip:
         name: azure-cli
 
-- name: Setup a docker network
+- name: Docker Installations on RPI
   hosts: rpi
-  tasks:
+  pre_tasks:
     - name: Create a network
       community.docker.docker_network:
         name: lsio
-
-- hosts: rpi
-  name: Install Mealie & Ensure mealie data is backed up to azure storage account
   roles:
     - role: home.mealie
     - role: home.zip.backup
@@ -97,19 +86,9 @@
       tenant: "{{ azure.homeSPN.tenant }}"
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: mealie_data
-
-- hosts: rpi
-  name: Install services on RPI host
-  roles:
-    - role: cloudalchemy.node_exporter
-
-- hosts: rpi
-  name: Install services with docker
-  roles:
     - role: home.duckdns
     - role: home.swag
     - role: home.prometheus-server
-
 # ------------------------------------
 
 

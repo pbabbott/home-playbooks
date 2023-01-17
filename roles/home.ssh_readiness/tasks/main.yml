@@ -1,11 +1,11 @@
 - name: Install and upgrade pip to pip3
-  pip:
+  ansible.builtin.pip:
     name: pip
     extra_args: --upgrade
     executable: pip3
 
 - name: Install paramiko
-  pip:
+  ansible.builtin.pip:
     name: paramiko
 
 - name: Generate an OpenSSH keypair with the default values (won't overwrite!)
@@ -26,7 +26,7 @@
     
 - name: Apt - Install sshpass
   become: true
-  apt:
+  ansible.builtin.apt:
     name: sshpass
     update_cache: yes
     state: present
