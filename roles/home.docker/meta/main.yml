@@ -2,5 +2,5 @@
 
 galaxy_info:
   author: Brandon Abbott
-  description: Ensure target host has docker, docker-compose installed. Ensure current user can run docker commands.
+  description: Ensure target host has docker, docker-compose installed. 
   

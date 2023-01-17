@@ -1,5 +1,5 @@
 # TODO: Update this script to support both debian and ubuntu
-# TODO: Update this script to support multiople architectures
+# TODO: Update this script to support multiple architectures
 
 - name: Apt - Install prerequsites
   apt:
@@ -27,12 +27,3 @@
       - containerd.io
       - docker-compose-plugin
     update_cache: yes
-
-- name: Ensure user account has access to run docker commands
-  vars:
-    username: "{{ ansible_user }}"
-  become: true
-  user:
-    name: "{{ ansible_user }}"
-    groups: docker
-    append: true

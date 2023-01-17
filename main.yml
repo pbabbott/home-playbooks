@@ -1,3 +1,9 @@
+- name: Configure Local Computer
+  hosts: room_of_requirement
+  roles:
+    - home.docker_permissions
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
 
 # ------------------------------------
 # localhost
@@ -56,6 +62,7 @@
   become: true
   roles:
     - role: home.docker
+    - role: home.docker_permissions
   tasks:
     - ansible.builtin.pip:
         name: docker

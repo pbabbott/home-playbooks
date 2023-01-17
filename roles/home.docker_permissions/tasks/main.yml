@@ -1,0 +1,16 @@
+
+
+- name: Ensure docker group exists
+  become: true
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Ensure user account has access to run docker commands
+  vars:
+    username: "{{ ansible_user }}"
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
