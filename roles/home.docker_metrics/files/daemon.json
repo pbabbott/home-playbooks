@@ -1,0 +1,5 @@
+{
+    "metrics-addr" : "IP_ADDRESS:9323",
+    "experimental" : true,
+    "live-restore": true
+}

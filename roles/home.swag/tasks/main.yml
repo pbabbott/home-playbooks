@@ -1,25 +1,34 @@
-
-
 - ansible.builtin.file:
     path: /home/pi/swag/nginx/site-confs
     state: directory
-    mode: '0755'  
+    mode: '0755' 
 
 - name: Copy nginx.conf to remote
+  register: nginx_conf
   ansible.builtin.copy:
     src: ./files/nginx.conf
     dest: "/home/pi/swag/nginx/site-confs/default"
 
+- ansible.builtin.file:
+    path: /home/pi/swag/nginx/proxy-confs
+    state: directory
+    mode: '0755'  
+
 - name: Enable mealie configuration
+  register: proxy_conf
   ansible.builtin.copy:
-    src: /home/pi/swag/nginx/proxy-confs/mealie.subdomain.conf.sample
+    src: ./files/mealie.subdomain.conf
     dest: /home/pi/swag/nginx/proxy-confs/mealie.subdomain.conf
-    remote_src: true
+
+- name: restart swag container
+  docker_container:
+    name: swag
+    state: restarted
+  when: nginx_conf.changed or proxy_conf.changed
 
 # https://hub.docker.com/r/linuxserver/swag
 - community.docker.docker_compose:
     project_name: swag
-    
     definition:
       version: "2.1"
       networks:
@@ -33,8 +42,8 @@
           cap_add:
             - NET_ADMIN
           environment:
-            PUID: 1000
-            PGID: 1000
+            PUID: 1001
+            PGID: 1001
             TZ: America/Los_Angeles
             URL: abbottland.duckdns.org
             SUBDOMAINS: wildcard
@@ -46,6 +55,8 @@
             - 443:443
             - 80:80
           restart: unless-stopped
+
+
 
 
 

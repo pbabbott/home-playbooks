@@ -1,3 +1,13 @@
+
+- hosts: rpi
+  name: Hello World
+  become: true
+  roles:
+    - role: home.swag
+
+
+
+
 # - hosts: rpi
 #   name: Hello World
 #   tasks:

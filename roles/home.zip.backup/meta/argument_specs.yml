@@ -6,28 +6,28 @@ argument_specs:
       job_name:
         type: "str"
         description: "The name of the file that the cron job will run."
-        requried: true
+        required: true
       path:
         type: "str"
         description: "The path to the directory that should be archived"
-        requried: true
+        required: true
       dest:
         type: "str"
         description: "The destination where the zipped directory should go (eg. /tmp/archive.tgz)"
-        requried: true
+        required: true
       username:
         type: "str"
         description: "Azure SPN username"
-        requried: true
+        required: true
       password:
         type: "str"
         description: "Azure SPN secret"
-        requried: true
+        required: true
       tenant:
         type: "str"
         description: "Azure SPN tenant id"
-        requried: true
+        required: true
       subscriptionId:
         type: "str"
         description: "Azure SPN tenant id"
-        requried: true
+        required: true

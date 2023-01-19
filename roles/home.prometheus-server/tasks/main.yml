@@ -5,11 +5,11 @@
     state: directory
     mode: '0755'  
 
-
 - name: Copy prometheus.yml to remote
   ansible.builtin.copy:
     src: ./files/prometheus.yml
     dest: "/home/pi/prometheus/prometheus.yml"
+  register: prometheus_config
 
 - community.docker.docker_compose:
     project_name: prometheus
@@ -31,3 +31,9 @@
           volumes:
             - /home/pi/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
           
+
+- name: Restart prometheus container
+  docker_container:
+    name: prometheus
+    state: restarted
+  when: prometheus_config.changed

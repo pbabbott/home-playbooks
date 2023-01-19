@@ -1,0 +1,32 @@
+
+
+- name: Ensure /etc/docker directory exists
+  ansible.builtin.file:
+    state: directory
+    path: /etc/docker
+    mode: '0755'  
+
+- name: Copy daemon.json to remote
+  ansible.builtin.copy:
+    src: ./files/daemon.json
+    dest: /tmp/daemon.json
+
+- name: Replace ip address
+  replace:
+    path: /tmp/daemon.json
+    regexp: 'IP_ADDRESS'
+    replace: "{{ip_address}}"
+
+- name: Replace existing docker daemon.json
+  ansible.builtin.copy:
+    remote_src: true
+    src: /tmp/daemon.json
+    dest: /etc/docker/daemon.json
+  register: docker_daemon
+
+- name: Restart docker
+  when: docker_daemon.changed
+  ansible.builtin.systemd:
+    state: restarted
+    daemon_reload: yes
+    name: docker

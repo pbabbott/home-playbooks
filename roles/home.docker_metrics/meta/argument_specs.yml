@@ -1,0 +1,9 @@
+
+
+argument_specs:
+  main:
+    options:
+      ip_address:
+        type: "str"
+        description: "The IP address on which the metrics should be exposed."
+        required: true
