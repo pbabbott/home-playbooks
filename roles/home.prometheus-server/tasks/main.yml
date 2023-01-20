@@ -35,5 +35,5 @@
 - name: Restart prometheus container
   docker_container:
     name: prometheus
-    state: restarted
+    restart: true
   when: prometheus_config.changed

@@ -28,4 +28,9 @@ scrape_configs:
   - job_name: 'docker'
     static_configs:
       - targets: ['192.168.4.24:9323']
+  
+  # grafana services on raspberry pi
+  - job_name: 'grafana'
+    static_configs:
+      - targets: ['192.168.4.24:3000']
         

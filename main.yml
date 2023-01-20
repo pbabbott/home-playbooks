@@ -37,7 +37,7 @@
 # ------------------------------------
 # rpi
 # ------------------------------------
-- name: Install python, docker, azure cli, and pip packages on RPI host
+- name: Install python, docker, azure cli, and pip packages on RPI host (executes as root)
   hosts: rpi
   become: true
   pre_tasks:
@@ -65,9 +65,7 @@
     - ansible.builtin.pip:
         name: azure-cli
 
-    
-
-- name: Docker Installations on RPI
+- name: Docker Installations on RPI (not root)
   hosts: rpi
   pre_tasks:
     - name: Create a network
@@ -78,14 +76,25 @@
     - role: home.duckdns
     - role: home.swag
     - role: home.prometheus-server
+    - role: home.grafana
+    
     - role: home.zip.backup
       path: /home/pi/mealie_data
-      dest: /home/pi/mealie_data.tar.gz
+      dest: "/home/pi/mealie_data_{{ansible_date_time.date}}.tar.gz"
       username: "{{ azure.homeSPN.username }}"
       password: "{{ azure.homeSPN.password }}"
       tenant: "{{ azure.homeSPN.tenant }}"
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: mealie_data
+  
+    - role: home.zip.backup
+      path: /home/pi/grafana
+      dest: "/home/pi/grafana_data_{{ansible_date_time.date}}.tar.gz"
+      username: "{{ azure.homeSPN.username }}"
+      password: "{{ azure.homeSPN.password }}"
+      tenant: "{{ azure.homeSPN.tenant }}"
+      subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
+      job_name: grafana_data
 
 
 

@@ -23,7 +23,7 @@
 - name: restart swag container
   docker_container:
     name: swag
-    state: restarted
+    restart: true
   when: nginx_conf.changed or proxy_conf.changed
 
 # https://hub.docker.com/r/linuxserver/swag

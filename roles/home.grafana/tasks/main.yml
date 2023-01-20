@@ -1,0 +1,44 @@
+# TODO: update mealie_data path to be a variable
+
+- ansible.builtin.file:
+    path: /home/pi/grafana
+    state: directory
+    mode: '0755'
+
+- ansible.builtin.file:
+    path: /home/pi/grafana/data
+    state: directory
+    mode: '0755'  
+
+- community.docker.docker_compose:
+    project_name: grafana
+    
+    definition:
+      version: "3.1"
+      networks:
+        default:
+          name: lsio
+          external: true
+      services:
+        grafana:
+          image: grafana/grafana-enterprise:latest
+          container_name: grafana
+          restart: always
+          ports:
+            - "3000:3000"
+          user: "1001"
+          volumes:
+            - /home/pi/grafana/data:/var/lib/grafana
+            - /home/pi/grafana/grafana.ini:/etc/grafana/grafana.ini
+            
+- name: Copy grafana.ini to remote
+  register: grafana_conf
+  ansible.builtin.copy:
+    src: ./files/grafana.ini
+    dest: /home/pi/grafana/grafana.ini
+
+- name: Restart grafana container
+  docker_container:
+    name: grafana
+    restart: true
+  # when: grafana_conf.changed

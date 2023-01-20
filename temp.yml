@@ -1,12 +1,9 @@
 
 - hosts: rpi
   name: Hello World
-  become: true
-  roles:
-    - role: home.swag
-
-
-
+  tasks:
+    - debug:
+        msg: "hello user: {{ansible_date_time.date}}"
 
 # - hosts: rpi
 #   name: Hello World
