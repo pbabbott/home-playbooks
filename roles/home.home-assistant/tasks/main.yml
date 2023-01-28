@@ -1,0 +1,25 @@
+- ansible.builtin.file:
+    path: /home/pi/homeassistant_data
+    state: directory
+    mode: '0755'  
+
+- community.docker.docker_compose:
+    project_name: home-assistant
+    
+    definition:
+      version: '3'
+      networks:
+        default:
+          name: lsio
+          external: true
+      services:
+        homeassistant:
+          container_name: homeassistant
+          image: "ghcr.io/home-assistant/home-assistant:stable"
+          volumes:
+            - /home/pi/homeassistant_data:/config
+            - /etc/localtime:/etc/localtime:ro
+          restart: unless-stopped
+          privileged: true
+          ports:
+            - 8123:8123

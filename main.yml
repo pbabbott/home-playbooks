@@ -89,7 +89,17 @@
     - role: home.swag
     - role: home.prometheus-server
     - role: home.grafana
+    - role: home.home-assistant
     
+    - role: home.zip.backup
+      path: /home/pi/homeassistant_data
+      dest: "/home/pi/homeassistant_data_{{ansible_date_time.date}}.tar.gz"
+      username: "{{ azure.homeSPN.username }}"
+      password: "{{ azure.homeSPN.password }}"
+      tenant: "{{ azure.homeSPN.tenant }}"
+      subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
+      job_name: homeassistant_data
+
     - role: home.zip.backup
       path: /home/pi/mealie_data
       dest: "/home/pi/mealie_data_{{ansible_date_time.date}}.tar.gz"
@@ -107,8 +117,6 @@
       tenant: "{{ azure.homeSPN.tenant }}"
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: grafana_data
-
-
 
 #------------------------------------
 
