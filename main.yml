@@ -1,38 +1,50 @@
-# - name: Configure Local Computer
-#   hosts: room_of_requirement
-#   roles:
-#     - home.docker_permissions
-#   environment:
-#     PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
+# ------------------------------------
+# room_of_requirement
+# ------------------------------------
+
+- name: Install packages onto NAS
+  hosts: room_of_requirement
+  become: true
+  tasks:
+    - ansible.builtin.pip:
+        name: docker
+    - ansible.builtin.pip:
+        name: docker-compose
+
+- name: Configure NAS Docker Services
+  hosts: room_of_requirement
+  roles:
+    - home.prometheus-docker-node-exporter
+  
 
 # # ------------------------------------
 # # localhost
 # # ------------------------------------
 
-# - name: Configure Local Computer
-#   hosts: localhost
-#   roles:
-#     - role: home.detect_shell
-#     - role: home.shell_config
-#       config_file_name: "{{ shell_interactive }}"
-#       aliases:
-#         - alias: ll
-#           command: ls -lh
-#         - alias: k
-#           command: kubectl
-#         - alias: python
-#           command: python3
-#       exports: 
-#         - key: PATH
-#           value: "$PATH:$HOME/.local/bin"
-#       ssh_targets:
-#         - shortcut: rpi
-#           username: "{{ hostvars.rpi.ansible_user }}"
-#           hostname: "{{ hostvars.rpi.ansible_host }}"
-#         - shortcut: ror
-#           username: "{{ hostvars.room_of_requirement.ansible_user }}"
-#           hostname: "{{ hostvars.room_of_requirement.ansible_host }}"
-#     - role: home.ssh_readiness
+- name: Configure Local Computer
+  hosts: localhost
+  roles:
+    - role: home.detect_shell
+    - role: home.shell_config
+      config_file_name: "{{ shell_interactive }}"
+      aliases:
+        - alias: ll
+          command: ls -lh
+        - alias: k
+          command: kubectl
+        - alias: python
+          command: python3
+      exports: 
+        - key: PATH
+          value: "$PATH:$HOME/.local/bin"
+      ssh_targets:
+        - shortcut: rpi
+          username: "{{ hostvars.rpi.ansible_user }}"
+          hostname: "{{ hostvars.rpi.ansible_host }}"
+        - shortcut: ror
+          username: "{{ hostvars.room_of_requirement.ansible_user }}"
+          hostname: "{{ hostvars.room_of_requirement.ansible_host }}"
+    - role: home.ssh_readiness
 
 # ------------------------------------
 # rpi

@@ -1,0 +1,13 @@
+- community.docker.docker_compose:
+    project_name: nginx-hello
+    
+    definition:
+      version: "2.1"
+
+      services:
+        nginx-hello:
+          container_name: nginx-hello
+          image: nginxdemos/hello
+          restart: always
+          ports:
+            - 9080:80

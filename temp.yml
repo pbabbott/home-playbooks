@@ -1,9 +1,20 @@
 
-- hosts: rpi
-  name: Hello World
-  tasks:
-    - debug:
-        msg: "hello user: {{ansible_date_time.date}}"
+# - hosts: room_of_requirement
+#   name: docker prereqs
+#   become: true
+#   tasks:
+#     - ansible.builtin.pip:
+#         name: docker
+#     - ansible.builtin.pip:
+#         name: docker-compose
+
+# - hosts: room_of_requirement
+#   name: Hello World
+#   roles:
+#     - home.nginx-hello-world
+#   tasks:
+#     - debug:
+#         msg: "hello user: {{ansible_date_time.date}}"
 
 # - hosts: rpi
 #   name: Hello World

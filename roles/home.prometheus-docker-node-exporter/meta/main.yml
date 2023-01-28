@@ -1,0 +1,9 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Ensure that a docker container is running with node-exporter.  |
+    The preferred method for node-exporter is to run it on the host; however to 
+    avoid misconfiguration on my NAS, I have chosen to run metrics through a container instead.
+
+
+# https://github.com/prometheus/node_exporter
+# https://hub.docker.com/r/prom/node-exporter
