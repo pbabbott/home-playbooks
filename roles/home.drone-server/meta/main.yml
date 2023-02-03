@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Install drone ci server using docker-compose.  
+  

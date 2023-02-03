@@ -1,7 +1,6 @@
 # ------------------------------------
 # room_of_requirement
 # ------------------------------------
-
 - name: Install packages onto NAS
   hosts: room_of_requirement
   become: true
@@ -10,16 +9,25 @@
         name: docker
     - ansible.builtin.pip:
         name: docker-compose
+    - ansible.builtin.pip:
+        name: passlib
 
 - name: Configure NAS Docker Services
   hosts: room_of_requirement
   roles:
     - home.prometheus-docker-node-exporter
+
+    - role: home.verdaccio
+      config_dir: /volume1/Docker/verdaccio/config
+      storage_dir: /volume1/Docker/verdaccio/storage
+      plugins_dir: /volume1/Docker/verdaccio/plugins
+      verdaccio_user: pbabbott
+      verdaccio_pw: "{{ verdaccio.pbabbott_password }}"
   
 
-# # ------------------------------------
-# # localhost
-# # ------------------------------------
+# ------------------------------------
+# localhost
+# ------------------------------------
 
 - name: Configure Local Computer
   hosts: localhost
@@ -37,6 +45,8 @@
       exports: 
         - key: PATH
           value: "$PATH:$HOME/.local/bin"
+        - key: VERDACCIO_TOKEN
+          value: "{{ verdaccio.pbabbott_token }}"
       ssh_targets:
         - shortcut: rpi
           username: "{{ hostvars.rpi.ansible_user }}"
@@ -88,6 +98,7 @@
     - role: home.duckdns
     - role: home.swag
     - role: home.prometheus-server
+    - role: home.drone-server
     - role: home.grafana
     - role: home.home-assistant
     
@@ -117,6 +128,15 @@
       tenant: "{{ azure.homeSPN.tenant }}"
       subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
       job_name: grafana_data
+
+    - role: home.drone-server
+      path: /home/pi/drone_data
+      dest: "/home/pi/drone_data_{{ansible_date_time.date}}.tar.gz"
+      username: "{{ azure.homeSPN.username }}"
+      password: "{{ azure.homeSPN.password }}"
+      tenant: "{{ azure.homeSPN.tenant }}"
+      subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
+      job_name: drone_data
 
 #------------------------------------
 

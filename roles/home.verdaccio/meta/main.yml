@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Install verdaccio using docker-compose.  
+  

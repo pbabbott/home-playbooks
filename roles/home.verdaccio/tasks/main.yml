@@ -1,0 +1,60 @@
+- ansible.builtin.file:
+    path: "{{ config_dir }}"
+    state: directory
+    mode: '0755'  
+    owner: 10001
+    group: 65533
+
+- ansible.builtin.file:
+    path: "{{ storage_dir }}"
+    state: directory
+    mode: '0755'
+    owner: 10001
+    group: 65533
+
+- ansible.builtin.file:
+    path: "{{ plugins_dir }}"
+    state: directory
+    mode: '0755'  
+    owner: 10001
+    group: 65533
+
+- name: Copy config.yaml to remote
+  register: conf
+  ansible.builtin.copy:
+    src: ./files/config.yaml
+    dest: "{{ config_dir }}/config.yaml"
+
+- name: Add a user to a password file and ensure permissions are set
+  community.general.htpasswd:
+    path: "{{ config_dir }}/htpasswd"
+    name: "{{ verdaccio_user }}"
+    password: "{{ verdaccio_pw }}"
+    owner: 10001
+    group: 65533
+    mode: 0644
+
+- name: restart verdaccio container
+  docker_container:
+    name: verdaccio
+    restart: true
+  when: conf.changed 
+
+- community.docker.docker_compose:
+    project_name: verdaccio
+    
+    definition:
+      version: '3.1'
+      services:
+        verdaccio:
+          user: "10001:65533"
+          container_name: verdaccio
+          image: verdaccio/verdaccio
+          network_mode: host
+          environment:
+            - VERDACCIO_PORT=4873
+          volumes:
+            - '{{ storage_dir }}:/verdaccio/storage'
+            - '{{ config_dir }}:/verdaccio/conf'
+            - '{{ plugins_dir }}:/verdaccio/plugins'
+          restart: unless-stopped

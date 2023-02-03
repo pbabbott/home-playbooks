@@ -15,16 +15,22 @@
     mode: '0755'  
 
 - name: Enable mealie configuration
-  register: proxy_conf
+  register: mealie_proxy_conf
   ansible.builtin.copy:
     src: ./files/mealie.subdomain.conf
     dest: /home/pi/swag/nginx/proxy-confs/mealie.subdomain.conf
+
+- name: Enable drone configuration
+  register: drone_proxy_conf
+  ansible.builtin.copy:
+    src: ./files/drone.subdomain.conf
+    dest: /home/pi/swag/nginx/proxy-confs/drone.subdomain.conf
 
 - name: restart swag container
   docker_container:
     name: swag
     restart: true
-  when: nginx_conf.changed or proxy_conf.changed
+  when: nginx_conf.changed or mealie_proxy_conf.changed or drone_proxy_conf.changed
 
 # https://hub.docker.com/r/linuxserver/swag
 - community.docker.docker_compose:

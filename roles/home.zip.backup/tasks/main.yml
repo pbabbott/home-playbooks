@@ -28,7 +28,6 @@
       tenant={{tenant}}
       subscriptionId={{subscriptionId}}
 
-
 - name: Setup cron job to copy on Sundays at 10pm
   ansible.builtin.cron:
     name: "Backup job {{ job_name }}"

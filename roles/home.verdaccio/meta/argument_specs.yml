@@ -1,0 +1,24 @@
+
+argument_specs:
+  main:
+    options:
+      config_dir:
+        type: "str"
+        description: "The path to the config directory"
+        required: true
+      storage_dir:
+        type: "str"
+        description: "The path to the storage directory"
+        required: true
+      plugins_dir:
+        type: "str"
+        description: "The path to the plugins directory"
+        required: true
+      verdaccio_user:
+        type: "str"
+        description: "The path to the plugins directory"
+        required: true
+      verdaccio_pw:
+        type: "str"
+        description: "The path to the plugins directory"
+        required: true
