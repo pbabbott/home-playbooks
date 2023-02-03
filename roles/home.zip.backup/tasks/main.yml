@@ -1,6 +1,4 @@
 
-
-
 - name: Create backup jobs directory
   ansible.builtin.file:
     path: /home/pi/backup_jobs
@@ -23,10 +21,10 @@
     block: |
       path={{path}}
       dest={{dest}}
-      username={{username}}
-      password={{password}}
-      tenant={{tenant}}
-      subscriptionId={{subscriptionId}}
+      username={{backup_azure_username}}
+      password={{backup_azure_password}}
+      tenant={{backup_azure_tenant}}
+      subscriptionId={{backup_azure_subscriptionId}}
 
 - name: Setup cron job to copy on Sundays at 10pm
   ansible.builtin.cron:

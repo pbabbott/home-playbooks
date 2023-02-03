@@ -1,0 +1,14 @@
+
+
+pip_install_packages:
+  - docker
+  - docker-compose
+  - passlib
+
+# Verdaccio Settings
+verdaccio_config_dir: /volume1/Docker/verdaccio/config
+verdaccio_storage_dir: /volume1/Docker/verdaccio/storage
+verdaccio_plugins_dir: /volume1/Docker/verdaccio/plugins
+verdaccio_user: pbabbott
+verdaccio_pw: "{{ verdaccio.pbabbott_password }}"
+

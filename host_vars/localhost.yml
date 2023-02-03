@@ -1,0 +1,20 @@
+pip_install_packages:
+  - paramiko
+
+shell_config_aliases:
+  - alias: ll
+    command: ls -lh
+  - alias: python
+    command: python3
+shell_config_exports: 
+  - key: PATH
+    value: "$PATH:$HOME/.local/bin"
+  - key: VERDACCIO_TOKEN
+    value: "{{ verdaccio.pbabbott_token }}"
+shell_config_ssh_targets:
+  - shortcut: rpi
+    username: "{{ hostvars.rpi.ansible_user }}"
+    hostname: "{{ hostvars.rpi.ansible_host }}"
+  - shortcut: ror
+    username: "{{ hostvars.room_of_requirement.ansible_user }}"
+    hostname: "{{ hostvars.room_of_requirement.ansible_host }}"

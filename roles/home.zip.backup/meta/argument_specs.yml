@@ -15,19 +15,19 @@ argument_specs:
         type: "str"
         description: "The destination where the zipped directory should go (eg. /tmp/archive.tgz)"
         required: true
-      username:
+      backup_azure_username:
         type: "str"
         description: "Azure SPN username"
         required: true
-      password:
+      backup_azure_password:
         type: "str"
         description: "Azure SPN secret"
         required: true
-      tenant:
+      backup_azure_tenant:
         type: "str"
         description: "Azure SPN tenant id"
         required: true
-      subscriptionId:
+      backup_azure_subscriptionId:
         type: "str"
         description: "Azure SPN tenant id"
         required: true

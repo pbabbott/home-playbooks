@@ -1,0 +1,4 @@
+galaxy_info:
+  author: Brandon Abbott
+  description: Installs an array of pip packages
+  

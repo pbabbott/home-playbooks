@@ -12,15 +12,15 @@ argument_specs:
       exports_section_name:
         type: "str"
         description: "Name of the section where all the exports go"
-      exports:
+      shell_config_exports:
         type: "list"
         description: "List of objects of type: { key, value }"
         required: false
-      aliases:
+      shell_config_aliases:
         type: "list"
         description: "List of objects of type: { alias, command }"
-        requried: false
-      ssh_targets:
+        required: false
+      shell_config_ssh_targets:
         type: "list"
         description:: "List of objects of type: { shortcut, username, hostname }"
         required: false

@@ -1,0 +1,6 @@
+- name: Configure Local Computer
+  hosts: localhost
+  roles:
+    - role: home.detect_shell
+    - role: home.shell_config
+      config_file_name: "{{ shell_interactive }}"

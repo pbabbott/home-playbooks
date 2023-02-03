@@ -1,6 +1,12 @@
-aliases: []
-exports: []
-ssh_targets: []
+shell_config_aliases:
+  - alias: ll
+    command: ls -lh
+
+shell_config_exports:
+  - key: PATH
+    value: "$PATH:$HOME/.local/bin"
+    
+shell_config_ssh_targets: []
 
 config_file_name: .bashrc
 config_file_path: "{{ ansible_env.HOME }}/{{ config_file_name }}"

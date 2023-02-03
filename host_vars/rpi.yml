@@ -1,0 +1,26 @@
+pip_install_packages:
+  - docker
+  - docker-compose
+  - azure-cli
+
+backup_azure_username: "{{ azure.homeSPN.username }}"
+backup_azure_password: "{{ azure.homeSPN.password }}"
+backup_azure_tenant: "{{ azure.homeSPN.tenant }}"
+backup_azure_subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
+
+backup_jobs:
+  - path: /home/pi/homeassistant_data
+    dest: "/home/pi/homeassistant_data_{{ansible_date_time.date}}.tar.gz"
+    job_name: homeassistant_data
+
+  - path: /home/pi/mealie_data
+    dest: "/home/pi/mealie_data_{{ansible_date_time.date}}.tar.gz"
+    job_name: mealie_data
+
+  - path: /home/pi/grafana
+    dest: "/home/pi/grafana_data_{{ansible_date_time.date}}.tar.gz"
+    job_name: grafana_data
+
+  - path: /home/pi/drone_data
+    dest: "/home/pi/drone_data_{{ansible_date_time.date}}.tar.gz"
+    job_name: drone_data

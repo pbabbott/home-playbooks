@@ -1,19 +1,19 @@
 - ansible.builtin.file:
-    path: "{{ config_dir }}"
+    path: "{{ verdaccio_config_dir }}"
     state: directory
     mode: '0755'  
     owner: 10001
     group: 65533
 
 - ansible.builtin.file:
-    path: "{{ storage_dir }}"
+    path: "{{ verdaccio_storage_dir }}"
     state: directory
     mode: '0755'
     owner: 10001
     group: 65533
 
 - ansible.builtin.file:
-    path: "{{ plugins_dir }}"
+    path: "{{ verdaccio_plugins_dir }}"
     state: directory
     mode: '0755'  
     owner: 10001
@@ -23,11 +23,11 @@
   register: conf
   ansible.builtin.copy:
     src: ./files/config.yaml
-    dest: "{{ config_dir }}/config.yaml"
+    dest: "{{ verdaccio_config_dir }}/config.yaml"
 
 - name: Add a user to a password file and ensure permissions are set
   community.general.htpasswd:
-    path: "{{ config_dir }}/htpasswd"
+    path: "{{ verdaccio_config_dir }}/htpasswd"
     name: "{{ verdaccio_user }}"
     password: "{{ verdaccio_pw }}"
     owner: 10001
@@ -54,7 +54,7 @@
           environment:
             - VERDACCIO_PORT=4873
           volumes:
-            - '{{ storage_dir }}:/verdaccio/storage'
-            - '{{ config_dir }}:/verdaccio/conf'
-            - '{{ plugins_dir }}:/verdaccio/plugins'
+            - '{{ verdaccio_storage_dir }}:/verdaccio/storage'
+            - '{{ verdaccio_config_dir }}:/verdaccio/conf'
+            - '{{ verdaccio_plugins_dir }}:/verdaccio/plugins'
           restart: unless-stopped
