@@ -45,3 +45,14 @@ $ ansible-galaxy install -r ./requirements.yml
 ```sh
 ansible-playbook -e @./vault.yml main.yml
 ```
+
+# Windows Hosts
+```ps
+winrm quickconfig
+
+# Necessary if WSL is installed.
+Enable-PSRemoting -SkipNetworkProfileCheck -Force
+
+winrm set winrm/config/service/auth '@{Basic="true"}'
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+```

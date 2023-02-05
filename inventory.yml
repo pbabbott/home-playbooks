@@ -9,6 +9,15 @@ all:
   children:
     remote:
       hosts:
+        elder_wand:
+          ansible_host: 192.168.4.90
+          ansible_winrm_port: 5985
+          ansible_connection: winrm
+          ansible_winrm_scheme: http
+          ansible_winrm_server_cert_validation: ignore
+          ansible_winrm_transport: basic
+          ansible_user: pbabb
+          ansible_password: "{{ inventoryPasswords.elder_wand }}"
         rpi:
           ansible_host: 192.168.4.24
           ansible_user: pi

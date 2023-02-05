@@ -1,11 +1,14 @@
 pip_install_packages:
   - paramiko
+  - pywinrm
 
 shell_config_aliases:
   - alias: ll
     command: ls -lh
   - alias: python
     command: python3
+  - alias: sp
+    command: "source ~/.zprofile"
 shell_config_exports: 
   - key: PATH
     value: "$PATH:$HOME/.local/bin"
@@ -18,3 +21,6 @@ shell_config_ssh_targets:
   - shortcut: ror
     username: "{{ hostvars.room_of_requirement.ansible_user }}"
     hostname: "{{ hostvars.room_of_requirement.ansible_host }}"
+  - shortcut: elderwand
+    username: "{{ hostvars.elder_wand.ansible_user }}"
+    hostname: "{{ hostvars.elder_wand.ansible_host }}"

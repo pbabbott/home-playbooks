@@ -8,13 +8,17 @@
 #     - ansible.builtin.pip:
 #         name: docker-compose
 
-# - hosts: room_of_requirement
+# - hosts: elder_wand
 #   name: Hello World
-#   roles:
-#     - home.nginx-hello-world
 #   tasks:
 #     - debug:
 #         msg: "hello user: {{ansible_date_time.date}}"
+
+- name: test out windows module
+  hosts: elder_wand
+  tasks:
+  - name: Get whoami information
+    ansible.windows.win_whoami: 
 
 # - hosts: rpi
 #   name: Hello World
