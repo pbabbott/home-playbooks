@@ -22,5 +22,5 @@ argument_specs:
         required: false
       shell_config_ssh_targets:
         type: "list"
-        description:: "List of objects of type: { shortcut, username, hostname }"
+        description: "List of objects of type: { shortcut, username, hostname }"
         required: false
