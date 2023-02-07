@@ -12,7 +12,7 @@ shell_config_aliases:
 shell_config_exports: 
   - key: PATH
     value: "$PATH:$HOME/.local/bin"
-  - key: VERDACCIO_TOKEN
+  - key: NPM_TOKEN
     value: "{{ verdaccio.pbabbott_token }}"
 shell_config_ssh_targets:
   - shortcut: rpi
