@@ -1,7 +1,17 @@
+- name: Install items to localhost with sudo
+  become: true
+  hosts: localhost
+  tasks:
+    - name: Install zip
+      ansible.builtin.apt:
+        name: zip
+        state: present
+
 - name: Configure Local Computer
   hosts: localhost
   roles:
     - role: home.pip
+    - role: home.fnm
     - role: home.detect_shell
     - role: home.shell_config
       config_file_name: "{{ shell_interactive }}"
