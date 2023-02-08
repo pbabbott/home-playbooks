@@ -14,6 +14,8 @@ shell_config_exports:
     value: "$PATH:$HOME/.local/bin"
   - key: NPM_TOKEN
     value: "{{ verdaccio.pbabbott_token }}"
+  - key: GITHUB_TOKEN
+    value: "{{ drone.github_pat }}"
 shell_config_ssh_targets:
   - shortcut: rpi
     username: "{{ hostvars.rpi.ansible_user }}"

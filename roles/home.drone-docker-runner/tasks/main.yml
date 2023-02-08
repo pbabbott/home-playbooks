@@ -1,0 +1,23 @@
+
+- community.docker.docker_compose:
+    project_name: drone_runner
+    
+    definition:
+      version: '3'
+      networks:
+        default:
+          name: lsio
+          external: true
+      services:
+        drone_server:
+          container_name: drone_runner
+          image: drone/drone-runner-docker:1
+          environment:
+            DRONE_RPC_PROTO: https
+            DRONE_RPC_HOST: drone.abbottland.duckdns.org
+            DRONE_RPC_SECRET: "{{ drone.shared_secret }}"
+            DRONE_RUNNER_CAPACITY: 2
+            DRONE_RUNNER_NAME: rpi-runner
+          restart: always
+          ports:
+            - 3001:3000

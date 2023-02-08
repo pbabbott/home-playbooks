@@ -1,6 +1,7 @@
       
 # - import_playbook: ./playbooks/room_of_requirement.yml
-- import_playbook: ./playbooks/localhost.yml
+# - import_playbook: ./playbooks/localhost.yml
 # - import_playbook: ./playbooks/rpi.yml
+# - import_playbook: ./playbooks/elder_wand.yml
 
 
