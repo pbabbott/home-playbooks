@@ -6,3 +6,4 @@
     - role: home.prometheus-docker-node-exporter
     - role: home.verdaccio
     - role: home.shell_config
+    - role: home.docker-registry

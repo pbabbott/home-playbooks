@@ -1,0 +1,6 @@
+# https://docs.docker.com/registry/deploying/#run-a-local-registry
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Ensure target host gets a docker registry installed on it via docker-compose
+  

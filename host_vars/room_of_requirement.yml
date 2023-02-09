@@ -12,3 +12,4 @@ verdaccio_plugins_dir: /volume1/Docker/verdaccio/plugins
 verdaccio_user: pbabbott
 verdaccio_pw: "{{ verdaccio.pbabbott_password }}"
 
+docker_registry_storage_dir: /volume1/Docker/registry/storage
