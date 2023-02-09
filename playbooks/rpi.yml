@@ -35,8 +35,10 @@
     - role: home.swag
     - role: home.prometheus-server
     - role: home.drone-server
+    - role: home.drone-docker-runner
     - role: home.grafana
     - role: home.home-assistant
+    
 
 - name: Backup important data to Azure each week
   hosts: rpi
