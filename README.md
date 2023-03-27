@@ -26,6 +26,10 @@ Ansible Installation
 ```sh
 $ python -m pip install --user ansible
 ```
+Packages Installation
+```
+$ sudo apt install -y sshpass
+
 
 ## Other Notes
 

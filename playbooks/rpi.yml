@@ -1,28 +1,28 @@
 
-- name: Install python, docker, azure cli, and pip packages on RPI host (executes as root)
-  hosts: rpi
-  pre_tasks:
-    - become: true
-      block:
-      - name: Update Apt
-        ansible.builtin.apt:
-          upgrade: yes
-          update_cache: yes
-      - name: Install Python3 pip
-        ansible.builtin.apt:
-          name: 
-            - python3-pip
-          update_cache: yes
-  roles:
-    - role: home.pip
-      become: true
-    - role: home.docker_metrics
-      ip_address: "{{ ansible_host }}"
-    - role: home.docker
-    - role: home.docker_permissions
-    - role: home.az.cli
-    - role: cloudalchemy.node_exporter
-
+# - name: Install python, docker, azure cli, and pip packages on RPI host (executes as root)
+#   hosts: rpi
+#   pre_tasks:
+#     - become: true
+#       block:
+#       - name: Update Apt
+#         ansible.builtin.apt:
+#           upgrade: yes
+#           update_cache: yes
+#       - name: Install Python3 pip
+#         ansible.builtin.apt:
+#           name: 
+#             - python3-pip
+#           update_cache: yes
+#   roles:
+#     - role: home.pip
+#       become: true
+#     - role: home.docker_metrics
+#       ip_address: "{{ ansible_host }}"
+#     - role: home.docker
+#     - role: home.docker_permissions
+#     - role: home.az.cli
+#     - role: cloudalchemy.node_exporter
+#
 - name: Docker Installations on RPI (not root)
   hosts: rpi
   pre_tasks:
@@ -30,24 +30,27 @@
       community.docker.docker_network:
         name: lsio
   roles:
-    - role: home.mealie
-    - role: home.duckdns
-    - role: home.swag
-    - role: home.prometheus-server
-    - role: home.drone-server
-    - role: home.drone-docker-runner
-    - role: home.grafana
-    - role: home.home-assistant
-    
+    - role: home.dashy
+    # - role: home.mealie
+    # - role: home.duckdns
+    # - role: home.swag
+    # - role: home.prometheus-server
+    # - role: home.drone-server
+    # - role: home.drone-docker-runner
+    # - role: home.grafana
+    # - role: home.home-assistant
+    #
 
-- name: Backup important data to Azure each week
-  hosts: rpi
-  tasks:
-    - name: Zip backups
-      with_items: "{{ backup_jobs }}"
-      include_role:
-        name: home.zip.backup
-      vars:
-        path: "{{item.path}}"
-        dest: "{{item.dest}}"
-        job_name: "{{item.job_name}}"
+# - name: Backup important data to Azure each week
+#   hosts: rpi
+#   tasks:
+#     - name: Zip backups
+#       with_items: "{{ backup_jobs }}"
+#       include_role:
+#         name: home.zip.backup
+#       vars:
+#         path: "{{item.path}}"
+#         dest: "{{item.dest}}"
+#         job_name: "{{item.job_name}}"
+#
+#

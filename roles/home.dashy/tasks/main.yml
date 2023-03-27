@@ -1,0 +1,35 @@
+- ansible.builtin.file:
+    path: /home/pi/dashy_data
+    state: directory
+    mode: '0755'  
+- community.docker.docker_compose:
+    project_name: dashy
+    
+    definition:
+      version: "3.1"
+      networks:
+        default:
+          name: lsio
+          external: true
+      services:
+        dashy:
+          container_name: dashy
+          image: lissy93/dashy  
+          restart: always
+          ports:
+            - 4000:80
+          environment:
+            # TODO: Move these into group vars
+            PUID: 1001
+            PGID: 1001
+            NODE_ENV: production
+
+          volumes:
+            - /home/pi/mealie_data/:/app/data
+
+          healthcheck:
+            test: ['CMD', 'node', '/app/services/healthcheck']
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
