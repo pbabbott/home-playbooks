@@ -1,22 +1,218 @@
+appConfig:
+  language: en
+  layout: auto
+  iconSize: medium
+  theme: colorful
 pageInfo:
   title: Home Lab
-sections: # An array of sections
-- name: Example Section
-  icon: far fa-rocket
-  items:
-  - title: GitHub
-    description: Dashy source code and docs
-    icon: fab fa-github
-    url: https://github.com/Lissy93/dashy
-  - title: Issues
-    description: View open issues, or raise a new one
-    icon: fas fa-bug
-    url: https://github.com/Lissy93/dashy/issues
-- name: Local Services
-  items:
-  - title: Firewall
-    icon: favicon
-    url: http://192.168.1.1/
-  - title: Game Server
-    icon: https://i.ibb.co/710B3Yc/space-invader-x256.png
-    url: http://192.168.130.1/
+  description: ''
+  navLinks: []
+  footerText: ''
+sections:
+  - name: Raspberry Pi
+    icon: hl-raspberrypi
+    displayData:
+      sortBy: alphabetical
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Mealie
+        description: Recipe database
+        icon: hl-mealie
+        url: https://mealie.abbottland.duckdns.org
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
+        id: 0_1171_mealie
+      - title: Home Assistant
+        description: Home automations
+        icon: hl-home-assistant
+        url: http://192.168.4.24:8123
+        target: newtab
+        statusCheck: true
+        id: 1_1171_homeassistant
+      - title: Grafana
+        description: Dashboards
+        icon: hl-grafana
+        url: http://192.168.4.24:3000
+        target: newtab
+        statusCheck: true
+        id: 2_1171_grafana
+      - title: Prometheus
+        description: Metrics Aggregator
+        icon: hl-prometheus
+        url: http://192.168.4.24:9090
+        target: newtab
+        statusCheck: true
+        id: 3_1171_prometheus
+      - title: Drone
+        description: CI/CD Server
+        icon: hl-drone
+        url: https://drone.abbottland.duckdns.org
+        target: newtab
+        statusCheck: true
+        id: 4_1171_drone
+      - title: P. Exporter
+        description: Exporter for RPI host
+        icon: hl-prometheus
+        url: http://192.168.4.24:9100/
+        target: newtab
+        statusCheck: true
+        id: 5_1171_pexporter
+  - name: Asustor NAS
+    icon: fas fa-server
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Asustor
+        description: Server Management Portal
+        icon: fa fa-server
+        url: http://192.168.4.124:9000
+        target: newtab
+        statusCheck: true
+        id: 0_1011_asustor
+      - title: Docker Registry
+        description: Container Registry
+        icon: hl-docker
+        url: http://192.168.4.124:5000/
+        target: newtab
+        statusCheck: true
+        statusCheckUrl: http://192.168.4.124:5000/
+        id: 1_1011_dockerregistry
+      - title: Plex
+        description: Plex Media Server
+        icon: hl-plex
+        url: http://192.168.4.124:32400/
+        target: newtab
+        statusCheck: true
+        statusCheckUrl: http://192.168.4.124:32400/identity
+        id: 2_1011_plex
+      - title: Verdaccio
+        description: NPM Registry & Proxy
+        icon: verdaccio.svg
+        url: http://192.168.4.124:4873/
+        target: newtab
+        statusCheck: true
+        id: 3_1011_verdaccio
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://192.168.4.124:19943/
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
+        id: 4_1011_portainer
+      - title: P. Exporter
+        description: Metrics
+        icon: hl-prometheus
+        url: http://192.168.4.124:9100/
+        target: newtab
+        statusCheck: true
+        id: 5_1011_pexporter
+      - title: HandBrake
+        description: Video converter service
+        icon: hl-handbrake
+        url: http://192.168.4.124:5800
+        target: newtab
+        statusCheck: true
+        id: 6_1011_handbrake
+  - name: Corsair
+    icon: corsair-svgrepo-com.svg
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: P. Exporter
+        description: Windows Exporter
+        icon: hl-prometheus
+        url: http://192.168.4.90:9182
+        target: newtab
+        statusCheck: true
+        id: 0_723_pexporter
+      - title: Home File Service
+        description: Helps move content onto my NAS
+        icon: hl-node.js
+        url: http://192.168.4.90:4000
+        target: newtab
+        statusCheck: true
+        id: 1_723_homefileservice
+  - name: Banana Pi
+    icon: banana-svgrepo-com.svg
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Pi Hole
+        icon: hl-pihole
+        statusCheck: true
+        id: 0_794_pihole
+  - name: Icons
+    icon: fa fa-icons
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Font Awesome
+        description: Font Awesome Icon Search
+        icon: fa fa-font-awesome
+        url: https://fontawesome.com/
+        target: newtab
+        id: 0_508_fontawesome
+      - title: Dashy Icon Docs
+        icon: hl-dashy
+        url: https://dashy.to/docs/icons
+        id: 1_508_dashyicondocs
+      - title: Homelab Icons
+        description: List of supported homelab icons
+        icon: fa fa-icons
+        url: https://github.com/WalkxCode/dashboard-icons/tree/main/png
+        target: newtab
+        id: 2_508_homelabicons
+      - title: SVG Repo
+        icon: fa fa-icons
+        url: https://www.svgrepo.com/
+        target: newtab
+        id: 3_508_svgrepo
+  - name: Project Links
+    icon: fa fa-link
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Miro
+        description: Whiteboard
+        icon: fa fa-link
+        url: https://miro.com/app/board/uXjVPzv9we8=/
+        target: newtab
+        id: 0_1272_miro
+      - title: Confluence
+        description: ''
+        icon: fa fa-link
+        url: >-
+          https://pbabbott.atlassian.net/wiki/spaces/PP/pages/163855/Project+Exodus
+        target: newtab
+        id: 1_1272_confluence
+      - title: Figma
+        description: ''
+        icon: fa fa-link
+        url: https://www.figma.com/files/project/77710353/Project-Exodus
+        target: newtab
+        id: 2_1272_figma

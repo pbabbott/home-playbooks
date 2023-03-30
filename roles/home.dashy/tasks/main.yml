@@ -9,6 +9,18 @@
     src: ./files/conf.yml
     dest: /home/pi/dashy/conf.yml
 
+
+- ansible.builtin.file:
+    path: /home/pi/dashy/icons
+    state: directory
+    mode: '0755'  
+
+- name: Copy configuration file to remote
+  register: dashy_conf
+  ansible.builtin.copy:
+    src: ./files/item-icons
+    dest: /home/pi/dashy
+
 - community.docker.docker_compose:
     project_name: dashy
     
@@ -32,6 +44,7 @@
 
           volumes:
             - /home/pi/dashy/conf.yml:/app/public/conf.yml
+            - /home/pi/dashy/item-icons:/app/public/item-icons
 
           healthcheck:
             test: ['CMD', 'node', '/app/services/healthcheck']

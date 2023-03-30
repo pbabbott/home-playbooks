@@ -3,7 +3,29 @@
   tasks:
     - name: Ping host
       win_ping: {}
-      
+
+    - name: Firewall rule to allow HTTP on TCP port 4000
+      community.windows.win_firewall_rule:
+        name: HTTP
+        localport: 4000
+        action: allow
+        direction: in
+        protocol: tcp
+        profiles: private
+        state: present
+        enabled: yes
+
+    - name: Firewall rule to allow HTTP on TCP port 9182
+      community.windows.win_firewall_rule:
+        name: Prometheus Metrics
+        localport: 9182
+        action: allow
+        direction: in
+        protocol: tcp
+        profiles: private
+        state: present
+        enabled: yes
+
     - name: Install node-windows
       ansible.builtin.win_shell: npm install -g node-windows
       args:
