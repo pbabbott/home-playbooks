@@ -1,0 +1,60 @@
+- ansible.builtin.file:
+    path: /home/pi/dashy
+    state: directory
+    mode: '0755'  
+
+- name: Copy configuration file to remote
+  register: dashy_conf
+  ansible.builtin.copy:
+    src: ./files/conf.yml
+    dest: /home/pi/dashy/conf.yml
+
+
+- ansible.builtin.file:
+    path: /home/pi/dashy/icons
+    state: directory
+    mode: '0755'  
+
+- name: Copy configuration file to remote
+  register: dashy_conf
+  ansible.builtin.copy:
+    src: ./files/item-icons
+    dest: /home/pi/dashy
+
+- community.docker.docker_compose:
+    project_name: dashy
+    
+    definition:
+      version: "3.1"
+      networks:
+        default:
+          name: lsio
+          external: true
+      services:
+        dashy:
+          container_name: dashy
+          image: lissy93/dashy
+          restart: always
+          ports:
+            - 4000:80
+          environment:
+            PUID: 1001
+            PGID: 1001
+            NODE_ENV: production
+
+          volumes:
+            - /home/pi/dashy/conf.yml:/app/public/conf.yml
+            - /home/pi/dashy/item-icons:/app/public/item-icons
+
+          healthcheck:
+            test: ['CMD', 'node', '/app/services/healthcheck']
+            interval: 1m30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
+
+- name: Restart dashy container
+  docker_container:
+    name: dashy
+    restart: true
+  when: dashy_conf.changed
