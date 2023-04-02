@@ -1,7 +1,7 @@
 appConfig:
   language: en
   layout: auto
-  iconSize: medium
+  iconSize: large
   theme: colorful
 pageInfo:
   title: Home Lab
@@ -49,19 +49,33 @@ sections:
         id: 3_1171_prometheus
       - title: Drone
         description: CI/CD Server
-        icon: hl-drone
+        icon: hl-droneblue
         url: https://drone.abbottland.duckdns.org
         target: newtab
         statusCheck: true
         id: 4_1171_drone
-      - title: P. Exporter
+      - title: Metrics
         description: Exporter for RPI host
         icon: hl-prometheus
         url: http://192.168.4.24:9100/
         target: newtab
         statusCheck: true
-        id: 5_1171_pexporter
-  - name: Asustor NAS
+        id: 5_1171_metrics
+      - title: Metrics - Grafana
+        description: Exporter for Grafana service
+        icon: hl-prometheus
+        url: http://192.168.4.24:3000/metrics
+        target: newtab
+        statusCheck: true
+        id: 6_1171_metricsgrafana
+      - title: Metrics - Docker
+        description: Exporter for Docker
+        icon: hl-prometheus
+        url: http://192.168.4.24:9323/metrics
+        target: newtab
+        statusCheck: true
+        id: 7_1171_metricsdocker
+  - name: Room of Requirement
     icon: fas fa-server
     displayData:
       sortBy: default
@@ -76,7 +90,7 @@ sections:
         url: http://192.168.4.124:9000
         target: newtab
         statusCheck: true
-        id: 0_1011_asustor
+        id: 0_1859_asustor
       - title: Docker Registry
         description: Container Registry
         icon: hl-docker
@@ -84,7 +98,7 @@ sections:
         target: newtab
         statusCheck: true
         statusCheckUrl: http://192.168.4.124:5000/
-        id: 1_1011_dockerregistry
+        id: 1_1859_dockerregistry
       - title: Plex
         description: Plex Media Server
         icon: hl-plex
@@ -92,14 +106,14 @@ sections:
         target: newtab
         statusCheck: true
         statusCheckUrl: http://192.168.4.124:32400/identity
-        id: 2_1011_plex
+        id: 2_1859_plex
       - title: Verdaccio
         description: NPM Registry & Proxy
         icon: verdaccio.svg
         url: http://192.168.4.124:4873/
         target: newtab
         statusCheck: true
-        id: 3_1011_verdaccio
+        id: 3_1859_verdaccio
       - title: Portainer
         description: Container Management
         icon: hl-portainer
@@ -107,22 +121,22 @@ sections:
         target: newtab
         statusCheck: true
         statusCheckAllowInsecure: true
-        id: 4_1011_portainer
-      - title: P. Exporter
-        description: Metrics
+        id: 4_1859_portainer
+      - title: Metrics
+        description: Exporter for NAS via docker
         icon: hl-prometheus
         url: http://192.168.4.124:9100/
         target: newtab
         statusCheck: true
-        id: 5_1011_pexporter
+        id: 5_1859_metrics
       - title: HandBrake
         description: Video converter service
         icon: hl-handbrake
         url: http://192.168.4.124:5800
         target: newtab
         statusCheck: true
-        id: 6_1011_handbrake
-  - name: Corsair
+        id: 6_1859_handbrake
+  - name: Elder Wand
     icon: corsair-svgrepo-com.svg
     displayData:
       sortBy: default
@@ -131,20 +145,20 @@ sections:
       collapsed: false
       hideForGuests: false
     items:
-      - title: P. Exporter
-        description: Windows Exporter
+      - title: Metrics
+        description: Windows Host Exporter
         icon: hl-prometheus
         url: http://192.168.4.90:9182
         target: newtab
         statusCheck: true
-        id: 0_723_pexporter
+        id: 0_918_metrics
       - title: Home File Service
         description: Helps move content onto my NAS
         icon: hl-node.js
         url: http://192.168.4.90:4000
         target: newtab
         statusCheck: true
-        id: 1_723_homefileservice
+        id: 1_918_homefileservice
   - name: Banana Pi
     icon: banana-svgrepo-com.svg
     displayData:
@@ -216,3 +230,37 @@ sections:
         url: https://www.figma.com/files/project/77710353/Project-Exodus
         target: newtab
         id: 2_1272_figma
+      - title: home-file-service
+        description: Codebase for the home-file-service
+        icon: hl-github
+        url: https://github.com/pbabbott/home-file-service
+        target: newtab
+        id: 3_1272_homefileservice
+      - title: home-playbooks
+        description: Codebase for home infrastructure
+        icon: hl-github
+        url: https://github.com/pbabbott/home-playbooks
+        target: newtab
+        id: 4_1272_homeplaybooks
+  - name: Azure
+    icon: hl-azure
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: sthomebackup001
+        description: Storage account for home backups
+        icon: fa fa-cabinet-filing
+        url: >-
+          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/resourceGroups/rg-home-prod-001/providers/Microsoft.Storage/storageAccounts/sthomebackup001/overview
+        id: 0_519_sthomebackup
+      - title: home-prod-001
+        description: Azure Subscription
+        icon: fa fa-key
+        url: >-
+          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/overview
+        target: newtab
+        id: 1_519_homeprod
