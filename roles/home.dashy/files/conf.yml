@@ -49,7 +49,7 @@ sections:
         id: 3_1171_prometheus
       - title: Drone
         description: CI/CD Server
-        icon: hl-droneblue
+        icon: hl-drone
         url: https://drone.abbottland.duckdns.org
         target: newtab
         statusCheck: true
@@ -62,19 +62,26 @@ sections:
         statusCheck: true
         id: 5_1171_metrics
       - title: Metrics - Grafana
-        description: Exporter for Grafana service
+        description: Exporter for Grafana
         icon: hl-prometheus
         url: http://192.168.4.24:3000/metrics
         target: newtab
         statusCheck: true
         id: 6_1171_metricsgrafana
-      - title: Metrics - Docker
-        description: Exporter for Docker
-        icon: hl-prometheus
-        url: http://192.168.4.24:9323/metrics
+      - title: SWAG
+        description: Secure Web Application Gateway
+        icon: hl-nginx
+        url: https://www.abbottland.duckdns.org
         target: newtab
         statusCheck: true
-        id: 7_1171_metricsdocker
+        id: 7_1171_swag
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: http://192.168.4.24:9000/
+        target: newtab
+        statusCheck: true
+        id: 9_1171_portainer
   - name: Room of Requirement
     icon: fas fa-server
     displayData:
@@ -146,7 +153,7 @@ sections:
       hideForGuests: false
     items:
       - title: Metrics
-        description: Windows Host Exporter
+        description: Prometheus Windows Exporter
         icon: hl-prometheus
         url: http://192.168.4.90:9182
         target: newtab
@@ -169,6 +176,209 @@ sections:
       hideForGuests: false
     items:
       - title: Pi Hole
+        description: Network Ad-blocking & DNS
+        icon: hl-pihole
+        statusCheck: true
+        id: 0_794_pihole
+  - name: Icons
+    icon: fa fa-icons
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Font Awesome
+        description: Font Awesome Icon Search
+        icon: fa fa-font-awesome
+        url: https://fontawesome.com/
+/app/public # cat conf.yml
+appConfig:
+  language: en
+  layout: auto
+  iconSize: large
+  theme: colorful
+pageInfo:
+  title: Home Lab
+  description: ''
+  navLinks: []
+  footerText: ''
+sections:
+  - name: Raspberry Pi
+    icon: hl-raspberrypi
+    displayData:
+      sortBy: alphabetical
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Mealie
+        description: Recipe database
+        icon: hl-mealie
+        url: https://mealie.abbottland.duckdns.org
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
+        id: 0_1171_mealie
+      - title: Home Assistant
+        description: Home automations
+        icon: hl-home-assistant
+        url: http://192.168.4.24:8123
+        target: newtab
+        statusCheck: true
+        id: 1_1171_homeassistant
+      - title: Grafana
+        description: Dashboards
+        icon: hl-grafana
+        url: http://192.168.4.24:3000
+        target: newtab
+        statusCheck: true
+        id: 2_1171_grafana
+      - title: Prometheus
+        description: Metrics Aggregator
+        icon: hl-prometheus
+        url: http://192.168.4.24:9090
+        target: newtab
+        statusCheck: true
+        id: 3_1171_prometheus
+      - title: Drone
+        description: CI/CD Server
+        icon: hl-drone
+        url: https://drone.abbottland.duckdns.org
+        target: newtab
+        statusCheck: true
+        id: 4_1171_drone
+      - title: Metrics
+        description: Exporter for RPI host
+        icon: hl-prometheus
+        url: http://192.168.4.24:9100/
+        target: newtab
+        statusCheck: true
+        id: 5_1171_metrics
+      - title: Metrics - Grafana
+        description: Exporter for Grafana
+        icon: hl-prometheus
+        url: http://192.168.4.24:3000/metrics
+        target: newtab
+        statusCheck: true
+        id: 6_1171_metricsgrafana
+      - title: SWAG
+        description: Secure Web Application Gateway
+        icon: hl-nginx
+        url: https://www.abbottland.duckdns.org
+        target: newtab
+        statusCheck: true
+        id: 7_1171_swag
+      - title: Google
+        description: Container Management
+        icon: hl-portainer
+        url: http://google.com
+        target: newtab
+        id: 8_1171_google
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: http://192.168.4.24:9000/
+        target: newtab
+        statusCheck: true
+        id: 9_1171_portainer
+  - name: Room of Requirement
+    icon: fas fa-server
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Asustor
+        description: Server Management Portal
+        icon: fa fa-server
+        url: http://192.168.4.124:9000
+        target: newtab
+        statusCheck: true
+        id: 0_1859_asustor
+      - title: Docker Registry
+        description: Container Registry
+        icon: hl-docker
+        url: http://192.168.4.124:5000/
+        target: newtab
+        statusCheck: true
+        statusCheckUrl: http://192.168.4.124:5000/
+        id: 1_1859_dockerregistry
+      - title: Plex
+        description: Plex Media Server
+        icon: hl-plex
+        url: http://192.168.4.124:32400/
+        target: newtab
+        statusCheck: true
+        statusCheckUrl: http://192.168.4.124:32400/identity
+        id: 2_1859_plex
+      - title: Verdaccio
+        description: NPM Registry & Proxy
+        icon: verdaccio.svg
+        url: http://192.168.4.124:4873/
+        target: newtab
+        statusCheck: true
+        id: 3_1859_verdaccio
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://192.168.4.124:19943/
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
+        id: 4_1859_portainer
+      - title: Metrics
+        description: Exporter for NAS via docker
+        icon: hl-prometheus
+        url: http://192.168.4.124:9100/
+        target: newtab
+        statusCheck: true
+        id: 5_1859_metrics
+      - title: HandBrake
+        description: Video converter service
+        icon: hl-handbrake
+        url: http://192.168.4.124:5800
+        target: newtab
+        statusCheck: true
+        id: 6_1859_handbrake
+  - name: Elder Wand
+    icon: corsair-svgrepo-com.svg
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Metrics
+        description: Prometheus Windows Exporter
+        icon: hl-prometheus
+        url: http://192.168.4.90:9182
+        target: newtab
+        statusCheck: true
+        id: 0_918_metrics
+      - title: Home File Service
+        description: Helps move content onto my NAS
+        icon: hl-node.js
+        url: http://192.168.4.90:4000
+        target: newtab
+        statusCheck: true
+        id: 1_918_homefileservice
+  - name: Banana Pi
+    icon: banana-svgrepo-com.svg
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Pi Hole
+        description: Network Ad-blocking & DNS
         icon: hl-pihole
         statusCheck: true
         id: 0_794_pihole
@@ -212,38 +422,26 @@ sections:
       hideForGuests: false
     items:
       - title: Miro
-        description: Whiteboard
+        description: 'Whiteboard designs '
         icon: fa fa-link
         url: https://miro.com/app/board/uXjVPzv9we8=/
         target: newtab
         id: 0_1272_miro
       - title: Confluence
-        description: ''
+        description: Information site on project exodus
         icon: fa fa-link
         url: >-
           https://pbabbott.atlassian.net/wiki/spaces/PP/pages/163855/Project+Exodus
         target: newtab
         id: 1_1272_confluence
       - title: Figma
-        description: ''
+        description: Hi fidelity designs
         icon: fa fa-link
         url: https://www.figma.com/files/project/77710353/Project-Exodus
         target: newtab
         id: 2_1272_figma
-      - title: home-file-service
-        description: Codebase for the home-file-service
-        icon: hl-github
-        url: https://github.com/pbabbott/home-file-service
-        target: newtab
-        id: 3_1272_homefileservice
-      - title: home-playbooks
-        description: Codebase for home infrastructure
-        icon: hl-github
-        url: https://github.com/pbabbott/home-playbooks
-        target: newtab
-        id: 4_1272_homeplaybooks
-  - name: Azure
-    icon: hl-azure
+  - name: Code
+    icon: hl-github
     displayData:
       sortBy: default
       rows: 1
@@ -251,16 +449,15 @@ sections:
       collapsed: false
       hideForGuests: false
     items:
-      - title: sthomebackup001
-        description: Storage account for home backups
-        icon: fa fa-cabinet-filing
-        url: >-
-          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/resourceGroups/rg-home-prod-001/providers/Microsoft.Storage/storageAccounts/sthomebackup001/overview
-        id: 0_519_sthomebackup
-      - title: home-prod-001
-        description: Azure Subscription
-        icon: fa fa-key
-        url: >-
-          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/overview
+      - title: home-file-service
+        description: Automatically move files from PC onto NAS
+        icon: hl-github
+        url: https://github.com/pbabbott/home-file-service
         target: newtab
-        id: 1_519_homeprod
+        id: 0_379_homefileservice
+      - title: home-playbooks
+        description: Ansible playbooks to manage all home infra
+        icon: hl-github
+        url: https://github.com/pbabbott/home-playbooks
+        target: newtab
+        id: 1_379_homeplaybooks

@@ -1,0 +1,24 @@
+
+
+- ansible.builtin.file:
+    path: /home/pi/portainer_data
+    state: directory
+    mode: '0755'  
+
+- community.docker.docker_compose:
+    project_name: portainer
+    
+    definition:
+      version: '3.2'
+      services:
+        portainer:
+          restart: always
+          container_name: portainer
+          image: portainer/portainer-ce:latest
+          ports:
+            - "9443:9443"
+            - "9000:9000"
+          volumes:
+            - /home/pi/portainer_data:/data
+            - /var/run/docker.sock:/var/run/docker.sock
+

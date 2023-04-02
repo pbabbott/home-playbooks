@@ -8,7 +8,7 @@
 - community.docker.docker_compose:
     project_name: duckdns
     
-    definition:
+    definition: 
       version: "2.1"
       networks:
         default:
