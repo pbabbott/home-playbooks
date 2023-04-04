@@ -32,7 +32,7 @@ scrape_configs:
   # grafana services on raspberry pi
   - job_name: 'grafana'
     static_configs:
-      - targets: ['192.168.4.24:3000']
+      - targets: ['192.168.4.24:3002']
   
   # Network attached storage
   - job_name: 'room_of_requirement'

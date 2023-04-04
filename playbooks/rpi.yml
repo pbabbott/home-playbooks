@@ -35,7 +35,7 @@
     # - role: home.mealie
     # - role: home.duckdns
     # - role: home.swag
-    # - role: home.prometheus-server
+    - role: home.prometheus-server
     # - role: home.drone-server
     # - role: home.drone-docker-runner
     - role: home.grafana
