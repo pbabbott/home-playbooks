@@ -24,21 +24,14 @@
           image: grafana/grafana-enterprise:latest
           container_name: grafana
           restart: always
+          environment:
+            GF_AUTH_ANONYMOUS_ENABLED: 'true'
+            GF_AUTH_ANONYMOUS_ORG_NAME: 'Main Org.'
+            GF_AUTH_ANONYMOUS_ORG_ROLE: 'Admin'
+            GF_AUTH_BASIC_ENABLED: 'false'
+            GF_AUTH_DISABLE_LOGIN_FORM: 'true'
           ports:
             - "3002:3000"
           user: "1001"
           volumes:
             - /home/pi/grafana/data:/var/lib/grafana
-            - /home/pi/grafana/grafana.ini:/etc/grafana/grafana.ini
-            
-- name: Copy grafana.ini to remote
-  register: grafana_conf
-  ansible.builtin.copy:
-    src: ./files/grafana.ini
-    dest: /home/pi/grafana/grafana.ini
-
-- name: Restart grafana container
-  docker_container:
-    name: grafana
-    restart: true
-  when: grafana_conf.changed
