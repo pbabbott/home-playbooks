@@ -36,7 +36,7 @@ sections:
       - title: Grafana
         description: Dashboards
         icon: hl-grafana
-        url: http://192.168.4.24:3000
+        url: http://192.168.4.24:3002
         target: newtab
         statusCheck: true
         id: 2_1171_grafana
@@ -64,7 +64,7 @@ sections:
       - title: Metrics - Grafana
         description: Exporter for Grafana
         icon: hl-prometheus
-        url: http://192.168.4.24:3000/metrics
+        url: http://192.168.4.24:3002/metrics
         target: newtab
         statusCheck: true
         id: 6_1171_metricsgrafana
@@ -81,209 +81,7 @@ sections:
         url: http://192.168.4.24:9000/
         target: newtab
         statusCheck: true
-        id: 9_1171_portainer
-  - name: Room of Requirement
-    icon: fas fa-server
-    displayData:
-      sortBy: default
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Asustor
-        description: Server Management Portal
-        icon: fa fa-server
-        url: http://192.168.4.124:9000
-        target: newtab
-        statusCheck: true
-        id: 0_1859_asustor
-      - title: Docker Registry
-        description: Container Registry
-        icon: hl-docker
-        url: http://192.168.4.124:5000/
-        target: newtab
-        statusCheck: true
-        statusCheckUrl: http://192.168.4.124:5000/
-        id: 1_1859_dockerregistry
-      - title: Plex
-        description: Plex Media Server
-        icon: hl-plex
-        url: http://192.168.4.124:32400/
-        target: newtab
-        statusCheck: true
-        statusCheckUrl: http://192.168.4.124:32400/identity
-        id: 2_1859_plex
-      - title: Verdaccio
-        description: NPM Registry & Proxy
-        icon: verdaccio.svg
-        url: http://192.168.4.124:4873/
-        target: newtab
-        statusCheck: true
-        id: 3_1859_verdaccio
-      - title: Portainer
-        description: Container Management
-        icon: hl-portainer
-        url: https://192.168.4.124:19943/
-        target: newtab
-        statusCheck: true
-        statusCheckAllowInsecure: true
-        id: 4_1859_portainer
-      - title: Metrics
-        description: Exporter for NAS via docker
-        icon: hl-prometheus
-        url: http://192.168.4.124:9100/
-        target: newtab
-        statusCheck: true
-        id: 5_1859_metrics
-      - title: HandBrake
-        description: Video converter service
-        icon: hl-handbrake
-        url: http://192.168.4.124:5800
-        target: newtab
-        statusCheck: true
-        id: 6_1859_handbrake
-  - name: Elder Wand
-    icon: corsair-svgrepo-com.svg
-    displayData:
-      sortBy: default
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Metrics
-        description: Prometheus Windows Exporter
-        icon: hl-prometheus
-        url: http://192.168.4.90:9182
-        target: newtab
-        statusCheck: true
-        id: 0_918_metrics
-      - title: Home File Service
-        description: Helps move content onto my NAS
-        icon: hl-node.js
-        url: http://192.168.4.90:4000
-        target: newtab
-        statusCheck: true
-        id: 1_918_homefileservice
-  - name: Banana Pi
-    icon: banana-svgrepo-com.svg
-    displayData:
-      sortBy: default
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Pi Hole
-        description: Network Ad-blocking & DNS
-        icon: hl-pihole
-        statusCheck: true
-        id: 0_794_pihole
-  - name: Icons
-    icon: fa fa-icons
-    displayData:
-      sortBy: default
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Font Awesome
-        description: Font Awesome Icon Search
-        icon: fa fa-font-awesome
-        url: https://fontawesome.com/
-/app/public # cat conf.yml
-appConfig:
-  language: en
-  layout: auto
-  iconSize: large
-  theme: colorful
-pageInfo:
-  title: Home Lab
-  description: ''
-  navLinks: []
-  footerText: ''
-sections:
-  - name: Raspberry Pi
-    icon: hl-raspberrypi
-    displayData:
-      sortBy: alphabetical
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Mealie
-        description: Recipe database
-        icon: hl-mealie
-        url: https://mealie.abbottland.duckdns.org
-        target: newtab
-        statusCheck: true
-        statusCheckAllowInsecure: true
-        id: 0_1171_mealie
-      - title: Home Assistant
-        description: Home automations
-        icon: hl-home-assistant
-        url: http://192.168.4.24:8123
-        target: newtab
-        statusCheck: true
-        id: 1_1171_homeassistant
-      - title: Grafana
-        description: Dashboards
-        icon: hl-grafana
-        url: http://192.168.4.24:3000
-        target: newtab
-        statusCheck: true
-        id: 2_1171_grafana
-      - title: Prometheus
-        description: Metrics Aggregator
-        icon: hl-prometheus
-        url: http://192.168.4.24:9090
-        target: newtab
-        statusCheck: true
-        id: 3_1171_prometheus
-      - title: Drone
-        description: CI/CD Server
-        icon: hl-drone
-        url: https://drone.abbottland.duckdns.org
-        target: newtab
-        statusCheck: true
-        id: 4_1171_drone
-      - title: Metrics
-        description: Exporter for RPI host
-        icon: hl-prometheus
-        url: http://192.168.4.24:9100/
-        target: newtab
-        statusCheck: true
-        id: 5_1171_metrics
-      - title: Metrics - Grafana
-        description: Exporter for Grafana
-        icon: hl-prometheus
-        url: http://192.168.4.24:3000/metrics
-        target: newtab
-        statusCheck: true
-        id: 6_1171_metricsgrafana
-      - title: SWAG
-        description: Secure Web Application Gateway
-        icon: hl-nginx
-        url: https://www.abbottland.duckdns.org
-        target: newtab
-        statusCheck: true
-        id: 7_1171_swag
-      - title: Google
-        description: Container Management
-        icon: hl-portainer
-        url: http://google.com
-        target: newtab
-        id: 8_1171_google
-      - title: Portainer
-        description: Container Management
-        icon: hl-portainer
-        url: http://192.168.4.24:9000/
-        target: newtab
-        statusCheck: true
-        id: 9_1171_portainer
+        id: 8_1171_portainer
   - name: Room of Requirement
     icon: fas fa-server
     displayData:
@@ -461,3 +259,33 @@ sections:
         url: https://github.com/pbabbott/home-playbooks
         target: newtab
         id: 1_379_homeplaybooks
+  - name: Azure
+    icon: hl-azure
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: home-prod-001
+        description: Azure Subscription
+        icon: fa fa-key
+        url: >-
+          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/overview
+        target: newtab
+        id: 0_519_homeprod
+      - title: sthomebackup001
+        description: Azure Storage
+        icon: fa fa-folder
+        url: >-
+          https://portal.azure.com/#@pbabbottgmail.onmicrosoft.com/resource/subscriptions/07619e8e-01a2-4b48-9d9c-281f290d3a37/resourceGroups/rg-home-prod-001/providers/Microsoft.Storage/storageAccounts/sthomebackup001/overview
+        target: newtab
+        id: 1_519_sthomebackup
+      - title: rpi001
+        description: Storage Container
+        icon: fa fa-folder
+        url: >-
+          https://portal.azure.com/#view/Microsoft_Azure_Storage/ContainerMenuBlade/~/overview/storageAccountId/%2Fsubscriptions%2F07619e8e-01a2-4b48-9d9c-281f290d3a37%2FresourceGroups%2Frg-home-prod-001%2Fproviders%2FMicrosoft.Storage%2FstorageAccounts%2Fsthomebackup001/path/rpi001/etag/%220x8DA8A006D8883B1%22/defaultEncryptionScope/%24account-encryption-key/denyEncryptionScopeOverride~/false/defaultId//publicAccessVal/None
+        target: newtab
+        id: 2_519_rpi

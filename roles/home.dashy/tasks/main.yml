@@ -15,8 +15,7 @@
     state: directory
     mode: '0755'  
 
-- name: Copy configuration file to remote
-  register: dashy_conf
+- name: Copy icons to remote
   ansible.builtin.copy:
     src: ./files/item-icons
     dest: /home/pi/dashy
