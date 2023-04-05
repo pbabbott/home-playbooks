@@ -1,4 +1,6 @@
-
+host_puid: "1000"
+host_pgid: "100"
+host_tz: "America/Los_Angeles"
 
 pip_install_packages:
   - docker
@@ -13,3 +15,8 @@ verdaccio_user: pbabbott
 verdaccio_pw: "{{ verdaccio.pbabbott_password }}"
 
 docker_registry_storage_dir: /volume1/Docker/registry/storage
+
+handbrake_config_dir: /volume1/Docker/handbrake/config
+handbrake_storage_dir: /volume1/home/pabbott
+handbrake_watch_dir: "/volume1/Video Editing/GameCaptures/Raw"
+handbrake_output_dir: "/volume1/Video Editing/GameCaptures/Converted"

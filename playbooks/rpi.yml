@@ -31,15 +31,15 @@
         name: lsio
   roles:
     - role: home.dashy
-    # - role: home.portainer
-    # - role: home.mealie
-    # - role: home.duckdns
-    # - role: home.swag
-    # - role: home.prometheus-server
-    # - role: home.drone-server
-    # - role: home.drone-docker-runner
-    # - role: home.grafana
-    # - role: home.home-assistant
+    - role: home.portainer
+    - role: home.mealie
+    - role: home.duckdns
+    - role: home.swag
+    - role: home.prometheus-server
+    - role: home.drone-server
+    - role: home.drone-docker-runner
+    - role: home.grafana
+    - role: home.home-assistant
     #
 
 # - name: Backup important data to Azure each week

@@ -1,0 +1,38 @@
+- ansible.builtin.file:
+    path: "{{ handbrake_config_dir }}"
+    state: directory
+    mode: '0755'  
+
+- ansible.builtin.file:
+    path: "{{ handbrake_watch_dir }}"
+    state: directory
+    mode: '0755'
+
+- ansible.builtin.file:
+    path: "{{ handbrake_output_dir }}"
+    state: directory
+    mode: '0755'  
+
+- community.docker.docker_compose:
+    project_name: handbrake
+    # TODO: Add max CPU to be 3
+    definition:
+      version: "3.1"
+      services:
+        handbrake:
+          container_name: handbrake
+          image: jlesage/handbrake
+          restart: always
+          ports:
+            - 5800:5800
+          environment:
+            USER_ID: "{{ host_puid }}"
+            GROUP_ID: "{{ host_pgid }}"
+            TZ: "{{ host_tz }}"
+            DARK_MODE: "1"
+            AUTOMATED_CONVERSION_OUTPUT_SUBDIR: SAME_AS_SRC
+          volumes:
+            - "{{ handbrake_config_dir }}:/config:rw"
+            - "{{ handbrake_storage_dir }}:/storage:ro"
+            - "{{ handbrake_watch_dir }}:/watch:rw"
+            - "{{ handbrake_output_dir }}:/output:rw"
