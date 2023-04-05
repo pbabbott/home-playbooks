@@ -20,9 +20,9 @@
           image: lscr.io/linuxserver/duckdns:latest
           restart: always
           environment:
-            PUID: 1001
-            PGID: 1001
-            TZ: America/Los_Angeles
+            PUID: "{{ host_puid }}"
+            PGID: "{{ host_pgid }}"
+            TZ: "{{ host_tz }}"
             SUBDOMAINS: abbottland
             TOKEN: "{{ duckdns.token }}"
             LOG_FILE: 'false'

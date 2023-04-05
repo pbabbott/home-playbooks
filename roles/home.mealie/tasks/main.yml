@@ -21,9 +21,9 @@
           ports:
             - 9925:80
           environment:
-            PUID: 1001
-            PGID: 1001
-            TZ: America/Los_Angeles
+            PUID: "{{ host_puid }}"
+            PGID: "{{ host_pgid }}"
+            TZ: "{{ host_tz }}"
 
             # Default Recipe Settings
             RECIPE_PUBLIC: 'true'

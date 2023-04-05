@@ -32,6 +32,6 @@
             GF_AUTH_DISABLE_LOGIN_FORM: 'true'
           ports:
             - "3002:3000"
-          user: "1001"
+          user: "{{ host_puid }}"
           volumes:
             - /home/pi/grafana/data:/var/lib/grafana

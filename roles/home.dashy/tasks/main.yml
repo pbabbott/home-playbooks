@@ -37,14 +37,13 @@
           ports:
             - 4000:80
           environment:
-            PUID: 1001
-            PGID: 1001
+            PUID: "{{ host_puid }}"
+            PGID: "{{ host_pgid }}"
+            TZ: "{{ host_tz }}"
             NODE_ENV: production
-
           volumes:
             - /home/pi/dashy/conf.yml:/app/public/conf.yml
             - /home/pi/dashy/item-icons:/app/public/item-icons
-
           healthcheck:
             test: ['CMD', 'node', '/app/services/healthcheck']
             interval: 1m30s
