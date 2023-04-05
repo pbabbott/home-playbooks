@@ -55,6 +55,7 @@
             SUBDOMAINS: wildcard
             VALIDATION: duckdns
             DUCKDNSTOKEN: "{{ duckdns.token }}"
+            EMAIL: "{{ duckdns.email }}"
           volumes:
             - /home/pi/swag:/config
           ports:

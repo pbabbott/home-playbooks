@@ -30,15 +30,15 @@
       community.docker.docker_network:
         name: lsio
   roles:
-    - role: home.dashy
+    # - role: home.dashy
     # - role: home.portainer
     # - role: home.mealie
     # - role: home.duckdns
-    # - role: home.swag
-    - role: home.prometheus-server
+    - role: home.swag
+    # - role: home.prometheus-server
     # - role: home.drone-server
     # - role: home.drone-docker-runner
-    - role: home.grafana
+    # - role: home.grafana
     # - role: home.home-assistant
     #
 
