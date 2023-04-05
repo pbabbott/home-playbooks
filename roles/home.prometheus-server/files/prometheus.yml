@@ -13,6 +13,10 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.4.90:9182']
 
+  - job_name: 'home_file_service'
+    static_configs:
+      - targets: ['192.168.4.90:4000']
+
   # Raspberry pi node exporter
   # Note: 172.17.0.1 is how we access the host from within docker (works on linux, whereas host.docker.internal works with docker-desktop)
   - job_name: 'raspberrypi'
