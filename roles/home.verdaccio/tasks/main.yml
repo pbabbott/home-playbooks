@@ -58,4 +58,4 @@
             - '{{ verdaccio_storage_dir }}:/verdaccio/storage'
             - '{{ verdaccio_config_dir }}:/verdaccio/conf'
             - '{{ verdaccio_plugins_dir }}:/verdaccio/plugins'
-          restart: unless-stopped
+          restart: always
