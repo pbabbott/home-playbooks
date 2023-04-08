@@ -17,6 +17,9 @@ shell_config_exports:
   - key: GITHUB_TOKEN
     value: "{{ drone.github_pat }}"
 shell_config_ssh_targets:
+  - shortcut: bpi
+    username: "{{ hostvars.bananapi.ansible_user }}"
+    hostname: "{{ hostvars.bananapi.ansible_host }}"
   - shortcut: rpi
     username: "{{ hostvars.rpi.ansible_user }}"
     hostname: "{{ hostvars.rpi.ansible_host }}"
