@@ -82,6 +82,12 @@ sections:
         target: newtab
         statusCheck: true
         id: 8_1171_portainer
+      - title: Abbottland-Dev
+        description: Development site for abbottland
+        icon: hl-react
+        url: http://192.168.4.24:4200
+        target: newtab
+        id: 9_1171_abbottlanddev
   - name: Room of Requirement
     icon: fas fa-server
     displayData:
@@ -178,8 +184,17 @@ sections:
       - title: Pi Hole
         description: Network Ad-blocking & DNS
         icon: hl-pihole
+        url: http://192.168.4.144:4711
+        target: newtab
         statusCheck: true
         id: 0_794_pihole
+      - title: Traefik
+        description: Reverse proxy / Gateway
+        icon: hl-traefik
+        url: http://192.168.4.144:8080
+        target: newtab
+        statusCheck: true
+        id: 1_794_traefik
   - name: Icons
     icon: fa fa-icons
     displayData:
@@ -259,6 +274,12 @@ sections:
         url: https://github.com/pbabbott/home-playbooks
         target: newtab
         id: 1_379_homeplaybooks
+      - title: home-web-apps
+        description: Web application code for home projects
+        icon: hl-github
+        url: https://github.com/pbabbott/home-web-apps
+        target: newtab
+        id: 2_379_homewebapps
   - name: Azure
     icon: hl-azure
     displayData:

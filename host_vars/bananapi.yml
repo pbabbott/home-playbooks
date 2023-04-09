@@ -5,3 +5,5 @@ host_tz: "America/Los_Angeles"
 pip_install_packages:
   - docker
   - docker-compose
+
+traefik_config_dir: /home/pi/app_config/traefik
