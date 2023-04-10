@@ -28,4 +28,5 @@
 - name: Docker Installations on PI (not root)
   hosts: bananapi
   roles:
+    - role: home.cloudflare-ddns
     - role: home.traefik
