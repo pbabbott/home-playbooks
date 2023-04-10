@@ -8,6 +8,11 @@
     src: traefik.yml
     dest: "{{ traefik_config_dir }}/traefik.yml"
 
+- name: Copy config file to remote
+  ansible.builtin.copy:
+    src: conf.yml
+    dest: "{{ traefik_config_dir }}/conf.yml"
+
 - community.docker.docker_compose:
     project_name: traefik
     
@@ -23,4 +28,11 @@
             - "80:80"
           volumes:
             - /{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml
+            - /{{ traefik_config_dir }}/conf.yml:/etc/traefik/conf.d/conf.yml
 
+
+- name: restart container
+  docker_container:
+    name: traefik
+    restart: true
+  when: conf.changed 

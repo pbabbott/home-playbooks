@@ -1,0 +1,10 @@
+http:
+  routers:
+    to-mealie:
+      rule: "Host(`mealie.abbottland.io`)"
+      service: mealie
+  services:
+    mealie:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.24:9925/

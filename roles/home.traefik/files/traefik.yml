@@ -126,9 +126,12 @@ api:
 # Docker configuration backend
 ################################################################
 
-#providers:
+providers:
+  file:
+    directory: /etc/traefik/conf.d/
+
   # Enable Docker configuration backend
-#  docker:
+# docker:
     # Docker server endpoint. Can be a tcp or a unix socket endpoint.
     #
     # Required
