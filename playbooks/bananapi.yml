@@ -1,28 +1,28 @@
 
-# - name: Install python, docker, and pip packages on host (executes as root)
-#   hosts: bananapi
-#   pre_tasks:
-#     - become: true
-#       block:
-#       - name: Update Apt
-#         ansible.builtin.apt:
-#           upgrade: yes
-#           update_cache: yes
-#       - name: Install Python3 pip
-#         ansible.builtin.apt:
-#           name: 
-#             - python3-pip
-#           update_cache: yes
-#   roles:
-#     - role: home.pip
-#       become: true
-#     - role: home.docker
-#       become: true
-#     - role: home.docker_permissions
-#     - role: home.docker_metrics
-#       become: true
-#       ip_address: "{{ ansible_host }}"
-#     - role: cloudalchemy.node_exporter
+- name: Install python, docker, and pip packages on host (executes as root)
+  hosts: bananapi
+  pre_tasks:
+    - become: true
+      block:
+      - name: Update Apt
+        ansible.builtin.apt:
+          upgrade: yes
+          update_cache: yes
+      - name: Install Python3 pip
+        ansible.builtin.apt:
+          name: 
+            - python3-pip
+          update_cache: yes
+  roles:
+    - role: home.pip
+      become: true
+    - role: home.docker
+      become: true
+    - role: home.docker_permissions
+    - role: home.docker_metrics
+      become: true
+      ip_address: "{{ ansible_host }}"
+    - role: cloudalchemy.node_exporter
 
 
 - name: Docker Installations on PI (not root)
@@ -30,3 +30,17 @@
   roles:
     - role: home.cloudflare-ddns
     - role: home.traefik
+    - role: home.pihole
+
+- name: Self-reference as DNS server (root)
+  hosts: bananapi
+  become: true
+  tasks:
+    - name: self-reference dns
+      copy:
+        dest: /etc/dhcpcd.conf
+        owner: root
+        group: root
+        mode: 0664
+        content: |
+          static domain_name_servers=127.0.0.1

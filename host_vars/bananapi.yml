@@ -7,3 +7,5 @@ pip_install_packages:
   - docker-compose
 
 traefik_config_dir: /home/pi/app_config/traefik
+
+pihole_config_dir: /home/pi/app_config/pihole

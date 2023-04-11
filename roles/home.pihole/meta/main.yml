@@ -1,0 +1,6 @@
+# https://hub.docker.com/r/pihole/pihole
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Install pihole on target 
+  
