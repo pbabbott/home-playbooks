@@ -42,7 +42,7 @@
           volumes:
             - /{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml
             - /{{ traefik_config_dir }}/conf.yml:/etc/traefik/conf.d/conf.yml
-            - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
+            # - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
 
 
 - name: restart container

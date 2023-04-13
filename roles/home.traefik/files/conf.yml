@@ -11,18 +11,14 @@ http:
           - main: "abbottland.io"
             sans:
               - "*.abbottland.io"
-    to-mealie-http:
-      entryPoints:
-        - "web"
-      rule: "Host(`mealie.abbottland.io`)"
-      service: mealie
-
+  
     to-mealie-https:
       entryPoints:
         - "websecure"
       rule: "Host(`mealie.abbottland.io`)"
       service: mealie
-      tls: {}
+      tls:
+        certResolver: cloudflareResolver
         
   services:
     mealie:
