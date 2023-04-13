@@ -2,6 +2,15 @@
     path: "{{ traefik_config_dir }}"
     state: directory
 
+- ansible.builtin.file:
+    path: "{{ traefik_config_dir }}/acme.json"
+    state: touch
+    mode: '600'  
+
+- ansible.builtin.file:
+    path: "{{ traefik_config_dir }}/access.log"
+    state: touch
+
 - name: Copy config file to remote
   register: conf
   ansible.builtin.copy:
@@ -9,6 +18,7 @@
     dest: "{{ traefik_config_dir }}/traefik.yml"
 
 - name: Copy config file to remote
+  register: dyn_conf
   ansible.builtin.copy:
     src: conf.yml
     dest: "{{ traefik_config_dir }}/conf.yml"
@@ -23,16 +33,20 @@
           restart: always
           container_name: traefik
           image: traefik:v2.9
+          environment:
+            CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare.token }}"
           ports:
             - "8080:8080"
             - "80:80"
+            - "443:443"
           volumes:
             - /{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml
             - /{{ traefik_config_dir }}/conf.yml:/etc/traefik/conf.d/conf.yml
+            - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
 
 
 - name: restart container
   docker_container:
     name: traefik
     restart: true
-  when: conf.changed 
+  when: conf.changed or dyn_conf.changed

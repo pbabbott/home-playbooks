@@ -1,10 +1,31 @@
+## Dynamic Configuration
+
 http:
   routers:
-    to-mealie:
+    to-root:
+      rule: "Host(`abbottland.io`)"
+      service: mealie
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "abbottland.io"
+            sans:
+              - "*.abbottland.io"
+    to-mealie-http:
+      entryPoints:
+        - "web"
       rule: "Host(`mealie.abbottland.io`)"
       service: mealie
+
+    to-mealie-https:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`mealie.abbottland.io`)"
+      service: mealie
+      tls: {}
+        
   services:
     mealie:
       loadBalancer:
         servers:
-        - url: http://192.168.4.24:9925/
+        - url: http://192.168.4.24:9925
