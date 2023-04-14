@@ -12,6 +12,14 @@ http:
             sans:
               - "*.abbottland.io"
   
+    to-drone-https:
+      entryPoints:
+        - "websecure"
+      rule: "Host(`drone.abbottland.io`)"
+      service: drone
+      tls:
+        certResolver: cloudflareResolver
+
     to-mealie-https:
       entryPoints:
         - "websecure"
@@ -25,3 +33,7 @@ http:
       loadBalancer:
         servers:
         - url: http://192.168.4.24:9925
+    drone:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.24:9926

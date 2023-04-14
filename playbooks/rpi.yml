@@ -22,7 +22,7 @@
     - role: home.docker_permissions
     - role: home.az.cli
     - role: cloudalchemy.node_exporter
-#
+
 - name: Docker Installations on RPI (not root)
   hosts: rpi
   pre_tasks:
@@ -33,25 +33,23 @@
     - role: home.dashy
     - role: home.portainer
     - role: home.mealie
-    - role: home.duckdns
-    - role: home.swag
     - role: home.prometheus-server
     - role: home.drone-server
     - role: home.drone-docker-runner
     - role: home.grafana
     - role: home.home-assistant
-    #
+    
 
-# - name: Backup important data to Azure each week
-#   hosts: rpi
-#   tasks:
-#     - name: Zip backups
-#       with_items: "{{ backup_jobs }}"
-#       include_role:
-#         name: home.zip.backup
-#       vars:
-#         path: "{{item.path}}"
-#         dest: "{{item.dest}}"
-#         job_name: "{{item.job_name}}"
-#
-#
+- name: Backup important data to Azure each week
+  hosts: rpi
+  tasks:
+    - name: Zip backups
+      with_items: "{{ backup_jobs }}"
+      include_role:
+        name: home.zip.backup
+      vars:
+        path: "{{item.path}}"
+        dest: "{{item.dest}}"
+        job_name: "{{item.job_name}}"
+
+
