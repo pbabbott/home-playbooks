@@ -9,6 +9,29 @@ pageInfo:
   navLinks: []
   footerText: ''
 sections:
+  - name: Banana Pi
+    icon: banana-svgrepo-com.svg
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Pi Hole
+        description: Network Ad-blocking & DNS
+        icon: hl-pihole
+        url: http://192.168.4.144:8081/admin/
+        target: newtab
+        statusCheck: true
+        id: 0_794_pihole
+      - title: Traefik
+        description: Reverse proxy / Gateway
+        icon: hl-traefik
+        url: http://192.168.4.144:8080
+        target: newtab
+        statusCheck: true
+        id: 1_794_traefik
   - name: Raspberry Pi
     icon: hl-raspberrypi
     displayData:
@@ -21,7 +44,7 @@ sections:
       - title: Mealie
         description: Recipe database
         icon: hl-mealie
-        url: https://mealie.abbottland.duckdns.org
+        url: https://mealie.abbottland.io
         target: newtab
         statusCheck: true
         statusCheckAllowInsecure: true
@@ -159,29 +182,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 1_918_homefileservice
-  - name: Banana Pi
-    icon: banana-svgrepo-com.svg
-    displayData:
-      sortBy: default
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Pi Hole
-        description: Network Ad-blocking & DNS
-        icon: hl-pihole
-        url: http://192.168.4.144:4711
-        target: newtab
-        statusCheck: true
-        id: 0_794_pihole
-      - title: Traefik
-        description: Reverse proxy / Gateway
-        icon: hl-traefik
-        url: http://192.168.4.144:8080
-        target: newtab
-        statusCheck: true
-        id: 1_794_traefik
   - name: Icons
     icon: fa fa-icons
     displayData:
