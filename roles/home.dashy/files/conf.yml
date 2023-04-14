@@ -68,13 +68,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 6_1171_metricsgrafana
-      - title: SWAG
-        description: Secure Web Application Gateway
-        icon: hl-nginx
-        url: https://www.abbottland.duckdns.org
-        target: newtab
-        statusCheck: true
-        id: 7_1171_swag
       - title: Portainer
         description: Container Management
         icon: hl-portainer
@@ -82,12 +75,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 8_1171_portainer
-      - title: Abbottland-Dev
-        description: Development site for abbottland
-        icon: hl-react
-        url: http://192.168.4.24:4200
-        target: newtab
-        id: 9_1171_abbottlanddev
   - name: Room of Requirement
     icon: fas fa-server
     displayData:

@@ -27,6 +27,9 @@ providers:
   file:
     directory: /etc/traefik/conf.d/
 
+metrics:
+  prometheus: {}
+
 # accessLog:
   # filePath: /etc/traefik/access.log
 
