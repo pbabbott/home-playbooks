@@ -21,14 +21,14 @@ sections:
       - title: Pi Hole
         description: Network Ad-blocking & DNS
         icon: hl-pihole
-        url: http://192.168.4.144:8081/admin/
+        url: https://pihole.local.abbottland.io/
         target: newtab
         statusCheck: true
         id: 0_794_pihole
       - title: Traefik
         description: Reverse proxy / Gateway
         icon: hl-traefik
-        url: http://192.168.4.144:8080
+        url: https://traefik.local.abbottland.io/
         target: newtab
         statusCheck: true
         id: 1_794_traefik

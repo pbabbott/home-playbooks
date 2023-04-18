@@ -11,17 +11,17 @@
     path: "{{ traefik_config_dir }}/access.log"
     state: touch
 
-- name: Copy config file to remote
+- name: Copy static config file to remote
   register: conf
   ansible.builtin.copy:
     src: traefik.yml
     dest: "{{ traefik_config_dir }}/traefik.yml"
 
-- name: Copy config file to remote
+- name: Copy dynamic config file to remote
   register: dyn_conf
   ansible.builtin.copy:
     src: conf.yml
-    dest: "{{ traefik_config_dir }}/conf.yml"
+    dest: "{{ traefik_dynamic_config_dir }}/conf.yml"
 
 - community.docker.docker_compose:
     project_name: traefik
@@ -41,8 +41,9 @@
             - "443:443"
           volumes:
             - /{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml
-            - /{{ traefik_config_dir }}/conf.yml:/etc/traefik/conf.d/conf.yml
-            # - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
+            - /{{ traefik_config_dir }}/acme.json:/etc/traefik/acme.json
+            - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
+            - /{{ traefik_dynamic_config_dir }}:/etc/traefik/conf.d/
 
 
 - name: restart container

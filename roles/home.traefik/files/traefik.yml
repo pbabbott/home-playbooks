@@ -1,45 +1,36 @@
 ## Static Configuration
-
-global:
-  checkNewVersion: true
-  sendAnonymousUsage: true
-
-serversTransport:
-    insecureSkipVerify: true
-
+api:
+  insecure: true
 entryPoints:
-  web:
+  http:
     address: :80
     http:
       redirections:
         entryPoint:
-          to: websecure
+          to: https
           scheme: https
           permanent: true
-
-  websecure:
+  https:
     address: :443
-
-api:
-  insecure: true
-
+serversTransport:
+    insecureSkipVerify: true
 providers:
   file:
     directory: /etc/traefik/conf.d/
-
-metrics:
-  prometheus: {}
-
-# accessLog:
-  # filePath: /etc/traefik/access.log
-
+    watch: true
 certificatesResolvers:
   cloudflareResolver:
     acme:
       email: pbabbott@gmail.com
-      storage: acme.json
+      storage: /etc/traefik/acme.json
       dnsChallenge:
         provider: cloudflare
-  
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+metrics:
+  prometheus: {}
+accessLog:
+  filePath: /etc/traefik/access.log
 log:
   level: WARN

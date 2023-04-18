@@ -4,7 +4,7 @@
     - name: Ping host
       win_ping: {}
 
-    - name: Firewall rule to allow HTTP on TCP port 4000
+    - name: Firewall rule to allow HTTP on TCP port 4000 (for home-file-service)
       community.windows.win_firewall_rule:
         name: HTTP
         localport: 4000

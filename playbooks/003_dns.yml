@@ -1,0 +1,13 @@
+
+- name: Docker Installations on Banana PI (not root)
+  hosts: bananapi
+  roles:
+     - role: home.pihole
+
+- name: DNS Resolvers
+  hosts:
+    - bananapi
+    - rpi
+  become: true
+  roles:
+    - name: ansible-dns

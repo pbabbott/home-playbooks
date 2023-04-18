@@ -1,0 +1,22 @@
+http:
+  middlewares:
+    addprefix-pihole:
+      addPrefix:
+        prefix: "/admin"
+  routers:
+     to-pihole-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`pihole.local.abbottland.io`)"
+      middlewares:
+        - secured
+        - addprefix-pihole
+      tls: {}
+      service: pihole
+
+  services:
+    pihole:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.144:8081
+        passHostHeader: true

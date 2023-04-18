@@ -1,0 +1,31 @@
+
+# TODO: remove this once backup service is complete.
+# azure cli needs to be installed before pip packages
+- name: Install azure cli    
+  hosts: rpi
+  become: true
+  roles:
+    - role: home.az.cli
+
+- name: Install python, and pip and apt packages on target hosts (executes as root)
+  hosts:
+    - rpi
+    - bananapi
+  pre_tasks:
+    - become: true
+      block:
+      - name: Update Apt
+        ansible.builtin.apt:
+          upgrade: yes
+          update_cache: yes
+      - name: Install Python3 pip and dns dnsutils
+        ansible.builtin.apt:
+          name: 
+            - python3-pip
+            - dnsutils
+          update_cache: yes
+  roles:
+    - role: home.pip
+      become: true
+    - role: cloudalchemy.node_exporter
+    

@@ -1,10 +1,69 @@
 ## Dynamic Configuration
 
 http:
+  middlewares:
+    default-headers:
+      headers:
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-allowlist:
+      ipWhiteList:
+        sourceRange:
+        - "10.0.0.0/8"
+        - "192.168.0.0/16"
+        - "172.16.0.0/12"
+
+    secured:
+      chain:
+        middlewares:
+        - default-allowlist
+        - default-headers
+
   routers:
+    to-traefik:
+      entryPoints:
+        - http
+      rule: "Host(`traefik.local.abbottland.io`)"
+      service: api@internal
+
+    to-traefik-https:
+      entryPoints:
+        - https
+      rule: "Host(`traefik.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: api@internal
+
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "local.abbottland.io"
+            sans:
+              - "*.local.abbottland.io"      
+
+    to-dashboard-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`dashboard.local.abbottland.io`)"
+      middlewares:
+        - secured
+      tls: {}
+      service: dashy
+
     to-root:
       rule: "Host(`abbottland.io`)"
       service: mealie
+      middlewares:
+        - secured
       tls:
         certResolver: cloudflareResolver
         domains:
@@ -14,26 +73,24 @@ http:
   
     to-drone-https:
       entryPoints:
-        - "websecure"
+        - "https"
       rule: "Host(`drone.abbottland.io`)"
       service: drone
-      tls:
-        certResolver: cloudflareResolver
+      tls: {}
 
-    to-mealie-https:
-      entryPoints:
-        - "websecure"
-      rule: "Host(`mealie.abbottland.io`)"
-      service: mealie
-      tls:
-        certResolver: cloudflareResolver
+
         
   services:
-    mealie:
-      loadBalancer:
-        servers:
-        - url: http://192.168.4.24:9925
     drone:
       loadBalancer:
         servers:
         - url: http://192.168.4.24:9926
+        passHostHeader: true
+    dashy:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.24:4000
+        passHostHeader: true
+  
+    
+

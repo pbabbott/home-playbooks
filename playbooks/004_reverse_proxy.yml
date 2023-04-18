@@ -1,0 +1,22 @@
+
+- name: DDNS and Traefik Installation on Banana PI via Docker (not root)
+  hosts: bananapi
+  roles:
+    - role: home.cloudflare-ddns
+    - role: home.traefik
+  tasks:
+    - name: Enable mealie in proxy
+      ansible.builtin.copy:
+        src: ./traefik/mealie.yml
+        dest: "{{ traefik_dynamic_config_dir }}/mealie.yml"
+
+    - name: Enable pihole in proxy
+      ansible.builtin.copy:
+        src: ./traefik/pihole.yml
+        dest: "{{ traefik_dynamic_config_dir }}/pihole.yml"
+
+    - name: Enable roomofrequirement in proxy
+      ansible.builtin.copy:
+        src: ./traefik/roomofrequirement.yml
+        dest: "{{ traefik_dynamic_config_dir }}/roomofrequirement.yml"
+

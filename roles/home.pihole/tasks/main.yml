@@ -5,6 +5,29 @@
     state: directory
     mode: '0755'  
 
+- ansible.builtin.file:
+    path: "{{ pihole_config_dir }}/etc-pihole"
+    state: directory
+    mode: '0755'  
+
+- ansible.builtin.file:
+    path: "{{ pihole_config_dir }}/etc-dnsmasq.d"
+    state: directory
+    mode: '0755'  
+
+- name: Copy custom.list to remote
+  register: dns_records
+  ansible.builtin.copy:
+    src: ./files/pihole/05-pihole-custom-cname.conf
+    dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
+
+- name: Copy cname records to remote
+  register: cname_records
+  ansible.builtin.copy:
+    src: ./files/pihole/custom.list
+    dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
+
+
 - community.docker.docker_compose:
     project_name: pihole
     
@@ -21,8 +44,15 @@
           environment:
             TZ: "{{ host_tz }}"
             WEBPASSWORD: "{{ pihole.password }}"
+            PIHOLE_UID: "{{ host_puid }}"
+            PIHOLE_GID: "{{ host_pgid }}"
           volumes:
             - '{{ pihole_config_dir }}/etc-pihole:/etc/pihole'
             - '{{ pihole_config_dir }}/etc-dnsmasq.d:/etc/dnsmasq.d'
           restart: always
-          
+
+# - name: restart container
+#   docker_container:
+#     name: pihole
+#     restart: true
+#   when: dns_records.changed or cname_records.changed

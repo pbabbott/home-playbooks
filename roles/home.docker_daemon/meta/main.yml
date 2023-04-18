@@ -1,0 +1,6 @@
+
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Expose prometheus metrics from docker daemon specfying an IP address, leverage upstream registry as pull cache
+  

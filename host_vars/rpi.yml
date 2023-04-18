@@ -1,6 +1,11 @@
-host_puid: "1001"
-host_pgid: "1001"
+host_puid: "1000"
+host_pgid: "1000"
 host_tz: "America/Los_Angeles"
+
+dns_nameservers:
+  - "192.168.4.144"
+  - "75.75.75.75"
+  - "75.75.76.76"
 
 pip_install_packages:
   - docker

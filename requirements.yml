@@ -2,6 +2,7 @@ roles:
   - ryankwilliams.ssh_copy_id
   - gantsign.antigen_bundles
   - cloudalchemy.node_exporter
+  - src: https://github.com/Oefenweb/ansible-dns
 collections:
   - community.crypto
   - geerlingguy.mac
