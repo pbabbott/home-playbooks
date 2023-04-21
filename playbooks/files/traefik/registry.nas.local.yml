@@ -1,16 +1,16 @@
 http:
   routers:
-    to-roomofrequirement-https:
+    to-registry-nas-https:
       entryPoints:
         - "https"
       rule: "Host(`registry.nas.local.abbottland.io`)"
       middlewares:
         - secured
-      service: roomofrequirement
+      service: registry-nas
       tls: {} 
 
   services:
-    roomofrequirement:
+    registry-nas:
       loadBalancer:
         servers:
         - url: http://192.168.4.124:5000
