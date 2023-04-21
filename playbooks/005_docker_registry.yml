@@ -1,13 +1,13 @@
 
-# - name: Setup Docker Registry
-#   hosts: room_of_requirement
-#   roles:
-#     - role: home.docker-registry
+- name: Setup Docker Registry on NAS
+  hosts: room_of_requirement
+  roles:
+    - role: home.docker-registry
 
-# - name: Setup Docker Registry
-#   hosts: 
-#     - bananapi
-#     - rpi
-# - role: home.docker_daemon
-# ip_address: "{{ ansible_host }}"
+- name: Setup Docker Registry
+  hosts: 
+    - bananapi
+    - rpi
+- role: home.docker_daemon
+  ip_address: "{{ ansible_host }}"
     

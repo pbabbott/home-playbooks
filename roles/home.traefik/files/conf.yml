@@ -50,18 +50,9 @@ http:
             sans:
               - "*.local.abbottland.io"      
 
-    to-dashboard-https:
-      entryPoints:
-        - "https"
-      rule: "Host(`dashboard.local.abbottland.io`)"
-      middlewares:
-        - secured
-      tls: {}
-      service: dashy
-
     to-root:
       rule: "Host(`abbottland.io`)"
-      service: mealie
+      service: api@internal
       middlewares:
         - secured
       tls:
@@ -71,26 +62,4 @@ http:
             sans:
               - "*.abbottland.io"
   
-    to-drone-https:
-      entryPoints:
-        - "https"
-      rule: "Host(`drone.abbottland.io`)"
-      service: drone
-      tls: {}
-
-
-        
-  services:
-    drone:
-      loadBalancer:
-        servers:
-        - url: http://192.168.4.24:9926
-        passHostHeader: true
-    dashy:
-      loadBalancer:
-        servers:
-        - url: http://192.168.4.24:4000
-        passHostHeader: true
-  
-    
 

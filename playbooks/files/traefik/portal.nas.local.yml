@@ -1,0 +1,38 @@
+http:
+  middlewares:
+    redirect-plex:
+      redirectRegex:
+        regex: "^https:\\/\\/portal\\.nas\\.local\\.abbottland\\.io\\:8022\\/plexmediaserver"
+        replacement: "https://plex.abbottland.io"
+    
+    redirect-portainer:
+      redirectRegex:
+        regex: "^https:\\/\\/portal\\.nas\\.local\\.abbottland\\.io\\:19943"
+        replacement: "https://portainer.nas.local.abbottland.io"
+
+  routers:
+    to-roomofrequirement-https:
+      entryPoints:
+        - https
+        - plex-nas
+        - portainer-nas
+      rule: "Host(`portal.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+        - redirect-plex
+        - redirect-portainer
+      service: roomofrequirement
+      priority: 2
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "nas.local.abbottland.io"
+            sans:
+              - "*.nas.local.abbottland.io"    
+
+  services:
+    roomofrequirement:
+      loadBalancer:
+        servers:
+        - url: https://192.168.4.124:9001
+        passHostHeader: true

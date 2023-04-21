@@ -4,19 +4,22 @@
   roles:
     - role: home.cloudflare-ddns
     - role: home.traefik
+  vars:
+    traefik_files:
+      # Public Access
+      - drone.yml
+      - mealie.yml
+      - plex.yml
+      # LAN Only`
+      - dashboard.local.yml
+      - pihole.local.yml
+      - portal.nas.local.yml
+      - portainer.nas.local.yml
+      - registry.nas.local.yml
   tasks:
     - name: Enable mealie in proxy
       ansible.builtin.copy:
-        src: ./traefik/mealie.yml
-        dest: "{{ traefik_dynamic_config_dir }}/mealie.yml"
-
-    - name: Enable pihole in proxy
-      ansible.builtin.copy:
-        src: ./traefik/pihole.yml
-        dest: "{{ traefik_dynamic_config_dir }}/pihole.yml"
-
-    - name: Enable roomofrequirement in proxy
-      ansible.builtin.copy:
-        src: ./traefik/roomofrequirement.yml
-        dest: "{{ traefik_dynamic_config_dir }}/roomofrequirement.yml"
-
+        src: "./traefik/{{ item }}"
+        dest: "{{ traefik_dynamic_config_dir }}/{{ item }}"
+      loop: "{{ traefik_files }}"
+      

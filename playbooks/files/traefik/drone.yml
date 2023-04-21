@@ -1,0 +1,17 @@
+http:
+  routers:
+    to-drone-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`drone.abbottland.io`)"
+      service: drone
+      tls: {}
+
+  services:
+    drone:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.24:9926
+        passHostHeader: true
+
+    

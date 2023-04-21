@@ -51,8 +51,8 @@
             - '{{ pihole_config_dir }}/etc-dnsmasq.d:/etc/dnsmasq.d'
           restart: always
 
-# - name: restart container
-#   docker_container:
-#     name: pihole
-#     restart: true
-#   when: dns_records.changed or cname_records.changed
+- name: restart container
+  docker_container:
+    name: pihole
+    restart: true
+  when: dns_records.changed or cname_records.changed

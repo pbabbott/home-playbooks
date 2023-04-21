@@ -1,0 +1,17 @@
+http:
+  routers:
+    to-portainer-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`portainer.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: portainer-nas
+      tls: {} 
+
+  services:
+    portainer-nas:
+      loadBalancer:
+        servers:
+        - url: https://192.168.4.124:19943
+        passHostHeader: true

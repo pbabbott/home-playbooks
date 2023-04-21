@@ -36,9 +36,11 @@
           environment:
             CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare.token }}"
           ports:
+            - "8022:8022"
             - "8080:8080"
             - "80:80"
             - "443:443"
+            - "19943:19943"
           volumes:
             - /{{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml
             - /{{ traefik_config_dir }}/acme.json:/etc/traefik/acme.json

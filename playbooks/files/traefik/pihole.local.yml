@@ -3,6 +3,12 @@ http:
     addprefix-pihole:
       addPrefix:
         prefix: "/admin"
+    # TODO: figure out how to fix this.
+    # redirect-pihole-admin:
+    #   redirectRegex:
+    #     regex: "^https:\\/\\/pihole\\.local\\.abbottland\\.io\\/admin$"
+    #     replacement: "https://pihole.local.abbottland.io"
+      
   routers:
      to-pihole-https:
       entryPoints:
@@ -11,6 +17,7 @@ http:
       middlewares:
         - secured
         - addprefix-pihole
+        # - redirect-pihole-admin
       tls: {}
       service: pihole
 

@@ -1,0 +1,19 @@
+http:
+  routers:
+    to-dashboard-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`dashboard.local.abbottland.io`)"
+      middlewares:
+        - secured
+      tls: {}
+      service: dashy
+
+  services:
+    dashy:
+      loadBalancer:
+        servers:
+          - url: http://192.168.4.24:4000
+        passHostHeader: true
+  
+    

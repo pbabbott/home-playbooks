@@ -12,6 +12,13 @@ entryPoints:
           permanent: true
   https:
     address: :443
+
+  plex-nas:
+    address: :8022
+
+  portainer-nas:
+    address: :19943
+
 serversTransport:
     insecureSkipVerify: true
 providers:
