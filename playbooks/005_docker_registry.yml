@@ -4,14 +4,15 @@
   roles:
     - role: home.docker-registry
 
-# TODO: https://joxit.dev/docker-registry-ui/
+# # TODO: https://joxit.dev/docker-registry-ui/
 
-# - name: Setup Docker Registry
-#   hosts: 
-#     - bananapi
-#     - rpi
-#   roles:
-#     - role: home.docker_daemon
-#       ip_address: "{{ ansible_host }}"
-#       # docker_registry_mirror_host: "{{docker_registry_mirror_host}}"
+- name: Setup Docker Registry
+  become: true
+  hosts: 
+    - bananapi
+    - rpi
+  roles:
+    - role: home.docker_daemon
+      ip_address: "{{ ansible_host }}"
+      # docker_registry_mirror_host: "{{docker_registry_mirror_host}}"
     
