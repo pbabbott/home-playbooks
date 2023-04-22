@@ -7,3 +7,7 @@ argument_specs:
         type: "str"
         description: "The IP address on which the metrics should be exposed."
         required: true
+      docker_registry_mirror_host:
+        type: "str"
+        description: "The URI of the registry to use as a pull through cache."
+        required: true

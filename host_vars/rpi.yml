@@ -33,3 +33,5 @@ backup_jobs:
   - path: /home/pi/drone_data
     dest: "/home/pi/drone_data_{{ansible_date_time.date}}.tar.gz"
     job_name: drone_data
+
+docker_registry_mirror_host: https://registry.nas.local.abbottland.io
