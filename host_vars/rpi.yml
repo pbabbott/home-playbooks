@@ -4,8 +4,8 @@ host_tz: "America/Los_Angeles"
 
 dns_nameservers:
   - "192.168.4.144"
-  - "75.75.75.75"
-  - "75.75.76.76"
+  # - "75.75.75.75"
+  # - "75.75.76.76"
 
 pip_install_packages:
   - docker

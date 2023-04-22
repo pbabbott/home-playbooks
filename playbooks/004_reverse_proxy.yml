@@ -1,4 +1,7 @@
 
+# TODO: Consider having each server have its own traefik instance
+# for now, bananapi will manage all traffic across all servers
+
 - name: DDNS and Traefik Installation on Banana PI via Docker (not root)
   hosts: bananapi
   roles:
@@ -6,18 +9,21 @@
     - role: home.traefik
   vars:
     traefik_files:
-      # Public Access
+      # Banana PI
+      - pihole.local.yml
+      # Raspberry PI
       - drone.yml
       - mealie.yml
-      - plex.yml
-      # LAN Only`
       - dashboard.local.yml
-      - pihole.local.yml
+      # Room Of Requirement
+      - plex.yml
       - portal.nas.local.yml
       - portainer.nas.local.yml
       - registry.nas.local.yml
+      - handbrake.nas.local.yml
+
   tasks:
-    - name: Enable mealie in proxy
+    - name: "Copy traefik config {{item}} to remote"
       ansible.builtin.copy:
         src: "./traefik/{{ item }}"
         dest: "{{ traefik_dynamic_config_dir }}/{{ item }}"

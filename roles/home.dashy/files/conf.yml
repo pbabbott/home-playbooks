@@ -97,7 +97,7 @@ sections:
         url: http://192.168.4.24:9000/
         target: newtab
         statusCheck: true
-        id: 8_1171_portainer
+        id: 7_1171_portainer
   - name: Room of Requirement
     icon: fas fa-server
     displayData:
@@ -110,14 +110,14 @@ sections:
       - title: Asustor
         description: Server Management Portal
         icon: fa fa-server
-        url: http://192.168.4.124:9000
+        url: https://portal.nas.local.abbottland.io
         target: newtab
         statusCheck: true
         id: 0_1859_asustor
       - title: Docker Registry
         description: Container Registry
         icon: hl-docker
-        url: http://192.168.4.124:5000/
+        url: https://registry.nas.local.abbottland.io
         target: newtab
         statusCheck: true
         statusCheckUrl: http://192.168.4.124:5000/
@@ -125,7 +125,7 @@ sections:
       - title: Plex
         description: Plex Media Server
         icon: hl-plex
-        url: http://192.168.4.124:32400/
+        url: https://plex.abbottland.io
         target: newtab
         statusCheck: true
         statusCheckUrl: http://192.168.4.124:32400/identity
@@ -140,7 +140,7 @@ sections:
       - title: Portainer
         description: Container Management
         icon: hl-portainer
-        url: https://192.168.4.124:19943/
+        url: https://portainer.nas.local.abbottland.io
         target: newtab
         statusCheck: true
         statusCheckAllowInsecure: true
@@ -155,7 +155,7 @@ sections:
       - title: HandBrake
         description: Video converter service
         icon: hl-handbrake
-        url: http://192.168.4.124:5800
+        url: https://handbrake.nas.local.abbottland.io
         target: newtab
         statusCheck: true
         id: 6_1859_handbrake

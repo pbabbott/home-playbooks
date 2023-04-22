@@ -27,6 +27,12 @@
     src: ./files/pihole/custom.list
     dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
 
+- name: Copy internal dnsmasq config remote
+  register: dnsmasq_conf
+  ansible.builtin.copy:
+    src: ./files/pihole/02-internal.conf
+    dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/02-internal.conf"
+
 
 - community.docker.docker_compose:
     project_name: pihole
@@ -55,4 +61,4 @@
   docker_container:
     name: pihole
     restart: true
-  when: dns_records.changed or cname_records.changed
+  when: dns_records.changed or cname_records.changed or dnsmasq_conf.changed

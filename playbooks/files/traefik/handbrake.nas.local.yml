@@ -1,0 +1,19 @@
+# nas.local.abbottland.io
+
+http:
+  routers:
+    to-handbrake-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`handbrake.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: handbrake-nas
+      tls: {} 
+
+  services:
+    handbrake-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:5800
+        passHostHeader: true
