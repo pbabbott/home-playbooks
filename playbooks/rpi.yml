@@ -7,11 +7,12 @@
         name: lsio
   roles:
     - role: home.dashy
+    - role: home.drone-server
+    - role: home.drone-docker-runner
 #     - role: home.portainer
 #     - role: home.mealie
 #     - role: home.prometheus-server
-#     - role: home.drone-server
-#     - role: home.drone-docker-runner
+    
 #     - role: home.grafana
 #     - role: home.home-assistant
     

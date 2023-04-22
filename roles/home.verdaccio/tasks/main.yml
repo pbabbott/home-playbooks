@@ -54,6 +54,7 @@
           network_mode: host
           environment:
             - VERDACCIO_PORT=4873
+            - VERDACCIO_PUBLIC_URL='https://verdaccio.nas.local.abbottland.io'
           volumes:
             - '{{ verdaccio_storage_dir }}:/verdaccio/storage'
             - '{{ verdaccio_config_dir }}:/verdaccio/conf'

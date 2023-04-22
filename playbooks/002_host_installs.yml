@@ -29,3 +29,8 @@
       become: true
     - role: cloudalchemy.node_exporter
     
+- name: Pip Installs on NAS
+  hosts: room_of_requirement
+  roles:
+    - role: home.pip
+      become: true

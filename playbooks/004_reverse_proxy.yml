@@ -21,6 +21,7 @@
       - portainer.nas.local.yml
       - registry.nas.local.yml
       - handbrake.nas.local.yml
+      - verdaccio.nas.local.yml
 
   tasks:
     - name: "Copy traefik config {{item}} to remote"

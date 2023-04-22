@@ -32,7 +32,7 @@
       services:
         dashy:
           container_name: dashy
-          image: lissy93/dashy:2.1.0
+          image: lissy93/dashy:latest
           restart: always
           ports:
             - 4000:80
