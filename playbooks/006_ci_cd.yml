@@ -1,13 +1,9 @@
 
-# - name: Docker Installations on RPI (not root)
-#   hosts: rpi
-#   pre_tasks:
-#     - name: Create a network
-#       community.docker.docker_network:
-#         name: lsio
-#   roles:
-#     - role: home.drone-server
-#     - role: home.drone-docker-runner
+- name: Drone Docker Installations on RPI (not root)
+  hosts: rpi
+  roles:
+    - role: home.drone-server
+    # - role: home.drone-docker-runner
 
 # - name: Configure elder_wand
 #   hosts: elder_wand
@@ -33,19 +29,23 @@
 #   tasks:
 #     - name: Get Verdaccio Token
 #       ansible.builtin.uri:
-#         url: "https://verdaccio.nas.local.abbottland.io/-/user/org.couchdb.user:foo"
+#         url: "{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
 #         method: PUT
 #         body_format: json
 #         status_code:
 #           - 201
-#         user: foo
-#         password: bar
+#         user: "{{ verdaccio_user }}"
+#         password: "{{ verdaccio_pw }}"
 #         force_basic_auth: true
 #         headers:
 #           Content-Type: application/json
-#         body: '{"name":"foo","password":"bar"}'
+#         body: '{"name":"{{ verdaccio_user }}","password":"{{ verdaccio_pw }}"}'
 #         return_content: true
 #       register: token_response
 
-# - name: Setup NPM access to 
-#   hosts: room_of_requirement
+#     - name: Set Token
+#       ansible.builtin.set_fact:
+#         verdaccio_token: "{{(token_response.content | from_json).token }}"
+
+#     - debug:
+#         msg: "Response: {{verdaccio_token}}"

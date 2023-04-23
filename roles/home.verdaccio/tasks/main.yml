@@ -29,8 +29,8 @@
   register: password
   community.general.htpasswd:
     path: "{{ verdaccio_config_dir }}/htpasswd"
-    name: foo
-    password: bar
+    name: "{{ verdaccio_user }}"
+    password: "{{ verdaccio_pw }}"
     owner: "{{verdaccio_owner}}"
     group: "{{verdaccio_group}}"
     mode: 0640
