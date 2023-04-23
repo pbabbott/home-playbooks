@@ -1,12 +1,8 @@
 host_puid: "1000"
 host_pgid: "1000"
-host_tz: "America/Los_Angeles"
 
 dns_nameservers: 
   - "127.0.0.1"
-  # - "75.75.75.75"
-  # - "75.75.76.76"
-
 
 pip_install_packages:
   - docker
@@ -16,5 +12,3 @@ traefik_config_dir: /home/pi/app_config/traefik
 traefik_dynamic_config_dir: /home/pi/app_config/traefik/conf.d
 
 pihole_config_dir: /home/pi/app_config/pihole
-
-docker_registry_mirror_host: https://registry.nas.local.abbottland.io

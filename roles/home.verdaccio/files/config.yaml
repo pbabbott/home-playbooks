@@ -59,6 +59,8 @@ web:
 auth:
   htpasswd:
     file: ./htpasswd
+    algorithm: md5
+    max_users: -1
 
 # https://verdaccio.org/docs/configuration#uplinks
 # a list of other known repositories we can talk to

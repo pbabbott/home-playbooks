@@ -1,12 +1,4 @@
 http:
-
-  # middlewares:
-  #   verdaccio-headers:
-  #     headers:
-  #       customRequestHeaders:
-  #         Host: verdaccio.nas.local.abbottland.io
-  #         X-Forwarded-Proto: https
-
   routers:
     to-verdaccio-nas-https:
       entryPoints:
@@ -14,7 +6,6 @@ http:
       rule: "Host(`verdaccio.nas.local.abbottland.io`)"
       middlewares:
         - secured
-        # - verdaccio-headers
       service: verdaccio-nas
       tls: {} 
 

@@ -2,22 +2,22 @@
     path: "{{ verdaccio_config_dir }}"
     state: directory
     mode: '0755'  
-    owner: 10001
-    group: 65533
+    owner: "{{verdaccio_owner}}"
+    group: "{{verdaccio_group}}"
 
 - ansible.builtin.file:
     path: "{{ verdaccio_storage_dir }}"
     state: directory
     mode: '0755'
-    owner: 10001
-    group: 65533
+    owner: "{{verdaccio_owner}}"
+    group: "{{verdaccio_group}}"
 
 - ansible.builtin.file:
     path: "{{ verdaccio_plugins_dir }}"
     state: directory
     mode: '0755'  
-    owner: 10001
-    group: 65533
+    owner: "{{verdaccio_owner}}"
+    group: "{{verdaccio_group}}"
 
 - name: Copy config.yaml to remote
   register: conf
@@ -25,21 +25,16 @@
     src: ./files/config.yaml
     dest: "{{ verdaccio_config_dir }}/config.yaml"
 
-# TODO: figure out how to add a user after the service is up with npm adduser
-# - name: Add a user to a password file and ensure permissions are set
-#   community.general.htpasswd:
-#     path: "{{ verdaccio_config_dir }}/htpasswd"
-#     name: "{{ verdaccio_user }}"
-#     password: "{{ verdaccio_pw }}"
-#     owner: 10001
-#     group: 65533
-#     mode: 0644
-
-- name: restart verdaccio container
-  docker_container:
-    name: verdaccio
-    restart: true
-  when: conf.changed 
+- name: Setup npm users
+  register: password
+  community.general.htpasswd:
+    path: "{{ verdaccio_config_dir }}/htpasswd"
+    name: foo
+    password: bar
+    owner: "{{verdaccio_owner}}"
+    group: "{{verdaccio_group}}"
+    mode: 0640
+    crypt_scheme: md5_crypt
 
 - community.docker.docker_compose:
     project_name: verdaccio
@@ -48,15 +43,21 @@
       version: '3.1'
       services:
         verdaccio:
-          user: "10001:65533"
+          user: "{{verdaccio_owner}}:{{verdaccio_group}}"
           container_name: verdaccio
           image: verdaccio/verdaccio
           network_mode: host
           environment:
             - VERDACCIO_PORT=4873
-            - VERDACCIO_PUBLIC_URL='https://verdaccio.nas.local.abbottland.io'
+            - VERDACCIO_PUBLIC_URL='{{verdaccio_public_url}}'
           volumes:
             - '{{ verdaccio_storage_dir }}:/verdaccio/storage'
             - '{{ verdaccio_config_dir }}:/verdaccio/conf'
             - '{{ verdaccio_plugins_dir }}:/verdaccio/plugins'
           restart: always
+
+- name: restart verdaccio container
+  docker_container:
+    name: verdaccio
+    restart: true
+  when: conf.changed or password.changed

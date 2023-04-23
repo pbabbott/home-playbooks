@@ -1,0 +1,7 @@
+host_tz: "America/Los_Angeles"
+
+docker_registry_mirror_host: https://registry.nas.local.abbottland.io
+
+verdaccio_public_url: https://verdaccio.nas.local.abbottland.io
+verdaccio_user: pbabbott
+verdaccio_pw: "{{ verdaccio.pbabbott_password }}"

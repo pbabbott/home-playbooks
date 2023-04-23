@@ -20,7 +20,7 @@
             DRONE_GITHUB_CLIENT_ID: "{{ drone.github_client_id }}"
             DRONE_GITHUB_CLIENT_SECRET: "{{ drone.github_client_secret }}"
             DRONE_RPC_SECRET: "{{ drone.shared_secret }}"
-            DRONE_SERVER_HOST: drone.abbottland.duckdns.org
+            DRONE_SERVER_HOST: drone.abbottland.io
             DRONE_SERVER_PROTO: http
             DRONE_USER_FILTER: pbabbott
           volumes:

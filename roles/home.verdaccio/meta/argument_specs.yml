@@ -2,6 +2,14 @@
 argument_specs:
   main:
     options:
+      verdaccio_owner:
+        type: "str"
+        description: "The owner of files created/used by verdaccio"
+        required: true
+      verdaccio_group:
+        type: "str"
+        description: "The group owner of files created/used by verdaccio"
+        required: true
       verdaccio_config_dir:
         type: "str"
         description: "The path to the config directory"

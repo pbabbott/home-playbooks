@@ -23,7 +23,6 @@
     regexp: 'DOCKER_REGISTRY_MIRROR_HOST'
     replace: "{{docker_registry_mirror_host}}"
 
-
 - name: Replace existing docker daemon.json
   ansible.builtin.copy:
     remote_src: true

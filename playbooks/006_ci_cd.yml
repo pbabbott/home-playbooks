@@ -1,0 +1,51 @@
+
+# - name: Docker Installations on RPI (not root)
+#   hosts: rpi
+#   pre_tasks:
+#     - name: Create a network
+#       community.docker.docker_network:
+#         name: lsio
+#   roles:
+#     - role: home.drone-server
+#     - role: home.drone-docker-runner
+
+# - name: Configure elder_wand
+#   hosts: elder_wand
+#   tasks:
+#     - name: Ping host
+#       win_ping: {}
+
+#     - name: Copy a single file
+#       win_copy:
+#         src: ../files/.npmrc
+#         dest: C:\Users\pbabb\.npmrc
+
+#     - name: Set an environment variable for machine
+#       win_environment:
+#         state: present
+#         name: NPM_TOKEN
+#         value: "{{ verdaccio.pbabbott_token }}"
+#         level: machine
+
+# - name: Get Verdaccio Token
+#   hosts:
+#     - room_of_requirement
+#   tasks:
+#     - name: Get Verdaccio Token
+#       ansible.builtin.uri:
+#         url: "https://verdaccio.nas.local.abbottland.io/-/user/org.couchdb.user:foo"
+#         method: PUT
+#         body_format: json
+#         status_code:
+#           - 201
+#         user: foo
+#         password: bar
+#         force_basic_auth: true
+#         headers:
+#           Content-Type: application/json
+#         body: '{"name":"foo","password":"bar"}'
+#         return_content: true
+#       register: token_response
+
+# - name: Setup NPM access to 
+#   hosts: room_of_requirement

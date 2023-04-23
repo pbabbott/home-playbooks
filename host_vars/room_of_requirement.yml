@@ -1,18 +1,17 @@
 host_puid: "1000"
 host_pgid: "100"
-host_tz: "America/Los_Angeles"
 
 pip_install_packages:
   - docker
   - docker-compose
   - passlib
 
-# Verdaccio Settings
+
+verdaccio_owner: "10001"
+verdaccio_group: "65533"
 verdaccio_config_dir: /volume1/Docker/verdaccio/config
 verdaccio_storage_dir: /volume1/Docker/verdaccio/storage
 verdaccio_plugins_dir: /volume1/Docker/verdaccio/plugins
-verdaccio_user: pbabbott
-verdaccio_pw: "{{ verdaccio.pbabbott_password }}"
 
 docker_registry_config_dir: /volume1/Docker/registry/config
 docker_registry_storage_dir: /volume1/Docker/registry/storage
