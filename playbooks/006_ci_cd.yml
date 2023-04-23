@@ -1,28 +1,3 @@
-
-- name: Drone Docker Installations on RPI (not root)
-  hosts: rpi
-  roles:
-    - role: home.drone-server
-    # - role: home.drone-docker-runner
-
-# - name: Configure elder_wand
-#   hosts: elder_wand
-#   tasks:
-#     - name: Ping host
-#       win_ping: {}
-
-#     - name: Copy a single file
-#       win_copy:
-#         src: ../files/.npmrc
-#         dest: C:\Users\pbabb\.npmrc
-
-#     - name: Set an environment variable for machine
-#       win_environment:
-#         state: present
-#         name: NPM_TOKEN
-#         value: "{{ verdaccio.pbabbott_token }}"
-#         level: machine
-
 # - name: Get Verdaccio Token
 #   hosts:
 #     - room_of_requirement
@@ -42,10 +17,36 @@
 #         body: '{"name":"{{ verdaccio_user }}","password":"{{ verdaccio_pw }}"}'
 #         return_content: true
 #       register: token_response
-
 #     - name: Set Token
 #       ansible.builtin.set_fact:
 #         verdaccio_token: "{{(token_response.content | from_json).token }}"
-
 #     - debug:
 #         msg: "Response: {{verdaccio_token}}"
+
+
+- name: Drone Docker Installations on RPI (not root)
+  hosts: rpi
+  roles:
+    - role: home.drone-server
+    - role: home.drone-docker-runner
+
+# TODO: figure out how to load secrets into drone automatically.
+
+# - name: Configure elder_wand
+#   hosts: elder_wand
+#   tasks:
+#     - name: Ping host
+#       win_ping: {}
+
+#     - name: Copy a single file
+#       win_copy:
+#         src: ../files/.npmrc
+#         dest: C:\Users\pbabb\.npmrc
+
+#     - name: Set an environment variable for machine
+#       win_environment:
+#         state: present
+#         name: NPM_TOKEN
+#         value: "{{ verdaccio.pbabbott_token }}"
+#         level: machine
+
