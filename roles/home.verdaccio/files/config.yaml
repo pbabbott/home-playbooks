@@ -112,7 +112,7 @@ packages:
 
 # https://verdaccio.org/docs/configuration#url-prefix
 # url_prefix: /verdaccio/
-# VERDACCIO_PUBLIC_URL='https://somedomain.org';
+# VERDACCIO_PUBLIC_URL='https://verdaccio.nas.local.abbottland.io';
 # url_prefix: '/my_prefix'
 # // url -> https://somedomain.org/my_prefix/
 # VERDACCIO_PUBLIC_URL='https://somedomain.org';

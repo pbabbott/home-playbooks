@@ -61,6 +61,13 @@
         value: "{{ verdaccio_public_url }}"
         level: machine
 
+    - name: Set an environment variable for machine (NPM_REGISTRY_PROTO)
+      win_environment:
+        state: present
+        name: NPM_REGISTRY_PROTO:
+        value: "{{ verdaccio_public_proto }}"
+        level: machine
+
     - name: Set an environment variable for machine (NPM_TOKEN)
       win_environment:
         state: present

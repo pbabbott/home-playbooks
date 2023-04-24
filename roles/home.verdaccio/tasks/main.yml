@@ -49,7 +49,7 @@
           network_mode: host
           environment:
             - VERDACCIO_PORT=4873
-            - VERDACCIO_PUBLIC_URL='{{verdaccio_public_url}}'
+            - VERDACCIO_PUBLIC_URL='{{verdaccio_public_proto}}://{{verdaccio_public_url}}'
           volumes:
             - '{{ verdaccio_storage_dir }}:/verdaccio/storage'
             - '{{ verdaccio_config_dir }}:/verdaccio/conf'

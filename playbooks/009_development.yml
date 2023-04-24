@@ -7,10 +7,12 @@
         value: "{{ verdaccio_token }}"
       - key: NPM_REGISTRY
         value: "{{ verdaccio_public_url }}"
+      - key: NPM_REGISTRY_PROTO
+        value: "{{ verdaccio_public_proto }}"
   pre_tasks:
     - name: Get Verdaccio Token
       ansible.builtin.uri:
-        url: "{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
+        url: "{{verdaccio_public_proto}}://{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
         method: PUT
         body_format: json
         status_code:
@@ -44,6 +46,7 @@
       environment:
         NPM_TOKEN: "{{verdaccio_token}}"
         NPM_REGISTRY: "{{ verdaccio_public_url }}"
+        NPM_REGISTRY_PROTO: "{{ verdaccio_public_proto }}"
       community.general.npm:
         name: nx
         global: true
