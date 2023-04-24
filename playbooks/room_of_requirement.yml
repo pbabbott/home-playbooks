@@ -1,6 +1,0 @@
-- name: Configure NAS 
-  hosts: room_of_requirement
-  roles:
-    - role: home.prometheus-docker-node-exporter
-    - role: home.shell_config
-    - role: home.handbrake

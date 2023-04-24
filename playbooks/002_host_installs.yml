@@ -34,3 +34,11 @@
   roles:
     - role: home.pip
       become: true
+
+- name: Install node.js on elder_wand
+  hosts: elder_wand
+  tasks:
+    - name: Install node-windows
+      ansible.builtin.win_shell: npm install -g node-windows
+      args:
+        creates: C:\Users\pbabb\AppData\Roaming\npm\node_modules\node-windows

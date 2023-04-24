@@ -31,6 +31,12 @@
 #         msg: "{{ playbook_dir }}"
   
 
+- name: Configure elder_wand
+  hosts: elder_wand
+  tasks:
+    - name: Ping host
+      win_ping: {}
+
 ## ------------------------------------
 
 # # - name: Install Tools

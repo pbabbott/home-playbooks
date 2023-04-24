@@ -1,0 +1,13 @@
+# - name: Backup important data to Azure each week
+#   hosts: rpi
+#   tasks:
+#     - name: Zip backups
+#       with_items: "{{ backup_jobs }}"
+#       include_role:
+#         name: home.zip.backup
+#       vars:
+#         path: "{{item.path}}"
+#         dest: "{{item.dest}}"
+#         job_name: "{{item.job_name}}"
+
+
