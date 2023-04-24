@@ -1,7 +1,7 @@
 # TODO: update mealie_data path to be a variable
 
 - ansible.builtin.file:
-    path: /home/pi/mealie_data
+    path: "{{mealie_data_dir}}"
     state: directory
     mode: '0755'  
 - community.docker.docker_compose:
@@ -38,4 +38,4 @@
             # WORKERS_PER_CORE: 0.5
             # MAX_WORKERS: 8
           volumes:
-            - /home/pi/mealie_data/:/app/data
+            - "{{mealie_data_dir}}:/app/data"

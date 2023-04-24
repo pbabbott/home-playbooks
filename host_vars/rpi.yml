@@ -18,6 +18,7 @@ drone_data_dir: /home/pi/app_config/drone/data
 drone_runner_name: rpi-runner
 
 dashy_config_dir: /home/pi/app_config/dashy
+mealie_data_dir: /home/pi/app_config/mealie_data
 
 # TODO: move this into new backup container project
 backup_jobs:

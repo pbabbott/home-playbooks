@@ -16,3 +16,9 @@
   hosts: room_of_requirement
   roles:
     - role: home.prometheus-docker-node-exporter
+
+- name: Docker Installations on RPI (not root)
+  hosts: rpi
+  roles:
+    - role: home.prometheus-server
+    - role: home.grafana
