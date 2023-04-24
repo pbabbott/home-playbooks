@@ -1,22 +1,71 @@
-- name: Configure NAS 
-  hosts: room_of_requirement
+- name: Get Verdaccio Token & Add to .zprofile
+  hosts:
+    - localhost
+  vars:
+    additional_exports:
+      - key: NPM_TOKEN
+        value: "{{ verdaccio_token }}"
+      - key: NPM_REGISTRY
+        value: "{{ verdaccio_public_url }}"
+  pre_tasks:
+    - name: Get Verdaccio Token
+      ansible.builtin.uri:
+        url: "{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
+        method: PUT
+        body_format: json
+        status_code:
+          - 201
+        user: "{{ verdaccio_user }}"
+        password: "{{ verdaccio_pw }}"
+        force_basic_auth: true
+        headers:
+          Content-Type: application/json
+        body: '{"name":"{{ verdaccio_user }}","password":"{{ verdaccio_pw }}"}'
+        return_content: true
+      register: token_response
+    - name: Set Token
+      ansible.builtin.set_fact:
+        verdaccio_token: "{{(token_response.content | from_json).token }}"
+    - debug:
+        msg: "Response: {{verdaccio_token}}"
+    
   roles:
-    - role: home.shell_config
-
-- name: Install items to localhost with sudo
-  become: true
-  hosts: localhost
-  tasks:
-    - name: Install zip
-      ansible.builtin.apt:
-        name: zip
-        state: present
-
-- name: Configure Local Computer
-  hosts: localhost
-  roles:
-    - role: home.pip
-    - role: home.fnm
     - role: home.detect_shell
     - role: home.shell_config
       config_file_name: "{{ shell_interactive }}"
+      shell_config_exports: "{{ shell_config_custom_exports + additional_exports }}"
+  tasks:
+    - name: Copy .npmrc
+      ansible.builtin.copy:
+        src: ./files/.npmrc
+        dest: "{{ansible_env.HOME}}/.npmrc"
+
+    - name: Globally install nx
+      environment:
+        NPM_TOKEN: "{{verdaccio_token}}"
+        NPM_REGISTRY: "{{ verdaccio_public_url }}"
+      community.general.npm:
+        name: nx
+        global: true
+        state: present
+
+
+# - name: Configure NAS 
+#   hosts: room_of_requirement
+#   roles:
+#     - role: home.shell_config
+
+# - name: Install items to localhost with sudo
+#   become: true
+#   hosts: localhost
+#   tasks:
+#     - name: Install zip
+#       ansible.builtin.apt:
+#         name: zip
+#         state: present
+
+# - name: Configure Local Computer
+#   hosts: localhost
+#   roles:
+#     - role: home.pip
+#     - role: home.fnm

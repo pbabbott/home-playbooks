@@ -9,13 +9,14 @@ shell_config_aliases:
     command: python3
   - alias: sp
     command: "source ~/.zprofile"
-shell_config_exports: 
+# NOTE: Name does not match 'shell_config_exports' on purpose
+shell_config_custom_exports: 
   - key: PATH
     value: "$PATH:$HOME/.local/bin"
-  - key: NPM_TOKEN
-    value: "{{ verdaccio.pbabbott_token }}"
   - key: GITHUB_TOKEN
     value: "{{ drone.github_pat }}"
+  - key: NODE_ENV
+    value: "development"
 shell_config_ssh_targets:
   - shortcut: bpi
     username: "{{ hostvars.bananapi.ansible_user }}"
