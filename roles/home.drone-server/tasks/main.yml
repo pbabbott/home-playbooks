@@ -17,7 +17,7 @@
             DRONE_GITHUB_CLIENT_SECRET: "{{ drone.github_client_secret }}"
             DRONE_RPC_SECRET: "{{ drone.shared_secret }}"
             DRONE_SERVER_HOST: "{{ drone_server_host }}"
-            DRONE_SERVER_PROTO: http
+            DRONE_SERVER_PROTO: https
             DRONE_USER_FILTER: "{{ drone_user_filter }}"
           volumes:
             - "{{ drone_data_dir}}:/data"

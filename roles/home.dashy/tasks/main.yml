@@ -1,5 +1,5 @@
 - ansible.builtin.file:
-    path: /home/pi/dashy
+    path: "{{ dashy_config_dir }}"
     state: directory
     mode: '0755'  
 
@@ -7,18 +7,18 @@
   register: dashy_conf
   ansible.builtin.copy:
     src: ./files/conf.yml
-    dest: /home/pi/dashy/conf.yml
+    dest: "{{ dashy_config_dir }}/conf.yml"
 
 
 - ansible.builtin.file:
-    path: /home/pi/dashy/icons
+    path: "{{ dashy_config_dir }}/icons"
     state: directory
     mode: '0755'  
 
 - name: Copy icons to remote
   ansible.builtin.copy:
     src: ./files/item-icons
-    dest: /home/pi/dashy
+    dest: "{{ dashy_config_dir }}"
 
 - community.docker.docker_compose:
     project_name: dashy
@@ -42,8 +42,8 @@
             TZ: "{{ host_tz }}"
             NODE_ENV: production
           volumes:
-            - /home/pi/dashy/conf.yml:/app/public/conf.yml
-            - /home/pi/dashy/item-icons:/app/public/item-icons
+            - "{{ dashy_config_dir }}/conf.yml:/app/public/conf.yml"
+            - "{{ dashy_config_dir }}/item-icons:/app/public/item-icons"
           healthcheck:
             test: ['CMD', 'node', '/app/services/healthcheck']
             interval: 1m30s

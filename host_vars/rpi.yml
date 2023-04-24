@@ -17,6 +17,8 @@ backup_azure_subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
 drone_data_dir: /home/pi/app_config/drone/data
 drone_runner_name: rpi-runner
 
+dashy_config_dir: /home/pi/app_config/dashy
+
 # TODO: move this into new backup container project
 backup_jobs:
   - path: /home/pi/homeassistant_data
