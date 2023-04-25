@@ -53,19 +53,16 @@
         state: present
 
 
-# - name: Configure NAS 
-#   hosts: room_of_requirement
-#   roles:
-#     - role: home.shell_config
+- name: Configure NAS 
+  hosts: room_of_requirement
+  roles:
+    - role: home.shell_config
 
-# - name: Install items to localhost with sudo
-#   become: true
-#   hosts: localhost
-#   tasks:
-#     - name: Install zip
-#       ansible.builtin.apt:
-#         name: zip
-#         state: present
+- name: Install items to localhost with sudo
+  become: true
+  hosts: localhost
+  roles:
+    - home.gh_cli
 
 # - name: Configure Local Computer
 #   hosts: localhost
