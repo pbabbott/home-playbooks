@@ -24,7 +24,7 @@
   tasks:
     - name: Get Verdaccio Token
       ansible.builtin.uri:
-        url: "{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
+        url: "{{verdaccio_public_proto}}://{{verdaccio_public_url}}/-/user/org.couchdb.user:{{verdaccio_user}}"
         method: PUT
         body_format: json
         status_code:
@@ -64,7 +64,7 @@
     - name: Set an environment variable for machine (NPM_REGISTRY_PROTO)
       win_environment:
         state: present
-        name: NPM_REGISTRY_PROTO:
+        name: NPM_REGISTRY_PROTO
         value: "{{ verdaccio_public_proto }}"
         level: machine
 
