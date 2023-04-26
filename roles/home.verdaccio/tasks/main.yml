@@ -46,7 +46,8 @@
           user: "{{verdaccio_owner}}:{{verdaccio_group}}"
           container_name: verdaccio
           image: verdaccio/verdaccio
-          network_mode: host
+          ports:
+            - "4873:4873"
           environment:
             - VERDACCIO_PORT=4873
             - VERDACCIO_PUBLIC_URL='{{verdaccio_public_proto}}://{{verdaccio_public_url}}'

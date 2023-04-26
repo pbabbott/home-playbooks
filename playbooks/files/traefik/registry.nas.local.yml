@@ -1,14 +1,5 @@
 http:
   routers:
-    to-registry-ui-nas-https:
-      entryPoints:
-        - "https"
-      rule: "Host(`registry-ui.nas.local.abbottland.io`)"
-      middlewares:
-        - secured
-      service: registry-ui-nas
-      tls: {} 
-
     to-registry-nas-https:
       entryPoints:
         - "https"
@@ -18,14 +9,54 @@ http:
       service: registry-nas
       tls: {} 
 
+    to-registry-ui-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`registry-ui.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: registry-ui-nas
+      tls: {} 
+
+    to-registry-mirror-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`registry-mirror.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: registry-mirror-nas
+      tls: {} 
+
+    to-registry-mirror-ui-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`registry-mirror-ui.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: registry-mirror-ui-nas
+      tls: {} 
+
   services:
+    registry-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:5000
+        passHostHeader: true
+
     registry-ui-nas:
       loadBalancer:
         servers:
         - url: http://192.168.4.124:5001
         passHostHeader: true
-    registry-nas:
+        
+    registry-mirror-nas:
       loadBalancer:
         servers:
         - url: http://192.168.4.124:5002
+        passHostHeader: true
+    
+    registry-mirror-ui-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:5003
         passHostHeader: true

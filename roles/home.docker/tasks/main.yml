@@ -15,9 +15,13 @@
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
 
+- name: Get DEB architecture
+  shell: dpkg --print-architecture
+  register: deb_architecture
+
 - name: Add Docker APT repository
   apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    repo: deb [arch={{ deb_architecture.stdout }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 
 - name: Install Docker CE
   apt:

@@ -1,0 +1,31 @@
+argument_specs:
+  main:
+    options:
+      docker_registry_config_dir:
+        type: "str"
+        description: "Directory where all the config files will live"
+        required: true
+      docker_registry_storage_dir:
+        type: "str"
+        description: "Directory where all the data files will live"
+        required: true
+      docker_registry_port:
+        type: "str"
+        description: "The port for the registry to run on"
+        required: true
+      docker_registry_ui_port:
+        type: "str"
+        description: "The port for the registry user-interface to run on"
+        required: true
+      docker_registry_proxy_enabled:
+        type: 'bool'
+        description: "Should this registry be used as a pull-through cache"
+        required: false
+      docker_hub_username:
+        type: 'str'
+        description: "Username for docker hub (used with proxy)"
+        required: false
+      docker_hub_password:
+        type: 'str'
+        description: "Password for docker hub (used with proxy)"
+        required: false

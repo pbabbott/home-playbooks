@@ -1,6 +1,14 @@
 host_tz: "America/Los_Angeles"
 
-docker_registry_mirror_host: https://registry.nas.local.abbottland.io
+
+docker_registry_host: https://registry.nas.local.abbottland.io
+docker_registry_port: 5000
+docker_registry_ui_port: 5001
+
+
+docker_registry_mirror_host: https://registry-mirror.nas.local.abbottland.io
+docker_registry_mirror_port: 5002
+docker_registry_mirror_ui_port: 5003
 
 drone_server_host: drone.abbottland.io
 drone_user_filter: pbabbott

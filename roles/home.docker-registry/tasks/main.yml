@@ -1,50 +1,67 @@
 - ansible.builtin.file:
-    path: "{{ docker_registry_storage_dir }}"
+    path: "{{ item }}"
     state: directory
     mode: '0755'
-
-- ansible.builtin.file:
-    path: "{{ docker_registry_config_dir }}"
-    state: directory
-    mode: '0755'
+  loop: "{{ registry_configuration_directories }}"
 
 - name: Copy config file to remote
-  register: conf
   ansible.builtin.copy:
     src: config.yml
+    dest: "{{ docker_registry_config_dir }}/temp.yml"
+
+- name: Add block section to target file
+  when: docker_registry_proxy_enabled
+  blockinfile:
+    path: "{{ docker_registry_config_dir }}/temp.yml"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED SECTION"
+    block: |
+      proxy:
+        remoteurl: https://registry-1.docker.io
+        username: {{ docker_hub_username }}
+        password: {{ docker_hub_password }}
+
+- name: Replace existing config
+  ansible.builtin.copy:
+    remote_src: true
+    src: "{{ docker_registry_config_dir }}/temp.yml"
     dest: "{{ docker_registry_config_dir }}/config.yml"
+  register: conf
+
+- ansible.builtin.file:
+    path: "{{ docker_registry_config_dir }}/temp.yml"
+    state: absent
 
 - community.docker.docker_compose:
-    project_name: registry
+    project_name: "{{ 'registry' if docker_registry_proxy_enabled else 'registry_mirror'}}"
     
     definition:
       version: '3.1'
       services:
-        registry:
+        registry_mirror:
           restart: always
           image: registry:2
-          container_name: registry
+          container_name:  "registry{{ '_mirror' if docker_registry_proxy_enabled else '' }}"  
           ports:
-            # Uncertain why port 5000 does not work on host.
-            - 5002:5000
+            - "{{docker_registry_port}}:5000"
           volumes:
             - '{{ docker_registry_storage_dir }}:/var/lib/registry'
             - '{{ docker_registry_config_dir }}/config.yml:/etc/docker/registry/config.yml'
 
-        registry_ui:
+        registry_mirror_ui:
           restart: always
           image: joxit/docker-registry-ui:latest
-          container_name: registry_ui
+          container_name:  "registry_ui{{ '_mirror' if docker_registry_proxy_enabled else '' }}"  
           ports:
-            - 5001:80
+            - "{{docker_registry_ui_port}}:80"
           environment:
-            - REGISTRY_TITLE=Homelab Private Docker Registry
-            - REGISTRY_URL=https://registry.nas.local.abbottland.io
-            - SINGLE_REGISTRY=true
-            - DELETE_IMAGES=true
+            REGISTRY_TITLE: "{{docker_registry_title}}"
+            REGISTRY_URL: "{{docker_registry_host}}"
+            SINGLE_REGISTRY: "true"
+            DELETE_IMAGES: "{{ 'false' if docker_registry_proxy_enabled else 'true'}}"
 
-- name: restart container
-  docker_container:
-    name: registry
-    restart: true
-  when: conf.changed 
+# - name: restart container
+#   docker_container:
+#     name: registry
+#     restart: true
+#   when: conf.changed 

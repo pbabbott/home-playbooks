@@ -6,15 +6,19 @@ pip_install_packages:
   - docker-compose
   - passlib
 
-
 verdaccio_owner: "10001"
 verdaccio_group: "65533"
 verdaccio_config_dir: /volume1/Docker/verdaccio/config
 verdaccio_storage_dir: /volume1/Docker/verdaccio/storage
 verdaccio_plugins_dir: /volume1/Docker/verdaccio/plugins
 
+docker_registry_title: Homelab Private Docker Registry
 docker_registry_config_dir: /volume1/Docker/registry/config
 docker_registry_storage_dir: /volume1/Docker/registry/storage
+
+docker_registry_mirror_title: Homelab Pull-Through Cache
+docker_registry_mirror_config_dir: /volume1/Docker/registry_mirror/config
+docker_registry_mirror_storage_dir: /volume1/Docker/registry_mirror/storage
 
 handbrake_config_dir: /volume1/Docker/handbrake/config
 handbrake_storage_dir: /volume1/home/pabbott

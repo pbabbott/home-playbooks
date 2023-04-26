@@ -1,0 +1,3 @@
+registry_configuration_directories:
+  - "{{ docker_registry_config_dir }}"
+  - "{{ docker_registry_storage_dir }}"
