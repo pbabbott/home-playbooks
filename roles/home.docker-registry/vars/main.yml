@@ -1,3 +1,19 @@
 registry_configuration_directories:
-  - "{{ docker_registry_config_dir }}"
-  - "{{ docker_registry_storage_dir }}"
+  - "{{docker_registry_config_dir}}"
+  - "{{docker_registry_storage_dir}}"
+
+
+docker_registry_project_name: "{{'registry_mirror' if docker_registry_proxy_enabled else 'registry'}}"
+
+
+docker_registry_default_volume_mounts:
+ - '{{ docker_registry_storage_dir }}:/var/lib/registry'
+ - '{{ docker_registry_config_dir }}/config.yml:/etc/docker/registry/config.yml'
+
+docker_registry_auth_mount:
+ - '{{ docker_registry_config_dir }}/htpasswd:/auth/htpasswd'
+
+
+container_suffix: "{{ '_mirror' if docker_registry_proxy_enabled else '' }}"
+
+# docker_registry_default_volume_mounts: "{{ docker_registry_default_volume_mounts + ([] if docker_registry_proxy_enabled else docker_registry_auth_mount ) }}"

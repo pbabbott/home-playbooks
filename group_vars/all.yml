@@ -1,10 +1,12 @@
 host_tz: "America/Los_Angeles"
 
+# Credentials used for both registry and mirror
+docker_registry_username: "{{dockerRegistry.username}}"
+docker_registry_password: "{{dockerRegistry.password}}"
 
 docker_registry_host: https://registry.nas.local.abbottland.io
 docker_registry_port: 5000
 docker_registry_ui_port: 5001
-
 
 docker_registry_mirror_host: https://registry-mirror.nas.local.abbottland.io
 docker_registry_mirror_port: 5002

@@ -1,14 +1,14 @@
-# - name: Install Docker 
-#   hosts: 
-#     - localhost
-#   tasks:
-#   become: true
-#   roles:
-#     # TODO: docker daemon not setup with systemctl on wsl!
-#     - role: home.docker
-#     - role: home.docker_permissions
-#     - role: home.docker_daemon
-#       ip_address: "{{ ansible_host }}"
+- name: Install Docker 
+  hosts: 
+    - localhost
+  tasks:
+  become: true
+  roles:
+    # TODO: docker daemon not setup with systemctl on wsl!
+    # - role: home.docker
+    # - role: home.docker_permissions
+    - role: home.docker_daemon
+      ip_address: "{{ ansible_host }}"
     
 
 - name: Get Verdaccio Token & Add to .zprofile

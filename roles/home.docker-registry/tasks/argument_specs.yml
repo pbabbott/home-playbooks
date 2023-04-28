@@ -21,6 +21,14 @@ argument_specs:
         type: 'bool'
         description: "Should this registry be used as a pull-through cache"
         required: false
+      docker_registry_username:
+        type: 'str'
+        description: "Username of who can access this regisry"
+        required: true
+      docker_registry_password:
+        type: 'str':
+        description: "Password for provided username"
+        required: true
       docker_hub_username:
         type: 'str'
         description: "Username for docker hub (used with proxy)"
