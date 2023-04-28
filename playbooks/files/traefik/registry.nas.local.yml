@@ -1,4 +1,10 @@
 http:
+  middlewares:
+    strip-prefix-ui:
+      stripPrefix:
+        forceSlash: false
+        prefixes:
+          - "/ui"
   routers:
     to-registry-nas-https:
       entryPoints:
@@ -12,9 +18,10 @@ http:
     to-registry-ui-nas-https:
       entryPoints:
         - "https"
-      rule: "Host(`registry-ui.nas.local.abbottland.io`)"
+      rule: "Host(`registry.nas.local.abbottland.io`) && PathPrefix(`/ui`)"
       middlewares:
         - secured
+        - strip-prefix-ui
       service: registry-ui-nas
       tls: {} 
 
@@ -30,9 +37,10 @@ http:
     to-registry-mirror-ui-nas-https:
       entryPoints:
         - "https"
-      rule: "Host(`registry-mirror-ui.nas.local.abbottland.io`)"
+      rule: "Host(`registry-mirror.nas.local.abbottland.io`) && PathPrefix(`/ui`)"
       middlewares:
         - secured
+        - strip-prefix-ui
       service: registry-mirror-ui-nas
       tls: {} 
 
