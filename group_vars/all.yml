@@ -14,6 +14,7 @@ docker_registry_mirror_ui_port: 5003
 
 drone_server_host: drone.abbottland.io
 drone_user_filter: pbabbott
+drone_admin: pbabbott
 
 verdaccio_public_proto: https
 verdaccio_public_url: verdaccio.nas.local.abbottland.io

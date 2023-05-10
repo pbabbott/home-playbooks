@@ -54,20 +54,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 4_1171_drone
-      - title: Metrics
-        description: Exporter for RPI host
-        icon: hl-prometheus
-        url: http://192.168.4.24:9100/
-        target: newtab
-        statusCheck: true
-        id: 5_1171_metrics
-      - title: Metrics - Grafana
-        description: Exporter for Grafana
-        icon: hl-prometheus
-        url: http://192.168.4.24:3002/metrics
-        target: newtab
-        statusCheck: true
-        id: 6_1171_metricsgrafana
       - title: Portainer
         description: Container Management
         icon: hl-portainer
@@ -91,13 +77,18 @@ sections:
         target: newtab
         statusCheck: true
         id: 0_1859_asustor
-      - title: Docker Registry UI
+      - title: Docker Registry
         description: Container Registry
         icon: hl-docker
-        url: https://registry-ui.nas.local.abbottland.io
+        url: https://registry.nas.local.abbottland.io/ui/
         target: newtab
         statusCheck: true
-        id: 1_1859_dockerregistryui
+      - title: Docker Registry Mirror
+        description: Pull-through cache for docker hub
+        icon: hl-docker
+        url: https://registry-mirror.nas.local.abbottland.io/ui/
+        target: newtab
+        statusCheck: true
       - title: Plex
         description: Plex Media Server
         icon: hl-plex
@@ -119,13 +110,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 4_1859_portainer
-      - title: Metrics
-        description: Exporter for NAS via docker
-        icon: hl-prometheus
-        url: http://192.168.4.124:9100/
-        target: newtab
-        statusCheck: true
-        id: 5_1859_metrics
       - title: HandBrake
         description: Video converter service
         icon: hl-handbrake
@@ -165,13 +149,6 @@ sections:
       collapsed: false
       hideForGuests: false
     items:
-      - title: Metrics
-        description: Prometheus Windows Exporter
-        icon: hl-prometheus
-        url: http://192.168.4.90:9182
-        target: newtab
-        statusCheck: true
-        id: 0_918_metrics
       - title: Home File Service
         description: Helps move content onto my NAS
         icon: hl-node.js
