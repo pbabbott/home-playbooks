@@ -1,0 +1,14 @@
+
+- name: Install loki log driver plugin
+  community.docker.docker_plugin:
+    plugin_name: grafana/loki-docker-driver:latest
+    state: present
+    alias: loki
+
+- name: Enable the plugin
+  community.docker.docker_plugin:
+    plugin_name: loki:latest
+    state: enable
+
+# TODO: enable loki plugin on ARM
+# https://github.com/grafana/loki/issues/974?ref=blog.richardsoper.me#issuecomment-766390258
