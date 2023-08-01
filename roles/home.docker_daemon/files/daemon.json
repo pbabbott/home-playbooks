@@ -1,6 +1,0 @@
-{
-    "metrics-addr" : "IP_ADDRESS:9323",
-    "experimental" : true,
-    "live-restore": true,
-    "registry-mirrors": ["DOCKER_REGISTRY_MIRROR_HOST"]
-}

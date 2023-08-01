@@ -3,11 +3,17 @@
 argument_specs:
   main:
     options:
-      ip_address:
+      docker_daemon_metrics_ip_address:
         type: "str"
         description: "The IP address on which the metrics should be exposed."
         required: true
-      docker_registry_mirror_host:
+      docker_daemon_registry_mirror:
         type: "str"
-        description: "The URI of the registry to use as a pull through cache."
-        required: true
+        description: "(optional) The URI of the registry to use as a pull through cache."
+        required: false
+      docker_daemon_loki_log_sink:
+        type: "str"
+        description: "(optional) The URI of where to send loki logs"
+        required: false
+      docker_daemon_skip_restart:
+        type: "bool"

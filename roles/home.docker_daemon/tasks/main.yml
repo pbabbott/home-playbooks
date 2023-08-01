@@ -6,22 +6,10 @@
     path: /etc/docker
     mode: '0755'  
 
-- name: Copy daemon.json to remote
-  ansible.builtin.copy:
-    src: ./files/daemon.json
+- name: write hostname using jinja2
+  ansible.builtin.template:
+    src: daemon.j2
     dest: /tmp/daemon.json
-
-- name: Replace ip address
-  replace:
-    path: /tmp/daemon.json
-    regexp: 'IP_ADDRESS'
-    replace: "{{ip_address}}"
-
-- name: Replace ip address
-  replace:
-    path: /tmp/daemon.json
-    regexp: 'DOCKER_REGISTRY_MIRROR_HOST'
-    replace: "{{docker_registry_mirror_host}}"
 
 - name: Replace existing docker daemon.json
   ansible.builtin.copy:
@@ -31,8 +19,13 @@
   register: docker_daemon
 
 - name: Restart docker
-  when: docker_daemon.changed
+  when: 
+    - docker_daemon.changed
+    - not docker_daemon_skip_restart == true
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: yes
     name: docker
+
+- name: Set docker daemon changed variable
+  ansible.builtin.set_fact: "docker_daemon_changed={{ docker_daemon.changed }}"

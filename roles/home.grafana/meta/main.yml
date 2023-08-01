@@ -1,4 +1,0 @@
-galaxy_info:
-  author: Brandon Abbott
-  description: Install grafana using docker-compose.  Data is located at /home/pi/grafana_data
-  

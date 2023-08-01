@@ -17,8 +17,37 @@
   roles:
     - role: home.prometheus-docker-node-exporter
 
-- name: Docker Installations on RPI (not root)
-  hosts: rpi
+- name: Install log driver plugin
+  hosts:
+    - room_of_requirement
   roles:
-    - role: home.prometheus-server
-    - role: home.grafana
+    - role: home.docker-plugins
+    
+
+- name: Docker Installations (not root)
+  hosts: 
+    - room_of_requirement
+  roles:
+    - role: home.grafana-loki
+    # - role: home.prometheus-server
+
+- name: Setup Docker Registry as pull through cache
+  become: true
+  hosts: 
+    - room_of_requirement
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
+  roles:
+    - role: home.docker_daemon
+      docker_daemon_metrics_ip_address: "{{ ansible_host }}"
+      docker_daemon_loki_log_sink: "localhost:3100"
+      docker_daemon_skip_restart: true
+  tasks:
+    - name: Restart docker daemon the hard way
+      when: docker_daemon_changed
+      block:
+        - name: stop docker
+          ansible.builtin.command: /usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh stop
+        - name: start docker
+          ansible.builtin.command: /usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh start
+  
