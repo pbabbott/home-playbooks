@@ -38,3 +38,5 @@ backup_jobs:
     dest: "/home/pi/drone_data_{{ansible_date_time.date}}.tar.gz"
     job_name: drone_data
 
+
+docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io

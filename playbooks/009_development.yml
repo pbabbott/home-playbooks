@@ -8,7 +8,7 @@
     # - role: home.docker
     # - role: home.docker_permissions
     - role: home.docker_daemon
-      ip_address: "{{ ansible_host }}"
+      docker_daemon_metrics_ip_address: "{{ ansible_host }}"
     
 
 - name: Get Verdaccio Token & Add to .zprofile
