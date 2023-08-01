@@ -33,13 +33,6 @@ sections:
         target: newtab
         statusCheck: true
         id: 1_1171_homeassistant
-      - title: Grafana
-        description: Dashboards
-        icon: hl-grafana
-        url: http://192.168.4.24:3002
-        target: newtab
-        statusCheck: true
-        id: 2_1171_grafana
       - title: Prometheus
         description: Metrics Aggregator
         icon: hl-prometheus
@@ -77,6 +70,19 @@ sections:
         target: newtab
         statusCheck: true
         id: 0_1859_asustor
+      - title: Grafana
+        description: Dashboards
+        icon: hl-grafana
+        url: https://grafana.nas.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 2_1171_grafana
+      - title: Loki
+        description: Log Aggregator
+        icon: hl-loki
+        url: https://loki.nas.local.abbottland.io/ready
+        target: newtab
+        statusCheck: true
       - title: Docker Registry
         description: Container Registry
         icon: hl-docker

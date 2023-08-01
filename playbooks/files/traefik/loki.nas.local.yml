@@ -1,0 +1,19 @@
+# nas.local.abbottland.io
+
+http:
+  routers:
+    to-loki-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`loki.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: loki-nas
+      tls: {} 
+
+  services:
+    loki-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:3100
+        passHostHeader: true

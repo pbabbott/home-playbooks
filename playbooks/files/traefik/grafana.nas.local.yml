@@ -1,0 +1,19 @@
+# nas.local.abbottland.io
+
+http:
+  routers:
+    to-grafana-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`grafana.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: grafana-nas
+      tls: {} 
+
+  services:
+    grafana-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:3000
+        passHostHeader: true
