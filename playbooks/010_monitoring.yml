@@ -22,7 +22,6 @@
     - room_of_requirement
   roles:
     - role: home.docker-plugins
-    
 
 - name: Docker Installations (not root)
   hosts: 
@@ -31,7 +30,14 @@
     - role: home.grafana-loki
     # - role: home.prometheus-server
 
-- name: Setup Docker Registry as pull through cache
+- name: RPI to send logs to loki
+  hosts: 
+    - rpi
+  roles:
+    - role: home.vector
+
+
+- name: Setup room_of_requirement docker daemon to send logs to loki
   become: true
   hosts: 
     - room_of_requirement

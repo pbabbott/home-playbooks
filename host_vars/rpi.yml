@@ -40,3 +40,6 @@ backup_jobs:
 
 
 docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io
+
+vector_config_directory: /home/pi/app_config/vector
+vector_loki_host: https://loki.nas.local.abbottland.io
