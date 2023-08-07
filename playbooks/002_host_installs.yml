@@ -1,7 +1,6 @@
-
 # TODO: remove this once backup service is complete.
 # azure cli needs to be installed before pip packages
-- name: Install azure cli    
+- name: Install azure cli
   hosts: rpi
   become: true
   roles:
@@ -12,23 +11,24 @@
     - rpi
     - bananapi
   pre_tasks:
-    - become: true
+    - name: Update apt and install pip packages
+      become: true
       block:
-      - name: Update Apt
-        ansible.builtin.apt:
-          upgrade: yes
-          update_cache: yes
-      - name: Install Python3 pip and dns dnsutils
-        ansible.builtin.apt:
-          name: 
-            - python3-pip
-            - dnsutils
-          update_cache: yes
+        - name: Update Apt
+          ansible.builtin.apt:
+            upgrade: true
+            update_cache: true
+        - name: Install Python3 pip and dns dnsutils
+          ansible.builtin.apt:
+            name:
+              - python3-pip
+              - dnsutils
+            update_cache: true
   roles:
     - role: home.pip
       become: true
     - role: cloudalchemy.node_exporter
-    
+
 - name: Pip Installs on NAS
   hosts: room_of_requirement
   roles:
@@ -39,6 +39,7 @@
   hosts: elder_wand
   tasks:
     - name: Install node-windows
-      ansible.builtin.win_shell: npm install -g node-windows
+      #ansible.builtin.win_shell
+      ansible.windows.win_shell: npm install -g node-windows
       args:
         creates: C:\Users\pbabb\AppData\Roaming\npm\node_modules\node-windows

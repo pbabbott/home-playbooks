@@ -1,0 +1,11 @@
+---
+# .ansible-lint
+
+skip_list:
+  - risky-file-permissions
+  - yaml
+  - fqcn-builtins
+  - name[template]
+  - galaxy[no-changelog]
+  - galaxy[no-changelog]
+

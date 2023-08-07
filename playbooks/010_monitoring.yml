@@ -21,7 +21,7 @@
   hosts:
     - room_of_requirement
   roles:
-    - role: home.docker-plugins
+    - role: abbottland.docker.docker_plugins
 
 - name: Docker Installations (not root)
   hosts: 
@@ -44,7 +44,7 @@
   environment:
     PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
   roles:
-    - role: home.docker_daemon
+    - role: abbottland.docker.docker_daemon
       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
       docker_daemon_loki_log_sink: "localhost:3100"
       docker_daemon_skip_restart: true

@@ -6,10 +6,15 @@ Ansible playbooks for home infra
 ## Summary
 In order to run this playbook, the following must be installed:
 
+
+### Prerequisites
 - python3
 - pip3
 - ansible
 - paramiko
+
+### Linting
+- ansible-lint
 
 ## Installation Commands
 
@@ -45,6 +50,8 @@ $ ansible-galaxy install -r ./requirements.yml
 ```
 
 ## `main.yml`
+
+This is the main playbook for all hosts - it is largely idempotent and targets all home infra.
 
 ```sh
 ansible-playbook -e @./vault.yml main.yml

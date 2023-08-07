@@ -1,10 +1,9 @@
 # Note: docker needs to be installed manually onto room_of_requirement!
-- name: Install Docker 
-  hosts: 
+- name: Install Docker
+  hosts:
     - bananapi
     - rpi
   become: true
   roles:
-    - role: home.docker
-    - role: home.docker_permissions
-    
+    - role: abbottland.docker.docker
+    - role: abbottland.docker.docker_permissions

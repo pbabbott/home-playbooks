@@ -16,7 +16,7 @@
     url: https://download.docker.com/linux/debian/gpg
 
 - name: Get DEB architecture
-  shell: dpkg --print-architecture
+  ansible.builtin.command: dpkg --print-architecture
   register: deb_architecture
 
 - name: Add Docker APT repository

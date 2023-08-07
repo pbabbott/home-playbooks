@@ -1,6 +1,5 @@
-
-
 galaxy_info:
   author: Brandon Abbott
   description: Expose prometheus metrics from docker daemon specfying an IP address, leverage upstream registry as pull cache
-  
+  license: GPL-3.0-or-later
+  min_ansible_version: ">=2.10"

@@ -1,0 +1,8 @@
+{
+    "ansible.python.interpreterPath": "/bin/python3",
+    "files.associations": {
+        "playbooks/**/*.yml": "ansible",
+        "**/main.yml": "ansible",
+        "**/argument_specs.yml": "ansible"
+    },
+}

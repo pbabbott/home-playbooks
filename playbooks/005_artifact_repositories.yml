@@ -23,7 +23,7 @@
     - bananapi
     - rpi
   roles:
-    - role: home.docker_daemon
+    - role: abbottland.docker.docker_daemon
       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
     
 - name: Setup NPM Registry on NAS 

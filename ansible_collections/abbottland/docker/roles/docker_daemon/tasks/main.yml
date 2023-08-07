@@ -6,7 +6,7 @@
     path: /etc/docker
     mode: '0755'  
 
-- name: write hostname using jinja2
+- name: Write hostname using jinja2
   ansible.builtin.template:
     src: daemon.j2
     dest: /tmp/daemon.json
@@ -21,7 +21,7 @@
 - name: Restart docker
   when: 
     - docker_daemon.changed
-    - not docker_daemon_skip_restart == true
+    - not docker_daemon_skip_restart
   ansible.builtin.systemd:
     state: restarted
     daemon_reload: yes

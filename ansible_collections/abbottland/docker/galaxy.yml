@@ -1,0 +1,27 @@
+---
+namespace: abbottland
+name: docker
+version: "1.0.0"
+readme: README.md
+authors:
+  - pbabbott
+
+description: Collection of roles to install and configure docker daemon, plugins, etc. (No deployable containers)
+
+license:
+- GPL-3.0-or-later
+
+license_file: ''
+
+tags:
+  - application
+  - docker
+
+dependencies: {}
+
+repository: https://github.com/pbabbott/home-playbooks
+documentation: https://github.com/pbabbott/home-playbooks
+homepage: https://github.com/pbabbott/home-playbooks
+issues: https://github.com/pbabbott/home-playbooks/issues
+
+build_ignore: []

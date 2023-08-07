@@ -1,0 +1,7 @@
+# https://docs.docker.com/engine/install/debian/
+
+galaxy_info:
+  author: Brandon Abbott
+  description: Ensure target host has docker, docker-compose installed.
+  license: GPL-3.0-or-later
+  min_ansible_version: ">=2.10"
