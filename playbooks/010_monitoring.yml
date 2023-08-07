@@ -1,3 +1,15 @@
+- name: Setup host metrics for PI
+  hosts:
+    - rpi
+    - bananapi
+  roles:
+    - role: cloudalchemy.node_exporter
+
+- name: Setup host metrics for NAS 
+  hosts: room_of_requirement
+  roles:
+    - role: home.prometheus-docker-node-exporter
+
 - name: Configure elder_wand
   hosts: elder_wand
   tasks:
@@ -12,10 +24,6 @@
         state: present
         enabled: yes
 
-- name: Configure NAS 
-  hosts: room_of_requirement
-  roles:
-    - role: home.prometheus-docker-node-exporter
 
 - name: Install log driver plugin
   hosts:

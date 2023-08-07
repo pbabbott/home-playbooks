@@ -80,5 +80,5 @@
 # - name: Configure Local Computer
 #   hosts: localhost
 #   roles:
-#     - role: home.pip
+#     - role: abbottland.core.pip
 #     - role: home.fnm

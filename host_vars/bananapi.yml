@@ -4,6 +4,10 @@ host_pgid: "1000"
 dns_nameservers: 
   - "127.0.0.1"
 
+apt_install_packages:
+  - python3-pip
+  - dnsutils
+
 pip_install_packages:
   - docker
   - docker-compose

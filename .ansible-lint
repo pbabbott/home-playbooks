@@ -1,6 +1,12 @@
 ---
 # .ansible-lint
 
+exclude_paths:
+    - roles/ansible-dns
+    - gantsign.antigen_bundles
+    - ryankwilliams.ssh_copy_id
+    - roles/cloudalchemy.node_exporter
+
 skip_list:
   - risky-file-permissions
   - yaml
@@ -8,4 +14,3 @@ skip_list:
   - name[template]
   - galaxy[no-changelog]
   - galaxy[no-changelog]
-

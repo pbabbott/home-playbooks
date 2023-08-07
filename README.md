@@ -12,6 +12,7 @@ In order to run this playbook, the following must be installed:
 - pip3
 - ansible
 - paramiko
+- pyopenssl
 
 ### Linting
 - ansible-lint

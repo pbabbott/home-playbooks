@@ -1,3 +1,13 @@
+# TODO: remove this once backup service is complete.
+# NOTE: azure cli needs to be installed before pip packages
+
+# - name: Install azure cli
+#   hosts: rpi
+#   become: true
+#   roles:
+#     - role: home.az.cli
+
+
 # - name: Backup important data to Azure each week
 #   hosts: rpi
 #   tasks:

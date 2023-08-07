@@ -1,0 +1,26 @@
+---
+namespace: abbottland
+name: core
+version: "1.0.0"
+readme: README.md
+authors:
+  - pbabbott
+
+description: Collection of roles to install globally-available packages (pip, node, apt)
+
+license:
+- GPL-3.0-or-later
+
+license_file: ''
+
+tags:
+  - application
+
+dependencies: {}
+
+repository: https://github.com/pbabbott/home-playbooks
+documentation: https://github.com/pbabbott/home-playbooks
+homepage: https://github.com/pbabbott/home-playbooks
+issues: https://github.com/pbabbott/home-playbooks/issues
+
+build_ignore: []
