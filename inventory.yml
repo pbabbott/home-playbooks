@@ -10,7 +10,8 @@ all:
     remote:
       hosts:
         elder_wand:
-          ansible_host: 192.168.4.90
+          # ansible_host: 192.168.4.90 # Ethernet
+          ansible_host: 192.168.4.134 # Wi-Fi
           ansible_winrm_port: 5985
           ansible_connection: winrm
           ansible_winrm_scheme: http
