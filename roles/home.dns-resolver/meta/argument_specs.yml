@@ -1,0 +1,12 @@
+argument_specs:
+  main:
+    short_description: The main entrypoint for the home.dns-resolver
+    options:
+      dns_resolver_dhcpcd:
+        type: "str"
+        description: "Path to dhcpcd.conf - default value is /etc/dhcpcd.conf"
+        required: false
+      dns_nameservers:
+        type: "list"
+        description: "A list of nameservers (strings) to use for DNS lookups"
+        required: true

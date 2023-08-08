@@ -26,7 +26,7 @@
       - loki.nas.local.yml
 
   tasks:
-    - name: "Copy traefik config {{item}} to remote"
+    - name: "Copy traefik config {{ item }} to remote"
       ansible.builtin.copy:
         src: "./traefik/{{ item }}"
         dest: "{{ traefik_dynamic_config_dir }}/{{ item }}"

@@ -1,0 +1,10 @@
+- name: Add block section to target file
+  notify:
+    - Restart dhcpcd
+  blockinfile:
+    path: "{{ dns_resolver_dhcpcd }}"
+    insertafter: EOF
+    marker: "# {mark} ANSIBLE MANAGED SECTION"
+    block: |
+      static domain_name_servers={{ dns_nameservers | join(' ') }}
+  

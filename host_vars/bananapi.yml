@@ -7,6 +7,7 @@ dns_nameservers:
 apt_install_packages:
   - python3-pip
   - dnsutils
+  - dhcpcd5
 
 pip_install_packages:
   - docker

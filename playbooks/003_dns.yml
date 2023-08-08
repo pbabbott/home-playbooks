@@ -10,4 +10,4 @@
     - rpi
   become: true
   roles:
-    - name: ansible-dns
+    - role: home.dns-resolver

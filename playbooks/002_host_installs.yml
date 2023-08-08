@@ -1,20 +1,20 @@
-# ---
-# - name: Install apt packages
-#   hosts:
-#     - rpi
-#     - bananapi
-#   become: true
-#   roles:
-#     - abbottland.core.apt
+---
+- name: Install apt packages
+  hosts:
+    - rpi
+    - bananapi
+  become: true
+  roles:
+    - abbottland.core.apt
 
-# - name: Install pip packages
-#   hosts:
-#     - rpi
-#     - bananapi
-#     - room_of_requirement
-#   roles:
-#     - role: abbottland.core.pip
-#       become: true
+- name: Install pip packages
+  hosts:
+    - rpi
+    - bananapi
+    - room_of_requirement
+  roles:
+    - role: abbottland.core.pip
+      become: true
 
 # TODO: This is for home-file-service only
 - name: Install node-windows globally on elder_wand

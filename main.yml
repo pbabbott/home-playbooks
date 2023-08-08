@@ -2,7 +2,7 @@
 # Docker needs to be installed before pip installs on host
 # - import_playbook: ./playbooks/001_docker.yml
 - import_playbook: ./playbooks/002_host_installs.yml
-# - import_playbook: ./playbooks/003_dns.yml
+- import_playbook: ./playbooks/003_dns.yml
 # - import_playbook: ./playbooks/004_reverse_proxy.yml
 # - import_playbook: ./playbooks/005_artifact_repositories.yml
 # - import_playbook: ./playbooks/006_ci_cd.yml
