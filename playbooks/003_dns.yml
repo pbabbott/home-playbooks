@@ -2,7 +2,7 @@
 - name: Docker Installations on Banana PI (not root)
   hosts: bananapi
   roles:
-     - role: home.pihole
+     - role: abbottland.dns.pihole
 
 - name: DNS Resolvers
   hosts:
@@ -10,4 +10,4 @@
     - rpi
   become: true
   roles:
-    - role: home.dns-resolver
+    - role: abbottland.dns.dns-resolver

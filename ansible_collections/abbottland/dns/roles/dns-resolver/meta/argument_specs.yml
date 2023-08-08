@@ -1,6 +1,6 @@
 argument_specs:
   main:
-    short_description: The main entrypoint for the home.dns-resolver
+    short_description: The main entrypoint for the dns-resolver
     options:
       dns_resolver_dhcpcd:
         type: "str"

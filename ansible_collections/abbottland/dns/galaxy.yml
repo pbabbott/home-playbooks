@@ -1,0 +1,26 @@
+---
+namespace: abbottland
+name: dns
+version: "1.0.0"
+readme: README.md
+authors:
+  - pbabbott
+
+description: Collection of roles to make working with DNS, DDNS, and DHCPD easier
+
+license:
+- GPL-3.0-or-later
+
+license_file: ''
+
+tags:
+  - application
+
+dependencies: {}
+
+repository: https://github.com/pbabbott/home-playbooks
+documentation: https://github.com/pbabbott/home-playbooks
+homepage: https://github.com/pbabbott/home-playbooks
+issues: https://github.com/pbabbott/home-playbooks/issues
+
+build_ignore: []
