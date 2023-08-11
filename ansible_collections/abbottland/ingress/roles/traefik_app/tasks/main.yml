@@ -1,0 +1,6 @@
+- name: "Copy {{ traefik_app_file_name }} traefik config to remote"
+  ansible.builtin.copy:
+    src: "./traefik/{{ traefik_app_file_name }}"
+    dest: "{{ traefik_dynamic_config_dir }}/{{ traefik_app_file_name }}"
+  notify:
+    - Restart traefik container

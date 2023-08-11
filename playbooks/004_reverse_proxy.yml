@@ -5,7 +5,6 @@
 - name: DDNS and Traefik Installation on Banana PI via Docker (not root)
   hosts: bananapi
   roles:
-    - role: abbottland.dns.cloudflare-ddns
     - role: home.traefik
   vars:
     traefik_files:

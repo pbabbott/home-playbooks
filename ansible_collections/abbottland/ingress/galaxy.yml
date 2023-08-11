@@ -1,0 +1,26 @@
+---
+namespace: abbottland
+name: ingress
+version: "1.0.0"
+readme: README.md
+authors:
+  - pbabbott
+
+description: Collection of roles to help with application ingress into my home infra.
+
+license:
+- GPL-3.0-or-later
+
+license_file: ''
+
+tags:
+  - application
+
+dependencies: {}
+
+repository: https://github.com/pbabbott/home-playbooks
+documentation: https://github.com/pbabbott/home-playbooks
+homepage: https://github.com/pbabbott/home-playbooks
+issues: https://github.com/pbabbott/home-playbooks/issues
+
+build_ignore: []

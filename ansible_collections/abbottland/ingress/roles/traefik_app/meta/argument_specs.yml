@@ -1,0 +1,11 @@
+argument_specs:
+  main:
+    options:
+      traefik_dynamic_config_dir:
+        type: "str"
+        description: "The configuration directory for traefik appliactions"
+        required: true
+      traefik_app_file_name:
+        type: "str"
+        description: "The name of the file to copy"
+        required: true

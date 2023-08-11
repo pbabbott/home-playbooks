@@ -1,29 +1,39 @@
-- ansible.builtin.file:
+- name: Ensure traekfik config directory exists
+  ansible.builtin.file:
     path: "{{ traefik_config_dir }}"
     state: directory
 
-- ansible.builtin.file:
+- name: Create acme.json empty file
+  ansible.builtin.file:
     path: "{{ traefik_config_dir }}/acme.json"
     state: touch
-    mode: '600'  
+    mode: '600'
+    modification_time: preserve
+    access_time: preserve
 
-- ansible.builtin.file:
+- name: Create access.log empty file
+  ansible.builtin.file:
     path: "{{ traefik_config_dir }}/access.log"
     state: touch
+    modification_time: preserve
+    access_time: preserve
 
 - name: Copy static config file to remote
-  register: conf
   ansible.builtin.copy:
     src: traefik.yml
     dest: "{{ traefik_config_dir }}/traefik.yml"
+  notify:
+    - Restart traefik container
 
 - name: Copy dynamic config file to remote
-  register: dyn_conf
   ansible.builtin.copy:
     src: conf.yml
     dest: "{{ traefik_dynamic_config_dir }}/conf.yml"
+  notify:
+    - Restart traefik container
 
-- community.docker.docker_compose:
+- name: Ensure traefik is running
+  community.docker.docker_compose:
     project_name: traefik
     
     definition:
@@ -34,7 +44,7 @@
           container_name: traefik
           image: traefik:v2.9
           environment:
-            CLOUDFLARE_DNS_API_TOKEN: "{{ cloudflare.token }}"
+            CLOUDFLARE_DNS_API_TOKEN: "{{ traefik_cloudflare_token }}"
           ports:
             - "8022:8022"
             - "8080:8080"
@@ -46,10 +56,3 @@
             - /{{ traefik_config_dir }}/acme.json:/etc/traefik/acme.json
             - /{{ traefik_config_dir }}/access.log:/etc/traefik/access.log
             - /{{ traefik_dynamic_config_dir }}:/etc/traefik/conf.d/
-
-
-- name: restart container
-  docker_container:
-    name: traefik
-    restart: true
-  when: conf.changed or dyn_conf.changed

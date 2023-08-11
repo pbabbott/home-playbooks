@@ -1,0 +1,15 @@
+argument_specs:
+  main:
+    options:
+      traefik_config_dir:
+        type: "str"
+        description: "The configuration directory for traefik"
+        required: true
+      traefik_dynamic_config_dir:
+        type: "str"
+        description: "The configuration directory for traefik appliactions"
+        required: true
+      traefik_cloudflare_token:
+        type: "str"
+        description: "The token to use for cloudflare"
+        required: true

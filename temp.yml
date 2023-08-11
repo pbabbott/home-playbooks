@@ -14,28 +14,28 @@
 #     - debug:
 #         msg: "hello user: {{ansible_date_time.date}}"
 
-- name: test out windows module
-  hosts: elder_wand
-  tasks:
-  - name: Get whoami information
-    ansible.windows.win_whoami: 
-
-# - hosts: rpi
-#   name: Hello World
+# - name: test out windows module
+#   hosts: elder_wand
 #   tasks:
-#     - debug:
-#         msg: "hello user: {{ansible_user}}"
-#     - debug:
-#         msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
-#     - debug:
-#         msg: "{{ playbook_dir }}"
+#   - name: Get whoami information
+#     ansible.windows.win_whoami: 
+
+# # - hosts: rpi
+# #   name: Hello World
+# #   tasks:
+# #     - debug:
+# #         msg: "hello user: {{ansible_user}}"
+# #     - debug:
+# #         msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+# #     - debug:
+# #         msg: "{{ playbook_dir }}"
   
 
-- name: Configure elder_wand
-  hosts: elder_wand
-  tasks:
-    - name: Ping host
-      win_ping: {}
+# - name: Configure elder_wand
+#   hosts: elder_wand
+#   tasks:
+#     - name: Ping host
+#       win_ping: {}
 
 ## ------------------------------------
 
