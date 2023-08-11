@@ -16,7 +16,7 @@
     - role: abbottland.core.pip
       become: true
 
-# TODO: This is for home-file-service only
+# TODO: Extract this out as its for home-file-service only
 - name: Install node-windows globally on elder_wand
   hosts: elder_wand
   tasks:
