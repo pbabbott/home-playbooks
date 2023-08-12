@@ -1,0 +1,34 @@
+- name: Traefik configuration for registry and registry mirror
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'registry.nas.local.yml'
+
+- name: Setup Docker Registry on NAS
+  hosts: room_of_requirement
+  roles:
+    # First registry is for publishing images.
+    - role: home.docker-registry
+
+    # Second registry is used as a pull-through cache (unable to push images to a mirror)
+    - role: home.docker-registry
+      docker_registry_host: "{{docker_registry_mirror_host}}"
+      docker_registry_title: "{{docker_registry_mirror_title}}"
+      docker_registry_config_dir: "{{docker_registry_mirror_config_dir}}"
+      docker_registry_storage_dir: "{{docker_registry_mirror_storage_dir}}"
+      docker_registry_port: "{{ docker_registry_mirror_port }}"
+      docker_registry_ui_port: "{{ docker_registry_mirror_ui_port }}"
+      docker_registry_proxy_enabled: true
+      docker_hub_username: "{{dockerHub.username}}"
+      docker_hub_password: "{{dockerHub.password}}"
+
+- name: Setup Docker Registry as pull through cache
+  become: true
+  hosts: 
+    - bananapi
+    - rpi
+  roles:
+     - role: abbottland.docker.docker_daemon
+       docker_daemon_key: 'registry-mirrors'
+       docker_daemon_value: '["{{docker_daemon_registry_mirror}}"]'
+    

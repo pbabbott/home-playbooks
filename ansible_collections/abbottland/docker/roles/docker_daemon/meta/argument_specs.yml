@@ -3,17 +3,13 @@
 argument_specs:
   main:
     options:
-      docker_daemon_metrics_ip_address:
-        type: "str"
-        description: "The IP address on which the metrics should be exposed."
-        required: true
-      docker_daemon_registry_mirror:
-        type: "str"
-        description: "(optional) The URI of the registry to use as a pull through cache."
-        required: false
-      docker_daemon_loki_log_sink:
-        type: "str"
-        description: "(optional) The URI of where to send loki logs"
-        required: false
       docker_daemon_skip_restart:
         type: "bool"
+      docker_daemon_key:
+        required: true
+        type: "str"
+        description: "key for dameon settings"
+      docker_daemon_value:
+        required: true
+        type: "raw"
+        description: "raw value for dameon settings"

@@ -9,7 +9,7 @@
   vars:
     traefik_files:
       # Banana PI
-      - pihole.local.yml
+      # - pihole.local.yml
       # Raspberry PI
       - drone.yml
       - mealie.yml
@@ -18,7 +18,7 @@
       - plex.yml
       - portal.nas.local.yml
       - portainer.nas.local.yml
-      - registry.nas.local.yml
+      # - registry.nas.local.yml
       - handbrake.nas.local.yml
       - verdaccio.nas.local.yml
       - grafana.nas.local.yml

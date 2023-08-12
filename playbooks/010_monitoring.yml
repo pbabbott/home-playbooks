@@ -44,18 +44,18 @@
   roles:
     - role: home.vector
 
-
-- name: Setup room_of_requirement docker daemon to send logs to loki
-  become: true
-  hosts: 
-    - room_of_requirement
-  environment:
-    PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
-  roles:
-    - role: abbottland.docker.docker_daemon
-      docker_daemon_metrics_ip_address: "{{ ansible_host }}"
-      docker_daemon_loki_log_sink: "localhost:3100"
-      docker_daemon_skip_restart: true
+# TODO: update this to use new docker_daemon config
+# - name: Setup room_of_requirement docker daemon to send logs to loki
+#   become: true
+#   hosts: 
+#     - room_of_requirement
+#   environment:
+#     PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
+#   roles:
+#     - role: abbottland.docker.docker_daemon
+#       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
+#       docker_daemon_loki_log_sink: "localhost:3100"
+#       docker_daemon_skip_restart: true
   tasks:
     - name: Restart docker daemon the hard way
       when: docker_daemon_changed
@@ -64,4 +64,14 @@
           ansible.builtin.command: /usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh stop
         - name: start docker
           ansible.builtin.command: /usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh start
-  
+
+# TODO: setup prometheus metrics  
+# - role: abbottland.docker.docker_daemon
+#       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
+
+# TODO: Setup loki metrics
+  # "log-driver":"loki",
+  #   "log-opts": {
+  #       "loki-url": "http://{{docker_daemon_loki_log_sink}}/loki/api/v1/push",
+  #       "loki-batch-size": "400"
+  #   }

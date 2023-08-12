@@ -6,6 +6,7 @@
     state: directory
     mode: '0755'  
 
+# TODO: make sure this is idempotent
 - name: "Ensure etc-pihole directory exists"
   ansible.builtin.file:
     path: "{{ pihole_config_dir }}/etc-pihole"

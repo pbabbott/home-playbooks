@@ -4,7 +4,7 @@
     "live-restore": true,
 
     {% if docker_daemon_registry_mirror is defined %}
-    "registry-mirrors": ["{{docker_daemon_registry_mirror}}"],
+"registry-mirrors": ["{{docker_daemon_registry_mirror}}"],
     {% endif %}
 
 {% if docker_daemon_loki_log_sink is defined %}
@@ -17,3 +17,5 @@
 {% endif %}
 
 }
+
+# https://stackoverflow.com/questions/50796341/add-a-new-key-value-to-a-json-file-using-ansible

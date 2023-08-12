@@ -15,6 +15,7 @@
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
 
+# TODO: make this idempotent
 - name: Get DEB architecture
   ansible.builtin.command: dpkg --print-architecture
   register: deb_architecture

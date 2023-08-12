@@ -11,6 +11,7 @@ apt_install_packages:
 pip_install_packages:
   - docker
   - docker-compose
+  # TODO: remove this once config-backup-service is done
   - azure-cli
 
 backup_azure_username: "{{ azure.homeSPN.username }}"

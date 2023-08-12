@@ -7,3 +7,9 @@
   roles:
     - role: abbottland.docker.docker
     - role: abbottland.docker.docker_permissions
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: 'experimental'
+      docker_daemon_value: true
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: 'live-restore'
+      docker_daemon_value: true
