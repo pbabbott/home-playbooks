@@ -1,0 +1,65 @@
+
+- name: Install dashy on target
+  hosts: rpi
+  handlers:
+    - name: Restart dashy container
+      community.docker.docker_container:
+        name: dashy
+        restart: true
+  tasks:
+    - name: Ensure dashy config directory exists
+      ansible.builtin.file:
+        path: "{{ dashy_config_dir }}"
+        state: directory
+        mode: '0755'  
+    - name: Copy configuration file to remote
+      ansible.builtin.copy:
+        src: ./files/conf.yml
+        dest: "{{ dashy_config_dir }}/conf.yml"
+      notify:
+        - Restart dashy container
+    - name: Copy icons directory to remote
+      ansible.builtin.file:
+        path: "{{ dashy_config_dir }}/icons"
+        state: directory
+        mode: '0755'  
+    - name: Copy icons to remote
+      ansible.builtin.copy:
+        src: ./files/item-icons
+        dest: "{{ dashy_config_dir }}"
+    - name: Ensure dashy is up-and-running
+      community.docker.docker_compose:
+        project_name: dashy
+        definition:
+          version: "3.1"
+          networks:
+            default:
+              name: lsio
+              external: true
+          services:
+            dashy:
+              container_name: dashy
+              image: lissy93/dashy:latest
+              restart: always
+              ports:
+                - 4000:80
+              environment:
+                PUID: "{{ host_puid }}"
+                PGID: "{{ host_pgid }}"
+                TZ: "{{ host_tz }}"
+                NODE_ENV: production
+              volumes:
+                - "{{ dashy_config_dir }}/conf.yml:/app/public/conf.yml"
+                - "{{ dashy_config_dir }}/item-icons:/app/public/item-icons"
+              healthcheck:
+                test: ['CMD', 'node', '/app/services/healthcheck']
+                interval: 1m30s
+                timeout: 10s
+                retries: 3
+                start_period: 40s
+
+- name: Traefik configuration for dashboard
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'dashboard.local.yml'

@@ -11,7 +11,7 @@
       # Banana PI
       # - pihole.local.yml
       # Raspberry PI
-      - drone.yml
+      # - drone.yml
       - mealie.yml
       - dashboard.local.yml
       # Room Of Requirement
@@ -19,7 +19,7 @@
       - portal.nas.local.yml
       - portainer.nas.local.yml
       # - registry.nas.local.yml
-      - handbrake.nas.local.yml
+      # - handbrake.nas.local.yml
       # - verdaccio.nas.local.yml
       - grafana.nas.local.yml
       - loki.nas.local.yml

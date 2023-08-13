@@ -1,12 +1,7 @@
-- name: Configure NAS 
-  hosts: room_of_requirement
-  roles:
-    - role: home.handbrake
 
 - name: Docker Installations on RPI (not root)
   hosts: rpi
   roles:
-    - role: home.dashy
     - role: home.mealie
 #     - role: home.portainer
 #     - role: home.home-assistant

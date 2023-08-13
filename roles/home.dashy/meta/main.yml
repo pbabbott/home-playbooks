@@ -1,4 +1,0 @@
-galaxy_info:
-  author: Brandon Abbott
-  description: Install dashy using docker-compose.  Data is located at /home/pi/dashy_data
- 

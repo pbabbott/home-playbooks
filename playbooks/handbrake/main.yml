@@ -1,0 +1,51 @@
+- name: Configure NAS 
+  hosts: room_of_requirement
+  tasks:
+    - name: Ensure handbrake config directory exists
+      ansible.builtin.file:
+        path: "{{ handbrake_config_dir }}"
+        state: directory
+        mode: '0755'  
+
+    - name: Ensure handbrake watch directory exists
+      ansible.builtin.file:
+        path: "{{ handbrake_watch_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Ensure handbrake output directory exists
+      ansible.builtin.file:
+        path: "{{ handbrake_output_dir }}"
+        state: directory
+        mode: '0755'  
+
+    - name: Ensure handbrake server is running
+      community.docker.docker_compose:
+        project_name: handbrake
+        # TODO: Add max CPU to be 3
+        definition:
+          version: "3.1"
+          services:
+            handbrake:
+              container_name: handbrake
+              image: jlesage/handbrake
+              restart: always
+              ports:
+                - 5800:5800
+              environment:
+                USER_ID: "{{ host_puid }}"
+                GROUP_ID: "{{ host_pgid }}"
+                TZ: "{{ host_tz }}"
+                DARK_MODE: "1"
+                AUTOMATED_CONVERSION_OUTPUT_SUBDIR: SAME_AS_SRC
+              volumes:
+                - "{{ handbrake_config_dir }}:/config:rw"
+                - "{{ handbrake_storage_dir }}:/storage:ro"
+                - "{{ handbrake_watch_dir }}:/watch:rw"
+                - "{{ handbrake_output_dir }}:/output:rw"
+        
+- name: Traefik configuration for handbrake
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'handbrake.nas.local.yml'
