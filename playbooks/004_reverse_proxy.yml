@@ -12,8 +12,8 @@
       # - pihole.local.yml
       # Raspberry PI
       # - drone.yml
-      - mealie.yml
-      - dashboard.local.yml
+      # - mealie.yml
+      # - dashboard.local.yml
       # Room Of Requirement
       - plex.yml
       - portal.nas.local.yml
