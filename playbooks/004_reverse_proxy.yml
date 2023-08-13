@@ -20,7 +20,7 @@
       - portainer.nas.local.yml
       # - registry.nas.local.yml
       - handbrake.nas.local.yml
-      - verdaccio.nas.local.yml
+      # - verdaccio.nas.local.yml
       - grafana.nas.local.yml
       - loki.nas.local.yml
 

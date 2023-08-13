@@ -25,8 +25,7 @@
 - name: Setup Docker Registry as pull through cache
   become: true
   hosts: 
-    - bananapi
-    - rpi
+    - web_servers
   roles:
      - role: abbottland.docker.docker_daemon
        docker_daemon_key: 'registry-mirrors'

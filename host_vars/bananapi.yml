@@ -1,24 +1,8 @@
-host_puid: "1000"
-host_pgid: "1000"
-
+# bananapi is dns server and should loop back to self
 dns_nameservers: 
   - "127.0.0.1"
-
-apt_install_packages:
-  - python3-pip
-  - dnsutils
-  - dhcpcd5
-
-pip_install_packages:
-  - docker
-  - docker-compose
 
 traefik_config_dir: /home/pi/app_config/traefik
 traefik_dynamic_config_dir: /home/pi/app_config/traefik/conf.d
 
 pihole_config_dir: /home/pi/app_config/pihole
-
-docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io
-
-vector_config_directory: /home/pi/app_config/vector
-vector_loki_host: https://loki.nas.local.abbottland.io

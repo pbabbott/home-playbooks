@@ -1,51 +1,5 @@
-host_puid: "1000"
-host_pgid: "1000"
-
-dns_nameservers:
-  - "192.168.4.144"
-
-apt_install_packages:
-  - python3-pip
-  - dnsutils
-
-pip_install_packages:
-  - docker
-  - docker-compose
-  # TODO: remove this once config-backup-service is done
-  - azure-cli
-
-backup_azure_username: "{{ azure.homeSPN.username }}"
-backup_azure_password: "{{ azure.homeSPN.password }}"
-backup_azure_tenant: "{{ azure.homeSPN.tenant }}"
-backup_azure_subscriptionId: "07619e8e-01a2-4b48-9d9c-281f290d3a37"
-
 drone_data_dir: /home/pi/app_config/drone/data
 drone_runner_name: rpi-runner
 
 dashy_config_dir: /home/pi/app_config/dashy
 mealie_data_dir: /home/pi/app_config/mealie_data
-
-# TODO: move this into new backup container project
-backup_jobs:
-  - path: /home/pi/homeassistant_data
-    dest: "/home/pi/homeassistant_data_{{ansible_date_time.date}}.tar.gz"
-    job_name: homeassistant_data
-
-  - path: /home/pi/mealie_data
-    dest: "/home/pi/mealie_data_{{ansible_date_time.date}}.tar.gz"
-    job_name: mealie_data
-
-  - path: /home/pi/grafana
-    dest: "/home/pi/grafana_data_{{ansible_date_time.date}}.tar.gz"
-    job_name: grafana_data
-
-  - path: /home/pi/drone_data
-    dest: "/home/pi/drone_data_{{ansible_date_time.date}}.tar.gz"
-    job_name: drone_data
-
-
-docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io
-
-vector_config_directory: /home/pi/app_config/vector
-vector_loki_host: https://loki.nas.local.abbottland.io
-

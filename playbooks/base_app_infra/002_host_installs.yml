@@ -1,16 +1,13 @@
 ---
 - name: Install apt packages
-  hosts:
-    - rpi
-    - bananapi
+  hosts: web_servers
   become: true
   roles:
     - abbottland.core.apt
 
 - name: Install pip packages
   hosts:
-    - rpi
-    - bananapi
+    - web_servers
     - room_of_requirement
   roles:
     - role: abbottland.core.pip

@@ -8,6 +8,19 @@ all:
       ansible_sudo_pass: "{{ inventoryPasswords.localhost }}"
   children:
     remote:
+      children:
+        web_servers:
+          hosts:
+            rpi:
+              ansible_host: 192.168.4.24
+              ansible_user: pi
+              ansible_password: "{{ inventoryPasswords.rpi }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.rpi }}"
+            bananapi:
+              ansible_host: 192.168.4.144
+              ansible_user: pi
+              ansible_password: "{{ inventoryPasswords.bananapi }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
       hosts:
         elder_wand:
           # ansible_host: 192.168.4.90 # Ethernet
@@ -19,16 +32,6 @@ all:
           ansible_winrm_transport: ntlm
           ansible_user: pbabb
           ansible_password: "{{ inventoryPasswords.elder_wand }}"
-        rpi:
-          ansible_host: 192.168.4.24
-          ansible_user: pi
-          ansible_password: "{{ inventoryPasswords.rpi }}"
-          ansible_sudo_pass: "{{ inventoryPasswords.rpi }}"
-        bananapi:
-          ansible_host: 192.168.4.144
-          ansible_user: pi
-          ansible_password: "{{ inventoryPasswords.bananapi }}"
-          ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
         room_of_requirement:
           ansible_host: 192.168.4.124
           ansible_user: pabbott

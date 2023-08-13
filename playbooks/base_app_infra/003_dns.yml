@@ -5,10 +5,10 @@
     - role: abbottland.dns.pihole
     - role: abbottland.dns.cloudflare_ddns
 
+# TODO: consider adding resolver to room_of_requirement
 - name: DNS Resolvers
   hosts:
-    - bananapi
-    - rpi
+    - web_servers
   become: true
   roles:
     - role: abbottland.dns.dns_resolver
