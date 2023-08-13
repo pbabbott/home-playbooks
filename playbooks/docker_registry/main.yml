@@ -12,15 +12,15 @@
 
     # Second registry is used as a pull-through cache (unable to push images to a mirror)
     - role: abbottland.docker.docker_registry
-      docker_registry_host: "{{docker_registry_mirror_host}}"
-      docker_registry_title: "{{docker_registry_mirror_title}}"
-      docker_registry_config_dir: "{{docker_registry_mirror_config_dir}}"
-      docker_registry_storage_dir: "{{docker_registry_mirror_storage_dir}}"
+      docker_registry_host: "{{ docker_registry_mirror_host }}"
+      docker_registry_title: "{{ docker_registry_mirror_title }}"
+      docker_registry_config_dir: "{{ docker_registry_mirror_config_dir }}"
+      docker_registry_storage_dir: "{{ docker_registry_mirror_storage_dir }}"
       docker_registry_port: "{{ docker_registry_mirror_port }}"
       docker_registry_ui_port: "{{ docker_registry_mirror_ui_port }}"
       docker_registry_proxy_enabled: true
-      docker_hub_username: "{{dockerHub.username}}"
-      docker_hub_password: "{{dockerHub.password}}"
+      docker_hub_username: "{{ dockerHub.username }}"
+      docker_hub_password: "{{ dockerHub.password }}"
 
 - name: Setup Docker Registry as pull through cache
   become: true
@@ -29,5 +29,5 @@
   roles:
      - role: abbottland.docker.docker_daemon
        docker_daemon_key: 'registry-mirrors'
-       docker_daemon_value: '["{{docker_daemon_registry_mirror}}"]'
+       docker_daemon_value: '["{{ docker_daemon_registry_mirror }}"]'
     

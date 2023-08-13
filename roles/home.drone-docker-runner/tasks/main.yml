@@ -11,7 +11,7 @@
           environment:
             DRONE_RPC_PROTO: https
             DRONE_RPC_HOST: "{{ drone_server_host }}"
-            DRONE_RPC_SECRET: "{{ drone.shared_secret }}"
+            DRONE_RPC_SECRET: "{{ drone_shared_secret }}"
             DRONE_RUNNER_CAPACITY: 2
             DRONE_RUNNER_NAME: "{{ drone_runner_name }}"
           restart: always

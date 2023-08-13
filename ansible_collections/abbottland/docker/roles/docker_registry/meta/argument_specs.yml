@@ -1,6 +1,14 @@
 argument_specs:
   main:
     options:
+      docker_registry_host:
+        type: 'str'
+        description: "URI of where the registry is running (not the UI)"
+        required: true
+      docker_registry_title:
+        type: 'str'
+        description: "Title to show up in the registry UI"
+        required: true
       docker_registry_config_dir:
         type: "str"
         description: "Directory where all the config files will live"
@@ -21,14 +29,6 @@ argument_specs:
         type: 'bool'
         description: "Should this registry be used as a pull-through cache"
         required: false
-      docker_registry_username:
-        type: 'str'
-        description: "Username of who can access this regisry"
-        required: true
-      docker_registry_password:
-        type: 'str'
-        description: "Password for provided username"
-        required: true
       docker_hub_username:
         type: 'str'
         description: "Username for docker hub (used with proxy)"
@@ -37,3 +37,12 @@ argument_specs:
         type: 'str'
         description: "Password for docker hub (used with proxy)"
         required: false
+      docker_registry_username:
+        type: 'str'
+        description: "Username of who can access this regisry"
+        required: true
+      docker_registry_password:
+        type: 'str'
+        description: "Password for provided username"
+        required: true
+     

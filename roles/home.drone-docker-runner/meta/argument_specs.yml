@@ -1,0 +1,15 @@
+argument_specs:
+  main:
+    options:
+      drone_server_host:
+        type: 'str'
+        description: "Hostname of drone server (URI)"
+        required: true
+      drone_shared_secret:
+        type: 'str'
+        description: "Shared secret between drone website and runners"
+        required: true
+      drone_runner_name:
+        type: 'str'
+        description: "Shared secret between drone website and runners"
+        required: true
