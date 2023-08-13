@@ -1,7 +1,7 @@
 
-- community.docker.docker_compose:
+- name: Setup drone runner
+  community.docker.docker_compose:
     project_name: drone_runner
-    
     definition:
       version: '3'
       services:
@@ -13,7 +13,7 @@
             DRONE_RPC_HOST: "{{ drone_server_host }}"
             DRONE_RPC_SECRET: "{{ drone.shared_secret }}"
             DRONE_RUNNER_CAPACITY: 2
-            DRONE_RUNNER_NAME: "{{drone_runner_name}}"
+            DRONE_RUNNER_NAME: "{{ drone_runner_name }}"
           restart: always
           ports:
             - 3000:3000

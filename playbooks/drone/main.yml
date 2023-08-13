@@ -1,3 +1,9 @@
+- name: Traefik configuration for drone
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'drone.yml'
+
 - name: Drone Docker Installations on RPI (not root)
   hosts: rpi
   roles:

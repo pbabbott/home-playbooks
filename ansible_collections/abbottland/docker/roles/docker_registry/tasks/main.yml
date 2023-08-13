@@ -1,5 +1,6 @@
 
-- ansible.builtin.file:
+- name: Ensure docker registry directories exist
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: '0755'
@@ -24,13 +25,16 @@
     remote_src: true
     src: "{{ docker_registry_config_dir }}/temp.yml"
     dest: "{{ docker_registry_config_dir }}/config.yml"
-  register: conf
+  notify:
+    - Restart registry container
 
-- ansible.builtin.file:
+- name: Remove temporary file
+  ansible.builtin.file:
     path: "{{ docker_registry_config_dir }}/temp.yml"
     state: absent
 
-- community.docker.docker_compose:
+- name: Ensure registry_mirror and registry_mirror_ui are running
+  community.docker.docker_compose:
     project_name: "{{ docker_registry_project_name }}"
     
     definition:
@@ -39,25 +43,20 @@
         registry_mirror:
           restart: always
           image: registry:2
-          container_name:  "registry{{container_suffix}}"  
+          container_name:  "registry{{ container_suffix }}"  
           ports:
-            - "{{docker_registry_port}}:5000"
-          volumes: "{{ docker_registry_default_volume_mounts + ([] if docker_registry_proxy_enabled else docker_registry_auth_mount ) }}"
+            - "{{ docker_registry_port }}:5000"
+          volumes: "{{ docker_registry_default_volume_mounts + ([] if docker_registry_proxy_enabled else docker_registry_auth_mount) }}"
 
         registry_mirror_ui:
           restart: always
           image: joxit/docker-registry-ui:latest
-          container_name:  "registry_ui{{container_suffix}}"  
+          container_name:  "registry_ui{{ container_suffix }}"  
           ports:
-            - "{{docker_registry_ui_port}}:80"
+            - "{{ docker_registry_ui_port }}:80"
           environment:
-            REGISTRY_TITLE: "{{docker_registry_title}}"
-            REGISTRY_URL: "{{docker_registry_host}}"
+            REGISTRY_TITLE: "{{ docker_registry_title }}"
+            REGISTRY_URL: "{{ docker_registry_host }}"
             SINGLE_REGISTRY: "true"
             DELETE_IMAGES: "{{ (not docker_registry_proxy_enabled) | string }}"
 
-- name: restart container
-  docker_container:
-    name: registry
-    restart: true
-  when: conf.changed 

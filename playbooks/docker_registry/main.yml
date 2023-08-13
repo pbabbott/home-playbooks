@@ -8,10 +8,10 @@
   hosts: room_of_requirement
   roles:
     # First registry is for publishing images.
-    - role: home.docker-registry
+    - role: abbottland.docker.docker_registry
 
     # Second registry is used as a pull-through cache (unable to push images to a mirror)
-    - role: home.docker-registry
+    - role: abbottland.docker.docker_registry
       docker_registry_host: "{{docker_registry_mirror_host}}"
       docker_registry_title: "{{docker_registry_mirror_title}}"
       docker_registry_config_dir: "{{docker_registry_mirror_config_dir}}"
