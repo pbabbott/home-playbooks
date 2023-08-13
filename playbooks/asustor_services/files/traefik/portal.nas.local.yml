@@ -28,7 +28,7 @@ http:
         domains:
           - main: "nas.local.abbottland.io"
             sans:
-              - "*.nas.local.abbottland.io"    
+              - "*.nas.local.abbottland.io"
 
   services:
     roomofrequirement:

@@ -1,0 +1,26 @@
+
+http:
+  routers:
+    to-portainer-rpi-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`portainer.raspberrypi.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: portainer-rpi
+      priority: 2
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "raspberrypi.local.abbottland.io"
+            sans:
+              - "*.raspberrypi.local.abbottland.io"
+
+  services:
+    portainer-rpi:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.24:9000
+        passHostHeader: true
+
+

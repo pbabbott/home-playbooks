@@ -50,7 +50,7 @@ sections:
       - title: Portainer
         description: Container Management
         icon: hl-portainer
-        url: http://192.168.4.24:9000/
+        url: https://portainer.raspberrypi.local.abbottland.io
         target: newtab
         statusCheck: true
         id: 7_1171_portainer

@@ -1,0 +1,34 @@
+- name: Configure portainer
+  # TODO: Get this running on webservers via variables
+  hosts: rpi
+  tasks:
+    - name: Ensure portainer data directory exists
+      ansible.builtin.file:
+        path: "{{ portainer_data_dir }}"
+        state: directory
+        mode: '0755'  
+
+    - name: Ensure portainer is running
+      community.docker.docker_compose:
+        project_name: portainer
+        
+        definition:
+          version: '3.2'
+          services:
+            portainer:
+              restart: always
+              container_name: portainer
+              image: portainer/portainer-ce:latest
+              ports:
+                - "9443:9443"
+                - "9000:9000"
+              volumes:
+                - "{{ portainer_data_dir }}:/data"
+                - /var/run/docker.sock:/var/run/docker.sock
+
+# TODO: Configure traefik for rpi portainer
+- name: Traefik configuration for portainer
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'portainer.rpi.local.yml'

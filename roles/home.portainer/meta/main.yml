@@ -1,4 +1,0 @@
-galaxy_info:
-  author: Brandon Abbott
-  description: Install portainer using docker-compose.  Data is located at /home/pi/portainer_data
-  
