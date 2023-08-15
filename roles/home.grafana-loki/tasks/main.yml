@@ -10,54 +10,43 @@
     state: directory
     mode: '0755'  
 
+- name: Create loki data directory
+  ansible.builtin.file:
+    path: "{{ loki_data_dir }}"
+    state: directory
+    mode: '0755'  
+
 - name: Copy loki config file to remote
-  register: loki_config
+  notify:
+    - Restart loki container
   ansible.builtin.copy:
     src: ./files/loki-config.yml
     dest: "{{ loki_config_dir }}/loki-config.yml"
 
-- name: Create promtail config directory
-  ansible.builtin.file:
-    path: "{{ promtail_config_dir }}"
-    state: directory
-    mode: '0755'  
-
-- name: Copy promtail config file to remote
-  register: promtail_config
-  ansible.builtin.copy:
-    src: ./files/promtail-config.yml
-    dest: "{{ promtail_config_dir }}/promtail-config.yml"
-
-- community.docker.docker_compose:
+- name: Ensure grafana & loki are up-and-running
+  community.docker.docker_compose:
     project_name: grafana_loki
+    # recreate: "always"
     definition:
       version: "3.1"
       networks:
         loki:
+          name: grafana_loki
+          driver: bridge
       services:
         loki:
           image: grafana/loki:2.4.0
           container_name: loki
           restart: always
           command: -config.file=/etc/loki/loki-config.yml
+          user: "{{ host_puid }}"
           ports:
             - "3100:3100"
           volumes:
+            - "{{ loki_data_dir }}:/loki_data"
             - "{{ loki_config_dir }}:/etc/loki"
           networks:
             - loki
-        promtail:
-          image: grafana/promtail:2.4.0
-          container_name: promtail
-          restart: always
-          command: -config.file=/etc/promtail/promtail-config.yml
-          volumes:
-            - "{{ promtail_config_dir }}:/etc/promtail"
-            - "{{ promtail_container_log_dir }}:/var/lib/docker/containers"
-          networks:
-            - loki
-          ports:
-            - "1514:1514"
         grafana:
           image: grafana/grafana-enterprise:latest
           container_name: grafana
@@ -76,15 +65,3 @@
           volumes:
             - "{{ grafana_data_dir }}:/var/lib/grafana"
 
-
-- name: Restart loki container
-  docker_container:
-    name: loki
-    restart: true
-  when: loki_config.changed
-
-- name: Restart promtail container
-  docker_container:
-    name: promtail
-    restart: true
-  when: promtail_config.changed

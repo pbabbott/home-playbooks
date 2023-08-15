@@ -27,8 +27,8 @@ shell_config_ssh_targets:
   - shortcut: ror
     username: "{{ hostvars.room_of_requirement.ansible_user }}"
     hostname: "{{ hostvars.room_of_requirement.ansible_host }}"
-  - shortcut: elderwand
-    username: "{{ hostvars.elder_wand.ansible_user }}"
-    hostname: "{{ hostvars.elder_wand.ansible_host }}"
+  - shortcut: dumbledore
+    username: "{{ hostvars.dumbledore.ansible_user }}"
+    hostname: "{{ hostvars.dumbledore.ansible_host }}"
 
 docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io

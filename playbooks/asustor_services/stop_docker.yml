@@ -1,0 +1,9 @@
+
+- name: Stop Docker daemon on ASUSTOR NAS
+  hosts: room_of_requirement
+  become: true
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
+  roles:
+    - role: home.asustor_docker
+      asustor_docker_command: stop

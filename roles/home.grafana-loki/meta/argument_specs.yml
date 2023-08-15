@@ -1,0 +1,33 @@
+
+argument_specs:
+  main:
+    options:
+      host_puid:
+        type: "str"
+        description: "The host machine userid"
+        required: true
+      grafana_data_dir:
+        type: "str"
+        description: "Where to store grafana data"
+        required: true
+      loki_data_dir:
+        type: "str"
+        description: "Where to store loki data"
+        required: true
+      loki_config_dir:
+        type: "str"
+        description: "Where to store loki config"
+        required: true
+      promtail_config_dir:
+        type: "str"
+        description: "Where to store promtail config"
+        required: true
+      promtail_container_log_dir:
+        type: "str"
+        description: "Should be set to docker logs directory on host"
+        required: true
+
+
+
+
+

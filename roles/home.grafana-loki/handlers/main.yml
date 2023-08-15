@@ -1,0 +1,5 @@
+
+- name: Restart loki container
+  community.docker.docker_container:
+    name: loki
+    restart: true

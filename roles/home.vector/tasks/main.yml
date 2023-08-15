@@ -5,6 +5,7 @@
     state: directory
     mode: '0755'  
 
+# TODO: make this idempotent
 - name: Copy vector.toml to remote
   ansible.builtin.copy:
     src: ./files/vector.toml
@@ -14,19 +15,23 @@
   replace:
     path: /tmp/vector.toml
     regexp: 'VECTOR_LOKI_HOST'
-    replace: "{{vector_loki_host}}"
+    replace: "{{ vector_loki_host }}"
 
 - name: Replace existing vector.toml
   ansible.builtin.copy:
     remote_src: true
     src: /tmp/vector.toml
     dest: "{{ vector_config_directory }}/vector.toml"
-  register: vector_conf
+  notify:
+    - Restart vector container
 
-- community.docker.docker_compose:
+- name: Deploy vector container via docker-compose
+  community.docker.docker_compose:
     project_name: vector
+    recreate: "always"
     definition:
       version: "3.1"
+      networks: "{{ vector_compose_networks }}"
       services:
         vector:
           image: timberio/vector:0.18.1-debian
@@ -37,9 +42,7 @@
           volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - "{{ vector_config_directory }}/vector.toml:/etc/vector/vector.toml:ro"
-
-- name: Restart vector container
-  docker_container:
-    name: vector
-    restart: true
-  when: vector_conf.changed
+          networks: "{{ vector_compose_service_network }}"
+            
+          # TODO: Consider adding a command for multiple files
+          # https://vector.dev/docs/reference/configuration/#multiple-files

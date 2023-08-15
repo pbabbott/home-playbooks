@@ -10,5 +10,5 @@
     plugin_name: loki:latest
     state: enable
 
-# TODO: enable loki plugin on ARM
+# TODO: enable loki plugin on ARM .... though... maybe not since vector is available.
 # https://github.com/grafana/loki/issues/974?ref=blog.richardsoper.me#issuecomment-766390258

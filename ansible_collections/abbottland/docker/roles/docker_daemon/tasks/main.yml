@@ -1,29 +1,28 @@
 
 
-- name: Ensure /etc/docker directory exists
+- name: "Ensure {{ docker_daemon_directory }} directory exists"
   ansible.builtin.file:
     state: directory
-    path: /etc/docker
+    path: "{{ docker_daemon_directory }}"
     mode: '0755'  
 
-
-- name: Does /etc/docker/daemon.json file exist?
+- name: Does "{{ docker_daemon_directory }}/daemon.json" file exist?
   stat:
-    path: /etc/docker/daemon.json
+    path: "{{ docker_daemon_directory }}/daemon.json"
   register:
     docker_daemon_stat_result
 
-- name: Create /etc/docker/daemon.json file if not exists
-  file:
-    path: /etc/docker/daemon.json
-    state: touch
+- name: Create "{{ docker_daemon_directory }}/daemon.json" file if not exists
+  ansible.builtin.copy:
+    dest: "{{ docker_daemon_directory }}/daemon.json"
+    src: ./files/daemon.json
   when: not docker_daemon_stat_result.stat.exists
 
 # ------------------------------------
 
 - name: Load variables from file
   slurp:
-    src: /etc/docker/daemon.json
+    src: "{{ docker_daemon_directory }}/daemon.json"
   register: imported_var
 
 # - name: Display decoded content
@@ -38,14 +37,14 @@
   set_fact:
     imported_var: "{{ imported_var.content | b64decode | from_json | combine({docker_daemon_key: docker_daemon_value}) }}"
 
-# - name: Display updated variables
-#   debug:
-#     var: imported_var
+- name: Display updated variables
+  debug:
+    var: imported_var
 
 - name: Update docker daemon.json
   ansible.builtin.copy: 
     content: "{{ imported_var | to_nice_json }}" 
-    dest: /etc/docker/daemon.json
+    dest: "{{ docker_daemon_directory }}/daemon.json"
   notify:
     - Restart docker daemon
   register: docker_daemon

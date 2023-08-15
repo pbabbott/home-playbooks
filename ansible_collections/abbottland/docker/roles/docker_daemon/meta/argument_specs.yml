@@ -13,3 +13,7 @@ argument_specs:
         required: true
         type: "raw"
         description: "raw value for dameon settings"
+      docker_daemon_directory:
+        required: false
+        type: str
+        description: "Directory where docker daemon.json lives."

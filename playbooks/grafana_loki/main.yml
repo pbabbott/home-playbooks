@@ -1,0 +1,23 @@
+- name: Use docker to setup grafana & loki
+  hosts: 
+    - room_of_requirement
+  roles:
+    - role: home.grafana-loki
+
+- name: Use docker to setup vector
+  hosts:
+    - room_of_requirement
+    # TODO: update to do all webservers once dumbledore is setup
+    - rpi
+    - bananapi
+  roles:
+    - role: home.vector
+
+- name: Traefik configuration for drone
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'grafana.nas.local.yml'
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'loki.nas.local.yml'
+

@@ -1,0 +1,21 @@
+
+
+argument_specs:
+  main:
+    options:
+      vector_config_directory:
+        required: true
+        type: "str"
+        description: "Config directory for vector"
+      vector_loki_host:
+        required: true
+        type: "str"
+        description: "Host where to send loki logs"
+      vector_compose_networks:
+        required: false
+        type: "raw"
+        description: "Network configuration for docker-compose"
+      vector_compose_service_network:
+        required: false
+        type: "list"
+        description: "Network configuration for docker-compose service: vector"

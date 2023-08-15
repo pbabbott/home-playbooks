@@ -2,6 +2,5 @@
 # - name: Docker Installations on RPI (not root)
 #   hosts: rpi
 #   roles:
-# #     - role: home.portainer
 # #     - role: home.home-assistant
     

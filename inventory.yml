@@ -21,6 +21,11 @@ all:
               ansible_user: pi
               ansible_password: "{{ inventoryPasswords.bananapi }}"
               ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
+            dumbledore:
+              ansible_host: 192.168.4.157
+              ansible_user: albus
+              ansible_password: "{{ inventoryPasswords.dumbledore }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
       hosts:
         elder_wand:
           # ansible_host: 192.168.4.90 # Ethernet

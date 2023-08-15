@@ -1,4 +1,4 @@
-# Note: docker needs to be installed manually onto room_of_requirement!
+
 - name: Install Docker
   hosts: web_servers
   become: true
@@ -11,3 +11,32 @@
     - role: abbottland.docker.docker_daemon
       docker_daemon_key: 'live-restore'
       docker_daemon_value: true
+
+
+# Note: docker needs to be installed manually onto room_of_requirement!
+# This just configures the daemon.json
+- name: Configure Docker Daemon on ROR
+  hosts: room_of_requirement
+  become: true
+  roles:
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: 'experimental'
+      docker_daemon_value: true
+      docker_daemon_skip_restart: true
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: 'live-restore'
+      docker_daemon_value: true
+      docker_daemon_skip_restart: true
+
+- name: Modify ASUSTOR startup script
+  hosts: room_of_requirement
+  become: true
+  tasks:
+    - name: Setup asustor to use custom daemon.json
+      ansible.builtin.lineinfile:
+        regex: ^DOCKERD_OPT="--data-root \/usr\/local\/AppCentral\/docker-ce\/docker_lib\/"$
+        line: DOCKERD_OPT="--data-root /usr/local/AppCentral/docker-ce/docker_lib/ --config-file /volume1/Docker/daemon.json"
+        path: /volume1/.@plugins/AppCentral/docker-ce/CONTROL/start-stop.sh
+
+- name: Restart docker on ASUSTOR
+  ansible.builtin.import_playbook: '../asustor_services/restart_docker.yml'

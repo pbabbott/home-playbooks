@@ -1,0 +1,15 @@
+
+- name: Conditionally Restart Docker daemon on ASUSTOR NAS
+  hosts: room_of_requirement
+  become: true
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/builtin/sbin"
+  tasks:
+    - name: Check if restart is needed
+      debug:
+        msg: "docker_daemon_changed: {{ docker_daemon_changed }}"
+    - name: Restart docker daemon the hard way
+      when: docker_daemon_changed
+      block:
+        - name: Reload asustor docker
+          ansible.builtin.command: /usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh reload

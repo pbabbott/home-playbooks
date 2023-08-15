@@ -27,6 +27,21 @@ handbrake_watch_dir: "/volume1/Video Editing/GameCaptures/Raw"
 handbrake_output_dir: "/volume1/Video Editing/GameCaptures/Converted"
 
 loki_config_dir:  /volume1/Docker/loki/config
+loki_data_dir:  /volume1/Docker/loki/data
+
 promtail_config_dir: /volume1/Docker/promtail/config
 promtail_container_log_dir: /volume1/.@plugins/AppCentral/docker-ce/docker_lib/containers
+
 grafana_data_dir: /volume1/Docker/grafana/data
+
+vector_config_directory: /volume1/Docker/vector
+vector_loki_host: http://loki:3100
+vector_compose_networks:
+  loki:
+    external:
+      name: grafana_loki
+vector_compose_service_network:
+  - loki
+  
+docker_daemon_loki_log_sink: localhost:3100
+docker_daemon_directory: /volume1/Docker

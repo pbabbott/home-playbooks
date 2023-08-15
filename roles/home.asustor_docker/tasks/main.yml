@@ -1,0 +1,3 @@
+
+- name: Asustor docker start-stop.sh
+  ansible.builtin.command: "/usr/local/AppCentral/docker-ce/CONTROL/start-stop.sh {{ asustor_docker_command }}"
