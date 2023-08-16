@@ -1,4 +1,4 @@
-host_tz: "America/Los_Angeles"
+host_tz: "America/Chicago"
 
 # Credentials used for both registry and mirror
 docker_registry_username: "{{dockerRegistry.username}}"

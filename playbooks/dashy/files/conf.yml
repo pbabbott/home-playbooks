@@ -9,51 +9,6 @@ pageInfo:
   navLinks: []
   footerText: ''
 sections:
-  - name: Raspberry Pi
-    icon: hl-raspberrypi
-    displayData:
-      sortBy: alphabetical
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
-      - title: Mealie
-        description: Recipe database
-        icon: hl-mealie
-        url: https://mealie.abbottland.io
-        target: newtab
-        statusCheck: true
-        statusCheckAllowInsecure: true
-        id: 0_1171_mealie
-      - title: Home Assistant
-        description: Home automations
-        icon: hl-home-assistant
-        url: http://192.168.4.24:8123
-        target: newtab
-        statusCheck: true
-        id: 1_1171_homeassistant
-      - title: Prometheus
-        description: Metrics Aggregator
-        icon: hl-prometheus
-        url: http://192.168.4.24:9090
-        target: newtab
-        statusCheck: true
-        id: 3_1171_prometheus
-      - title: Drone
-        description: CI/CD Server
-        icon: hl-drone
-        url: https://drone.abbottland.io
-        target: newtab
-        statusCheck: true
-        id: 4_1171_drone
-      - title: Portainer
-        description: Container Management
-        icon: hl-portainer
-        url: https://portainer.raspberrypi.local.abbottland.io
-        target: newtab
-        statusCheck: true
-        id: 7_1171_portainer
   - name: Room of Requirement
     icon: fas fa-server
     displayData:
@@ -123,6 +78,61 @@ sections:
         target: newtab
         statusCheck: true
         id: 6_1859_handbrake
+  - name: Raspberry Pi
+    icon: hl-raspberrypi
+    displayData:
+      sortBy: alphabetical
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Mealie
+        description: Recipe database
+        icon: hl-mealie
+        url: https://mealie.abbottland.io
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
+        id: 0_1171_mealie
+     
+      - title: Prometheus
+        description: Metrics Aggregator
+        icon: hl-prometheus
+        url: http://192.168.4.24:9090
+        target: newtab
+        statusCheck: true
+        id: 3_1171_prometheus
+      - title: Drone
+        description: CI/CD Server
+        icon: hl-drone
+        url: https://drone.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 4_1171_drone
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://portainer.raspberrypi.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 7_1171_portainer
+  - name: Dumbledore
+    icon: hl-raspberrypi
+    displayData:
+      sortBy: alphabetical
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Home Assistant
+        description: Home Automations
+        icon: hl-home-assistant
+        url: https://homeassistant.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 1_1171_homeassistant
   - name: Banana Pi
     icon: banana-svgrepo-com.svg
     displayData:

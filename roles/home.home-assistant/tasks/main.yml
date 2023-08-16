@@ -1,25 +1,30 @@
-- ansible.builtin.file:
-    path: /home/pi/homeassistant_data
+- name: Create home assistant directory
+  ansible.builtin.file:
+    path: "{{ home_assistant_dir }}"
     state: directory
     mode: '0755'  
 
-- community.docker.docker_compose:
+# https://community.traefik.io/t/traefik-as-frontend-for-home-assistant-gives-error-400-bad-request/14034
+# https://community.home-assistant.io/t/home-assistant-400-bad-request-docker-proxy-solution/322163
+# https://www.home-assistant.io/integrations/http/
+# Step 9 https://community.home-assistant.io/t/reverse-proxy-using-nginx/196954
+
+- name: Deploy home assistant with docker
+  community.docker.docker_compose:
     project_name: home-assistant
     
     definition:
       version: '3'
-      networks:
-        default:
-          name: lsio
-          external: true
       services:
         homeassistant:
           container_name: homeassistant
           image: "ghcr.io/home-assistant/home-assistant:stable"
           volumes:
-            - /home/pi/homeassistant_data:/config
+            - "{{ home_assistant_dir }}:/config"
             - /etc/localtime:/etc/localtime:ro
           restart: unless-stopped
+          environment:
+            TZ: "{{ host_tz }}"
           privileged: true
           ports:
             - 8123:8123

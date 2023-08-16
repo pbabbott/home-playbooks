@@ -1,6 +1,12 @@
 
-# - name: Docker Installations on RPI (not root)
-#   hosts: rpi
-#   roles:
-# #     - role: home.home-assistant
-    
+- name: Docker Installations on RPI (not root)
+  hosts: dumbledore
+  roles:
+    - role: home.home-assistant
+
+
+- name: Traefik configuration for dashboard
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'homeassistant.local.yml'

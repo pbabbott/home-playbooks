@@ -16,7 +16,6 @@ pip_install_packages:
 docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io
 
 vector_config_directory: /home/pi/app_config/vector
-vector_loki_host: https://loki.nas.local.abbottland.io
-
+vector_loki_host: http://192.168.4.124:3100
 
 portainer_data_dir: /home/pi/app_config/portainer_data

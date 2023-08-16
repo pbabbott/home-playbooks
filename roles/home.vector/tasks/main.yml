@@ -40,7 +40,7 @@
           ports:
             - "8383:8383"
           volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
+            - /var/run/docker.sock:/var/run/docker.sock:ro
             - "{{ vector_config_directory }}/vector.toml:/etc/vector/vector.toml:ro"
           networks: "{{ vector_compose_service_network }}"
             

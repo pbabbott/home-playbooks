@@ -7,9 +7,7 @@
 - name: Use docker to setup vector
   hosts:
     - room_of_requirement
-    # TODO: update to do all webservers once dumbledore is setup
-    - rpi
-    - bananapi
+    - web_servers
   roles:
     - role: home.vector
 

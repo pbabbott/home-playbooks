@@ -1,2 +1,5 @@
-vector_compose_networks: {}
-vector_compose_service_network: []
+vector_compose_networks:
+  vector:
+    driver: bridge
+vector_compose_service_network:
+  - vector
