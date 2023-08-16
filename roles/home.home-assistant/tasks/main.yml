@@ -4,15 +4,10 @@
     state: directory
     mode: '0755'  
 
-# https://community.traefik.io/t/traefik-as-frontend-for-home-assistant-gives-error-400-bad-request/14034
-# https://community.home-assistant.io/t/home-assistant-400-bad-request-docker-proxy-solution/322163
-# https://www.home-assistant.io/integrations/http/
-# Step 9 https://community.home-assistant.io/t/reverse-proxy-using-nginx/196954
-
 - name: Deploy home assistant with docker
   community.docker.docker_compose:
     project_name: home-assistant
-    
+    # recreate: "always"
     definition:
       version: '3'
       services:
@@ -25,6 +20,34 @@
           restart: unless-stopped
           environment:
             TZ: "{{ host_tz }}"
+            PUID: "{{ host_puid }}"
+            PGID: "{{ host_pgid }}"
           privileged: true
           ports:
             - 8123:8123
+          devices:
+            - /dev/ttyUSB0:/dev/ttyUSB0
+            - /dev/ttyUSB1:/dev/ttyUSB1
+            - /dev/ttyAMA0:/dev/ttyAMA0
+
+- name: Create empty files to avoid safe mode
+  vars:
+    touch_files:
+      - automations.yaml
+      - scripts.yaml
+      - scenes.yaml
+  ansible.builtin.file:
+    path: "{{ home_assistant_dir }}/{{ item }}"
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+  loop: "{{ touch_files }}"
+  notify:
+    - Restart homeassistant container
+
+- name: Copy configuration.yaml
+  ansible.builtin.copy:
+    dest: "{{ home_assistant_dir }}/configuration.yaml"
+    src: ./files/configuration.yaml
+  notify:
+    - Restart homeassistant container
