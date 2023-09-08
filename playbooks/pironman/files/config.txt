@@ -29,11 +29,11 @@
 
 temp_unit = F
 fan_temp = 50
-screen_always_on = True
+screen_always_on = False
 rgb_enable = True
 rgb_switch = True
 rgb_style = colorful
-rgb_color = 0a1aff
+rgb_color = 00ffff
 rgb_blink_speed = 50
 rgb_pwm_freq = 1000
 rgb_pin = 10

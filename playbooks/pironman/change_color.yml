@@ -1,0 +1,12 @@
+# TODO: figure out why this doesn't work
+- name: Set color
+  hosts:
+    - dumbledore
+  tasks:
+    - name: Update color
+      become: true
+      ansible.builtin.command: /usr/local/bin/pironman -rc 3AFCFF
+      register: temp
+    - debug:
+        msg: "{{ temp.stdout_lines }}"
+      
