@@ -3,11 +3,9 @@ http:
     to-homeassistant-https:
       entryPoints:
         - "https"
-      rule: "Host(`homeassistant.local.abbottland.io`)"
-      middlewares:
-        - secured
-      tls: {}
+      rule: "Host(`homeassistant.abbottland.io`)"
       service: homeassistant
+      tls: {}
 
   services:
     homeassistant:

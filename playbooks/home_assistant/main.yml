@@ -4,9 +4,8 @@
   roles:
     - role: home.home-assistant
 
-
 - name: Traefik configuration for dashboard
   hosts: bananapi
   roles:
     - role: abbottland.ingress.traefik_app
-      traefik_app_file_name: 'homeassistant.local.yml'
+      traefik_app_file_name: 'homeassistant.yml'

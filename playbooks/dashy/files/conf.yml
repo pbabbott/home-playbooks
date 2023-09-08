@@ -129,7 +129,7 @@ sections:
       - title: Home Assistant
         description: Home Automations
         icon: hl-home-assistant
-        url: https://homeassistant.local.abbottland.io
+        url: https://homeassistant.abbottland.io
         target: newtab
         statusCheck: true
         id: 1_1171_homeassistant

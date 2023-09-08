@@ -1,8 +1,24 @@
-- name: Create home assistant directory
+- name: Create directories
+  vars:
+    directories:
+      # - "{{ mosquitto_dir }}/data"
+      # - "{{ mosquitto_dir }}/config"
+      # - "{{ mosquitto_dir }}/log"
+      - "{{ home_assistant_dir }}"
+      # - "{{ zigbee2mqtt_dir }}"
+      # - "{{ zigbee2mqtt_dir }}/data"
+  loop: "{{ directories }}"
   ansible.builtin.file:
-    path: "{{ home_assistant_dir }}"
+    path: "{{ item }}"
     state: directory
     mode: '0755'  
+
+- name: Copy zigbee2mqtt configuration.yaml
+  ansible.builtin.copy:
+    dest: "{{ zigbee2mqtt_dir }}/data/configuration.yaml"
+    src: ./files/zigbee2mqtt.yaml
+  notify:
+    - Restart zigbee2mqtt container
 
 - name: Deploy home assistant with docker
   community.docker.docker_compose:
@@ -11,6 +27,38 @@
     definition:
       version: '3'
       services:
+        # zigbee2mqtt:
+        #   container_name: zigbee2mqtt
+        #   image: koenkk/zigbee2mqtt
+        #   restart: unless-stopped
+        #   volumes:
+        #     - "{{ zigbee2mqtt_dir }}/data:/app/data"
+        #     - /run/udev:/run/udev:ro
+        #   ports:
+        #     - 8080:8080
+        #   environment:
+        #     TZ: "{{ host_tz }}"
+        #     PUID: "{{ host_puid }}"
+        #     PGID: "{{ host_pgid }}"
+        #   devices:
+        #     - /dev/ttyUSB0:/dev/ttyUSB0
+        #     - /dev/ttyUSB1:/dev/ttyUSB1
+        #     - /dev/ttyAMA0:/dev/ttyAMA0
+        # mosquitto:
+        #   container_name: mosquitto
+        #   image: "eclipse-mosquitto:2"
+        #   ports:
+        #       - 1883:1883
+        #       - 9001:9001
+        #   user: "{{ host_puid }}"
+        #   environment:
+        #     TZ: "{{ host_tz }}"
+        #     PUID: "{{ host_puid }}"
+        #     PGID: "{{ host_pgid }}"
+        #   volumes:
+        #     - "{{ mosquitto_dir }}/config:/mosquitto/config"
+        #     - "{{ mosquitto_dir }}/data:/mosquitto/data"
+        #     - "{{ mosquitto_dir }}/log:/mosquitto/log"
         homeassistant:
           container_name: homeassistant
           image: "ghcr.io/home-assistant/home-assistant:stable"
@@ -25,10 +73,6 @@
           privileged: true
           ports:
             - 8123:8123
-          devices:
-            - /dev/ttyUSB0:/dev/ttyUSB0
-            - /dev/ttyUSB1:/dev/ttyUSB1
-            - /dev/ttyAMA0:/dev/ttyAMA0
 
 - name: Create empty files to avoid safe mode
   vars:
@@ -51,3 +95,18 @@
     src: ./files/configuration.yaml
   notify:
     - Restart homeassistant container
+
+# - name: Copy mosquitto.conf
+#   ansible.builtin.copy:
+#     dest: "{{ mosquitto_dir }}/mosquitto.conf"
+#     src: ./files/mosquitto.conf
+#   notify:
+#     - Restart mosquitto container
+
+# - name: Copy password.txt
+#   ansible.builtin.copy:
+#     dest: "{{ mosquitto_dir }}/password.txt"
+#     src: ./files/password.txt
+#   notify:
+#     - Restart mosquitto container
+
