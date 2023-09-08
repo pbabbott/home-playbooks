@@ -6,3 +6,5 @@ traefik_config_dir: /home/pi/app_config/traefik
 traefik_dynamic_config_dir: /home/pi/app_config/traefik/conf.d
 
 pihole_config_dir: /home/pi/app_config/pihole
+
+wireguard_config_dir: /home/pi/app_config/wireguard/config
