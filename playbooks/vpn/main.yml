@@ -1,23 +1,12 @@
 
 - name: Setup Wireguard
   hosts: bananapi
-  handlers:
-    - name: Restart wireguard container
-      community.docker.docker_container:
-        name: wireguard
-        restart: true
   tasks:
     - name: Ensure wireguard config directory exists
       ansible.builtin.file:
         path: "{{ wireguard_config_dir }}"
         state: directory
         mode: '0755'  
-    # - name: Copy configuration file to remote
-    #   ansible.builtin.copy:
-    #     src: ./files/conf.yml
-    #     dest: "{{ dashy_config_dir }}/conf.yml"
-    #   notify:
-    #     - Restart dashy container
     - name: Ensure wireguard is up-and-running
       community.docker.docker_compose:
         project_name: wireguard
