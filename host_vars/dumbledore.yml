@@ -4,5 +4,7 @@ vector_config_directory: /home/albus/app_config/vector
 
 home_assistant_dir: /home/albus/app_config/homeassistant
 
+code_server_config_dir: /home/albus/app_config/code-server/config
+
 # mosquitto_dir: /home/albus/app_config/mosquitto
 # zigbee2mqtt_dir: /home/albus/app_config/zigbee2mqtt

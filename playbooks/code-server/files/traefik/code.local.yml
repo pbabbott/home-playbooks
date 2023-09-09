@@ -1,0 +1,19 @@
+http:
+  routers:
+    to-code-server-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`code.local.abbottland.io`)"
+      middlewares:
+        - secured
+      tls: {}
+      service: code-server
+
+  services:
+    code-server:
+      loadBalancer:
+        servers:
+          - url: http://192.168.4.157:7080
+        passHostHeader: true
+  
+    

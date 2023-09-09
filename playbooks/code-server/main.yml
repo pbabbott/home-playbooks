@@ -1,0 +1,40 @@
+
+- name: Setup VS Code Server
+  hosts: dumbledore
+  
+  tasks:
+    - name: Ensure code-server exists
+      vars:
+        directories:
+          - "{{ code_server_config_dir }}"
+      loop: "{{ directories }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'  
+    - name: Ensure code-server server is up-and-running
+      community.docker.docker_compose:
+        project_name: code-server
+        definition:
+          version: "3.7"
+          services:
+            code-server:
+              image: ghcr.io/coder/coder:latest
+              container_name: code-server
+              restart: always
+              environment:
+                CODER_HTTP_ADDRESS: "0.0.0.0:7080"
+                CODER_ACCESS_URL: https://code.local.abbottland.io
+              volumes:
+                - /var/run/docker.sock:/var/run/docker.sock
+                - "{{ code_server_config_dir }}:/home/coder/.config"
+              ports:
+                - 7080:7080
+              group_add:
+                - "995" # docker group on host
+
+- name: Traefik configuration for code server
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'code.local.yml'
