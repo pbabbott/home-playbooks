@@ -8,8 +8,6 @@
             "redhat.ansible",
             "oderwat.indent-rainbow",
             "tamasfe.even-better-toml",
-            "redhat.vscode-yaml",
-            "Gruntfuggly.todo-tree",
             "yzhang.markdown-all-in-one"
         ]
       }
