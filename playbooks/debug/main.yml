@@ -1,6 +1,8 @@
 - hosts: 
     - bananapi
     - rpi
+    - dumbledore
+    - room_of_requirement
   name: Test web_server group vars
   tasks:
     - name: Test one_cool_var
