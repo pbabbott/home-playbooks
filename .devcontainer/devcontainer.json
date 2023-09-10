@@ -2,6 +2,9 @@
     "build": { "dockerfile": "./Dockerfile" },
   
     "customizations": {
+      "settings": {
+        "workbench.colorTheme": "GitHub Dark"
+      },
       "vscode": {
         "extensions": [
             "streetsidesoftware.code-spell-checker",
