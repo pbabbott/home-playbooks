@@ -3,7 +3,16 @@
   
     "customizations": {
       "vscode": {
-        "extensions": ["streetsidesoftware.code-spell-checker"]
+        "extensions": [
+            "streetsidesoftware.code-spell-checker",
+            "redhat.ansible",
+            "oderwat.indent-rainbow",
+            "tamasfe.even-better-toml",
+            "redhat.vscode-yaml",
+            "Gruntfuggly.todo-tree",
+            "yzhang.markdown-all-in-one"
+        ]
       }
-    }
+    },
+    "postCreateCommand": "pip3 install ansible paramiko pyopenssl"
 }
