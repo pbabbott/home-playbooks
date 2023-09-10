@@ -16,6 +16,5 @@
             "yzhang.markdown-all-in-one"
         ]
       }
-    },
-    "postCreateCommand": "pip3 install ansible paramiko pyopenssl"
+    }
 }
