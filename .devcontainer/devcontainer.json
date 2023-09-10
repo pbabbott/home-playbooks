@@ -4,11 +4,7 @@
     "customizations": {
       "vscode": {
         "extensions": [
-            "streetsidesoftware.code-spell-checker",
-            "redhat.ansible",
-            "oderwat.indent-rainbow",
-            "tamasfe.even-better-toml",
-            "yzhang.markdown-all-in-one"
+            "streetsidesoftware.code-spell-checker"
         ]
       }
     },
