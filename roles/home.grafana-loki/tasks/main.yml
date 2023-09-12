@@ -2,19 +2,19 @@
   ansible.builtin.file:
     path: "{{ grafana_data_dir }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Create loki config directory
   ansible.builtin.file:
     path: "{{ loki_config_dir }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Create loki data directory
   ansible.builtin.file:
     path: "{{ loki_data_dir }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Copy loki config file to remote
   notify:
@@ -64,4 +64,3 @@
             - loki
           volumes:
             - "{{ grafana_data_dir }}:/var/lib/grafana"
-

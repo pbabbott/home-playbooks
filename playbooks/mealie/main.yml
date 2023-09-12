@@ -5,11 +5,11 @@
       ansible.builtin.file:
         path: "{{ mealie_data_dir }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
     - name: Get mealie up-and-running with docker-compose
       community.docker.docker_compose:
         project_name: mealie
-        
+
         definition:
           version: "3.1"
           networks:

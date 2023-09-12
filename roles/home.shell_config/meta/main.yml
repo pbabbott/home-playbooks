@@ -1,5 +1,3 @@
 galaxy_info:
   author: Brandon Abbott
   description: Create a block of aliases, exports, & ssh targets in a target file
-
-  

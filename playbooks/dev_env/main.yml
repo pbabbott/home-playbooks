@@ -1,5 +1,5 @@
-# - name: Install Docker 
-#   hosts: 
+# - name: Install Docker
+#   hosts:
 #     - localhost
 #   tasks:
 #   become: true
@@ -9,7 +9,7 @@
 #     # - role: abbottland.docker.docker_permissions
 #     - role: abbottland.docker.docker_daemon
 #       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
-    
+
 
 # - name: Get Verdaccio Token & Add to .zprofile
 #   hosts:
@@ -43,7 +43,7 @@
 #         verdaccio_token: "{{ (token_response.content | from_json).token }}"
 #     - debug:
 #         msg: "Response: {{ verdaccio_token }}"
-    
+
 #   roles:
 #     - role: home.detect_shell
 #     - role: home.shell_config
@@ -66,7 +66,7 @@
 #         state: present
 
 
-# # - name: Configure NAS 
+# # - name: Configure NAS
 # #   hosts: room_of_requirement
 # #   roles:
 # #     - role: home.shell_config

@@ -1,6 +1,6 @@
 - community.docker.docker_compose:
     project_name: nginx-hello
-    
+
     definition:
       version: "2.1"
 

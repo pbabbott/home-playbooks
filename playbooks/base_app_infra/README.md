@@ -15,7 +15,7 @@ This playbook installs apt and pip packages across inventory hosts
 ## 003_dns
 
 This playbook:
-- runs pi hole as a docker container 
+- runs pi hole as a docker container
 - sets various hosts use pi hole host machine as a dns server
 
 ## 004_reverse_proxy

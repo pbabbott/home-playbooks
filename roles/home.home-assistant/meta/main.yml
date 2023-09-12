@@ -1,4 +1,3 @@
 galaxy_info:
   author: Brandon Abbott
-  description: Install home-assistant using docker-compose.  
-  
+  description: Install home-assistant using docker-compose.

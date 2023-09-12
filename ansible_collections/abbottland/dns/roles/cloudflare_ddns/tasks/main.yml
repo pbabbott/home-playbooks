@@ -2,8 +2,8 @@
 
 - community.docker.docker_compose:
     project_name: cloudflare-ddns
-    
-    definition: 
+
+    definition:
       version: "2.1"
       services:
         cloudflare-ddns:
@@ -13,4 +13,3 @@
           environment:
             API_KEY: "{{ cloudflare.token }}"
             ZONE: abbottland.io
-            

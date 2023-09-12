@@ -1,7 +1,7 @@
 - ansible.builtin.file:
     path: /home/pi/swag/nginx/site-confs
     state: directory
-    mode: '0755' 
+    mode: '0755'
 
 - name: Copy nginx.conf to remote
   register: nginx_conf
@@ -12,7 +12,7 @@
 - ansible.builtin.file:
     path: /home/pi/swag/nginx/proxy-confs
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Enable mealie configuration
   register: mealie_proxy_conf
@@ -62,8 +62,3 @@
             - 443:443
             - 80:80
           restart: unless-stopped
-
-
-
-
-

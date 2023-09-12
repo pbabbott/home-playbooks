@@ -7,7 +7,7 @@ http:
       middlewares:
         - secured
       service: verdaccio-nas
-      tls: {} 
+      tls: {}
 
   services:
     verdaccio-nas:

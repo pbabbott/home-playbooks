@@ -3,12 +3,12 @@
 - ansible.builtin.file:
     path: /home/pi/duckdns
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - community.docker.docker_compose:
     project_name: duckdns
-    
-    definition: 
+
+    definition:
       version: "2.1"
       networks:
         default:
@@ -28,4 +28,3 @@
             LOG_FILE: 'false'
           volumes:
             - /home/pi/duckdns/config:/config #optional
-          

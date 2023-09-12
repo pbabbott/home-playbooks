@@ -22,4 +22,4 @@
 #       repo: registry.nas.local.abbottland.io/home-playbooks-dev
 #       auto_tag: true
 #       dockerfile: ./.devcontainer/Dockerfile.dev
-#       context: ./.devcontainer/  
+#       context: ./.devcontainer/

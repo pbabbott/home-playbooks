@@ -9,7 +9,7 @@ http:
       middlewares:
         - secured
       service: handbrake-nas
-      tls: {} 
+      tls: {}
 
   services:
     handbrake-nas:

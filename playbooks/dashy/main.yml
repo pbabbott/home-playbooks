@@ -11,7 +11,7 @@
       ansible.builtin.file:
         path: "{{ dashy_config_dir }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
     - name: Copy configuration file to remote
       ansible.builtin.copy:
         src: ./files/conf.yml
@@ -22,7 +22,7 @@
       ansible.builtin.file:
         path: "{{ dashy_config_dir }}/icons"
         state: directory
-        mode: '0755'  
+        mode: '0755'
     - name: Copy icons to remote
       ansible.builtin.copy:
         src: ./files/item-icons

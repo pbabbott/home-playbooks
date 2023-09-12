@@ -11,7 +11,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Copy zigbee2mqtt configuration.yaml
   ansible.builtin.copy:
@@ -109,4 +109,3 @@
 #     src: ./files/password.txt
 #   notify:
 #     - Restart mosquitto container
-

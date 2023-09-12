@@ -5,7 +5,7 @@
 #   roles:
 #     - role: cloudalchemy.node_exporter
 
-# - name: Setup host metrics for NAS 
+# - name: Setup host metrics for NAS
 #   hosts: room_of_requirement
 #   roles:
 #     - role: home.prometheus-docker-node-exporter
@@ -25,11 +25,9 @@
 #         enabled: yes
 
 
-# # TODO: setup prometheus metrics  
+# # TODO: setup prometheus metrics
 # # - role: abbottland.docker.docker_daemon
 # #       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
 
 
 #     # - role: home.prometheus-server
-
-

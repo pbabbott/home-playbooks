@@ -12,4 +12,3 @@
 #   community.docker.docker_container:
 #     name: zigbee2mqtt
 #     restart: true
-

@@ -6,12 +6,12 @@
       ansible.builtin.file:
         path: "{{ portainer_data_dir }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
 
     - name: Ensure portainer is running
       community.docker.docker_compose:
         project_name: portainer
-        
+
         definition:
           version: '3.2'
           services:

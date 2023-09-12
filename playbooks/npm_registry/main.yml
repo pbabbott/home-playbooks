@@ -1,6 +1,6 @@
 
 
-- name: Setup NPM Registry on NAS 
+- name: Setup NPM Registry on NAS
   hosts: room_of_requirement
   roles:
     - role: home.verdaccio
@@ -32,7 +32,7 @@
     - name: Show verdaccio_token
       ansible.builtin.debug:
         msg: "Response: {{ verdaccio_token }}"
-        
+
 - name: Traefik configuration for verdaccio
   hosts: bananapi
   roles:
@@ -70,4 +70,3 @@
         name: NPM_TOKEN
         value: "{{ hostvars['room_of_requirement'].verdaccio_token }}"
         level: machine
-

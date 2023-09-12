@@ -3,7 +3,7 @@
   ansible.builtin.file:
     path: /home/pi/backup_jobs
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 - name: Copy backup.sh to remote
   ansible.builtin.copy:
@@ -11,8 +11,8 @@
     dest: "/home/pi/backup_jobs/{{ job_name }}.sh"
 
 - name: Changing perm of "/home/pi/backup_jobs/{{ job_name }}.sh", adding "+x"
-  ansible.builtin.file: 
-    dest: "/home/pi/backup_jobs/{{ job_name }}.sh" 
+  ansible.builtin.file:
+    dest: "/home/pi/backup_jobs/{{ job_name }}.sh"
     mode: a+x
 
 - name: Ensure block exists in new file

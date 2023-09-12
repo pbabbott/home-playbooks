@@ -4,7 +4,7 @@
 - name: Apt - Install prerequsites
   apt:
     update_cache: yes
-    name: 
+    name:
       - ca-certificates
       - curl
       - gnupg
@@ -26,7 +26,7 @@
 
 - name: Install Docker CE
   apt:
-    name: 
+    name:
       - docker-ce
       - docker-ce-cli
       - containerd.io

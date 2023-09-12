@@ -1,11 +1,11 @@
-- name: Configure NAS 
+- name: Configure NAS
   hosts: room_of_requirement
   tasks:
     - name: Ensure handbrake config directory exists
       ansible.builtin.file:
         path: "{{ handbrake_config_dir }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
 
     - name: Ensure handbrake watch directory exists
       ansible.builtin.file:
@@ -17,7 +17,7 @@
       ansible.builtin.file:
         path: "{{ handbrake_output_dir }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
 
     - name: Ensure handbrake server is running
       community.docker.docker_compose:
@@ -43,7 +43,7 @@
                 - "{{ handbrake_storage_dir }}:/storage:ro"
                 - "{{ handbrake_watch_dir }}:/watch:rw"
                 - "{{ handbrake_output_dir }}:/output:rw"
-        
+
 - name: Traefik configuration for handbrake
   hosts: bananapi
   roles:

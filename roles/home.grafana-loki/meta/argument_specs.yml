@@ -26,8 +26,3 @@ argument_specs:
         type: "str"
         description: "Should be set to docker logs directory on host"
         required: true
-
-
-
-
-

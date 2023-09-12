@@ -13,7 +13,7 @@ http:
       middlewares:
         - secured
       service: registry-nas
-      tls: {} 
+      tls: {}
 
     to-registry-ui-nas-https:
       entryPoints:
@@ -23,7 +23,7 @@ http:
         - secured
         - strip-prefix-ui
       service: registry-ui-nas
-      tls: {} 
+      tls: {}
 
     to-registry-mirror-nas-https:
       entryPoints:
@@ -32,7 +32,7 @@ http:
       middlewares:
         - secured
       service: registry-mirror-nas
-      tls: {} 
+      tls: {}
 
     to-registry-mirror-ui-nas-https:
       entryPoints:
@@ -42,7 +42,7 @@ http:
         - secured
         - strip-prefix-ui
       service: registry-mirror-ui-nas
-      tls: {} 
+      tls: {}
 
   services:
     registry-nas:
@@ -56,13 +56,13 @@ http:
         servers:
         - url: http://192.168.4.124:5001
         passHostHeader: true
-        
+
     registry-mirror-nas:
       loadBalancer:
         servers:
         - url: http://192.168.4.124:5002
         passHostHeader: true
-    
+
     registry-mirror-ui-nas:
       loadBalancer:
         servers:

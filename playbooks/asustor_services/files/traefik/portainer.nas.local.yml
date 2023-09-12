@@ -7,7 +7,7 @@ http:
       middlewares:
         - secured
       service: portainer-nas
-      tls: {} 
+      tls: {}
 
   services:
     portainer-nas:

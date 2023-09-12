@@ -2,7 +2,7 @@ host_puid: "1000"
 host_pgid: "100"
 
 pip_install_packages:
-  - pyyaml==5.3.1 
+  - pyyaml==5.3.1
   - docker
   - docker-compose
   - passlib
@@ -42,6 +42,6 @@ vector_compose_networks:
       name: grafana_loki
 vector_compose_service_network:
   - loki
-  
+
 docker_daemon_loki_log_sink: localhost:3100
 docker_daemon_directory: /volume1/Docker

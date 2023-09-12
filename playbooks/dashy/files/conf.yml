@@ -95,7 +95,7 @@ sections:
         statusCheck: true
         statusCheckAllowInsecure: true
         id: 0_1171_mealie
-     
+
       - title: Prometheus
         description: Metrics Aggregator
         icon: hl-prometheus

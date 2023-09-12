@@ -6,6 +6,6 @@
 
     - role: abbottland.ingress.traefik_app
       traefik_app_file_name: 'portal.nas.local.yml'
-      
+
     - role: abbottland.ingress.traefik_app
       traefik_app_file_name: 'portal.nas.local.yml'

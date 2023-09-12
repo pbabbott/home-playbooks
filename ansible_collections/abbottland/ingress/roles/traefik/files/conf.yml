@@ -48,7 +48,7 @@ http:
         domains:
           - main: "local.abbottland.io"
             sans:
-              - "*.local.abbottland.io"      
+              - "*.local.abbottland.io"
 
     to-root:
       rule: "Host(`abbottland.io`)"
@@ -61,5 +61,3 @@ http:
           - main: "abbottland.io"
             sans:
               - "*.abbottland.io"
-  
-

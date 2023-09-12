@@ -4,7 +4,7 @@
   ansible.builtin.file:
     state: directory
     path: "{{ docker_daemon_directory }}"
-    mode: '0755'  
+    mode: '0755'
 
 - name: Does "{{ docker_daemon_directory }}/daemon.json" file exist?
   stat:
@@ -42,8 +42,8 @@
     var: imported_var
 
 - name: Update docker daemon.json
-  ansible.builtin.copy: 
-    content: "{{ imported_var | to_nice_json }}" 
+  ansible.builtin.copy:
+    content: "{{ imported_var | to_nice_json }}"
     dest: "{{ docker_daemon_directory }}/daemon.json"
   notify:
     - Restart docker daemon
@@ -64,5 +64,5 @@
 #   register: docker_daemon
 
 - name: Set docker daemon changed variable
-  ansible.builtin.set_fact: 
+  ansible.builtin.set_fact:
     docker_daemon_changed: "{{ docker_daemon.changed }}"

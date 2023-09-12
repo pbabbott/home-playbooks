@@ -21,7 +21,7 @@ scrape_configs:
   # Note: 172.17.0.1 is how we access the host from within docker (works on linux, whereas host.docker.internal works with docker-desktop)
   - job_name: 'raspberrypi'
     static_configs:
-      - targets: ['172.17.0.1:9100']      
+      - targets: ['172.17.0.1:9100']
 
   # Prometheus server instance
   - job_name: 'prometheus'
@@ -32,18 +32,18 @@ scrape_configs:
   - job_name: 'docker'
     static_configs:
       - targets: ['192.168.4.24:9323']
-  
+
   # grafana services on raspberry pi
   - job_name: 'grafana'
     static_configs:
       - targets: ['192.168.4.24:3002']
-  
+
   # Network attached storage
   - job_name: 'room_of_requirement'
     static_configs:
-      - targets: ['192.168.4.124:9100']      
+      - targets: ['192.168.4.124:9100']
 
   # Traefik on banana pi
   - job_name: 'traefik'
     static_configs:
-      - targets: ['192.168.4.144:8080']      
+      - targets: ['192.168.4.144:8080']

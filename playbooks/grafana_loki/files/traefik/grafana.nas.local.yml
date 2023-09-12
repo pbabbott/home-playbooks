@@ -9,7 +9,7 @@ http:
       middlewares:
         - secured
       service: grafana-nas
-      tls: {} 
+      tls: {}
 
   services:
     grafana-nas:

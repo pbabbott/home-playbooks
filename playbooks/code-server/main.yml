@@ -1,7 +1,7 @@
 
 - name: Setup VS Code Server
   hosts: dumbledore
-  
+
   tasks:
     - name: Ensure code-server exists
       vars:
@@ -11,7 +11,7 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
-        mode: '0755'  
+        mode: '0755'
     - name: Ensure code-server server is up-and-running
       community.docker.docker_compose:
         project_name: code-server

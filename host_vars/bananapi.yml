@@ -1,5 +1,5 @@
 # bananapi is dns server and should loop back to self
-dns_nameservers: 
+dns_nameservers:
   - "127.0.0.1"
 
 traefik_config_dir: /home/pi/app_config/traefik

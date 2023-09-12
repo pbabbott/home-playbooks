@@ -45,4 +45,3 @@ argument_specs:
         type: 'str'
         description: "Password for provided username"
         required: true
-     

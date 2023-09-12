@@ -7,4 +7,3 @@
     marker: "# {mark} ANSIBLE MANAGED SECTION"
     block: |
       static domain_name_servers={{ dns_nameservers | join(' ') }}
-  

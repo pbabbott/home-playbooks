@@ -11,6 +11,6 @@
 
 - name: Install GH CLI
   apt:
-    name: 
+    name:
       - gh
     update_cache: yes

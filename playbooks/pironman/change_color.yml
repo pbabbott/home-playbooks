@@ -9,4 +9,3 @@
       register: temp
     - debug:
         msg: "{{ temp.stdout_lines }}"
-      

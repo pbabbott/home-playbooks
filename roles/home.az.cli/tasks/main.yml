@@ -1,7 +1,7 @@
 - name: Apt - Install prerequsites
   ansible.builtin.apt:
     update_cache: yes
-    name: 
+    name:
       - ca-certificates
       - curl
       - apt-transport-https
@@ -15,6 +15,6 @@
 - name: Apt - Install azure-cli
   ansible.builtin.apt:
     update_cache: yes
-    name: 
+    name:
       - azure-cli
     state: present

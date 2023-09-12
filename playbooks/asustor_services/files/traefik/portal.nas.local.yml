@@ -4,7 +4,7 @@ http:
       redirectRegex:
         regex: "^https:\\/\\/portal\\.nas\\.local\\.abbottland\\.io\\:8022\\/plexmediaserver"
         replacement: "https://plex.abbottland.io"
-    
+
     redirect-portainer:
       redirectRegex:
         regex: "^https:\\/\\/portal\\.nas\\.local\\.abbottland\\.io\\:19943"

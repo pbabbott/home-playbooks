@@ -35,7 +35,7 @@
 - name: Ensure traefik is running
   community.docker.docker_compose:
     project_name: traefik
-    
+
     definition:
       version: '3.2'
       services:

@@ -3,7 +3,7 @@
   ansible.builtin.file:
     path: "{{ vector_config_directory }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
 
 # TODO: make this idempotent
 - name: Copy vector.toml to remote
@@ -43,6 +43,6 @@
             - /var/run/docker.sock:/var/run/docker.sock:ro
             - "{{ vector_config_directory }}/vector.toml:/etc/vector/vector.toml:ro"
           networks: "{{ vector_compose_service_network }}"
-            
+
           # TODO: Consider adding a command for multiple files
           # https://vector.dev/docs/reference/configuration/#multiple-files

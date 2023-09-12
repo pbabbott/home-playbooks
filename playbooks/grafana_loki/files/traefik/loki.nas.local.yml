@@ -9,7 +9,7 @@ http:
       middlewares:
         - secured
       service: loki-nas
-      tls: {} 
+      tls: {}
 
   services:
     loki-nas:

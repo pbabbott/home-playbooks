@@ -1,5 +1,5 @@
 
-# echo $SHELL | awk -F"/" '{print $NF}' 
+# echo $SHELL | awk -F"/" '{print $NF}'
 - name: What is the name of user's $SHELL ?
   shell: "echo $SHELL | awk -F\"/\" '{print $NF}'"
   register: shell_name

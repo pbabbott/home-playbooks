@@ -10,7 +10,7 @@ shell_config_aliases:
   - alias: sp
     command: "source ~/.zprofile"
 # NOTE: Name does not match 'shell_config_exports' on purpose
-shell_config_custom_exports: 
+shell_config_custom_exports:
   - key: PATH
     value: "$PATH:$HOME/.local/bin"
   - key: GITHUB_TOKEN

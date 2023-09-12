@@ -1,4 +1,3 @@
 galaxy_info:
   author: Brandon Abbott
   description: Using a cron job, Zip a directory, and back it up to an azure storage account.
-  

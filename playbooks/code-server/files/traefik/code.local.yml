@@ -15,5 +15,3 @@ http:
         servers:
           - url: http://192.168.4.157:7080
         passHostHeader: true
-  
-    

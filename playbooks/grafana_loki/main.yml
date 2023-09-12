@@ -1,5 +1,5 @@
 - name: Use docker to setup grafana & loki
-  hosts: 
+  hosts:
     - room_of_requirement
   roles:
     - role: home.grafana-loki
@@ -18,4 +18,3 @@
       traefik_app_file_name: 'grafana.nas.local.yml'
     - role: abbottland.ingress.traefik_app
       traefik_app_file_name: 'loki.nas.local.yml'
-

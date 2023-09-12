@@ -1,5 +1,5 @@
 - name: Restart docker daemon
-  when: 
+  when:
     - not docker_daemon_skip_restart
   ansible.builtin.systemd:
     state: restarted

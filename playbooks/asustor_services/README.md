@@ -2,7 +2,7 @@
 
 There are things that are installed on Asustor that aren't using docker.
 
-For example.. 
+For example..
 - Plex!
 - Portainer
 - The ASUSTOR web portal itself

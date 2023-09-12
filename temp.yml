@@ -18,7 +18,7 @@
 #   hosts: elder_wand
 #   tasks:
 #   - name: Get whoami information
-#     ansible.windows.win_whoami: 
+#     ansible.windows.win_whoami:
 
 # # - hosts: rpi
 # #   name: Hello World
@@ -29,7 +29,7 @@
 # #         msg: deb [arch=arm64] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 # #     - debug:
 # #         msg: "{{ playbook_dir }}"
-  
+
 
 # - name: Configure elder_wand
 #   hosts: elder_wand
@@ -46,7 +46,7 @@
 # #     - name: Configure Oh-My-ZSH
 # #       role: gantsign.antigen_bundles
 # #       users:
-# #         - username: 
+# #         - username:
 # #           antigen_libraries:
 # #             - name: oh-my-zsh
 # #           antigen_theme:
@@ -57,5 +57,3 @@
 # #             - name: you-should-use
 # #             - name: autojump
 # #             - name: zsh-autosuggestions
-
-

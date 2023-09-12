@@ -1,7 +1,7 @@
 - ansible.builtin.file:
     path: "{{ verdaccio_config_dir }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
     owner: "{{verdaccio_owner}}"
     group: "{{verdaccio_group}}"
 
@@ -15,7 +15,7 @@
 - ansible.builtin.file:
     path: "{{ verdaccio_plugins_dir }}"
     state: directory
-    mode: '0755'  
+    mode: '0755'
     owner: "{{verdaccio_owner}}"
     group: "{{verdaccio_group}}"
 
@@ -38,7 +38,7 @@
 
 - community.docker.docker_compose:
     project_name: verdaccio
-    
+
     definition:
       version: '3.1'
       services:
