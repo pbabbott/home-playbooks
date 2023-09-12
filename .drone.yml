@@ -9,9 +9,6 @@ platform:
 trigger:
   branch:
     - main
-  ref:
-    include:
-      - refs/tags/*
 
 steps:
   - name: Publish dev image

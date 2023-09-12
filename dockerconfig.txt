@@ -1,0 +1,6 @@
+echo -n 'pbabbott:rn7E!X59pFLZCg#m' | base64
+cGJhYmJvdHQ6cm43RSFYNTlwRkxaQ2cjbQ==
+
+base64 -w0 ./config.json
+
+DOCKER_CONFIG_BASE64=ewogICAgImF1dGhzIjogewogICAgICAgICJodHRwczovL3JlZ2lzdHJ5Lm5hcy5sb2NhbC5hYmJvdHRsYW5kLmlvIjogewogICAgICAgICAgICAiYXV0aCI6ICJjR0poWW1KdmRIUTZjbTQzUlNGWU5UbHdSa3hhUTJjamJRPT0iCiAgICAgICAgfQogICAgfQp9
