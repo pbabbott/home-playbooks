@@ -1,0 +1,28 @@
+kind: pipeline
+name: ci
+type: docker
+
+platform:
+  os: linux
+  arch: arm64
+
+trigger:
+  branch:
+    - main
+  ref:
+    include:
+      - refs/tags/*
+
+steps:
+  - name: Publish dev image
+    image: plugins/docker
+    settings:
+      registry: https://registry.nas.local.abbottland.io
+      username: pbabbott
+      password:
+        from_secret: REGISTRY_PASSWORD
+      mirror: https://registry-mirror.nas.local.abbottland.io
+      repo: registry.nas.local.abbottland.io/home-playbooks-dev
+      auto_tag: true
+      dockerfile: ./.devcontainer/Dockerfile.dev
+      context: ./.devcontainer/  
