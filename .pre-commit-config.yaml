@@ -1,10 +1,24 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
-    hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: check-added-large-files
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+      args: [--unsafe]
+    - id: check-added-large-files
+- repo: local
+  hooks:
+    - id: vault-protect
+      name: vault-protect
+      entry: python ./scripts/vault-protect.py
+      language: python
+      files: vault.yml
+# TODO: setup ansible-lint as pre-commit hook
+# https://blog.emedeiros.me/archives/2020/03/20/ansible-best-practices-checker-with-pre-commit-and-ansible-lint.html
+# - repo: https://github.com/ansible/ansible-lint
+#   rev: v6.19.0
+#   hooks:
+#   - id: ansible-lint
