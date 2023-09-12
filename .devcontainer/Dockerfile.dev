@@ -10,3 +10,5 @@ RUN pip3 install \
     pyopenssl \
     pywinrm \
     pre-commit
+
+# TODO: RUN pre-commit install
