@@ -1,4 +1,6 @@
 {
+    "build": { "dockerfile": "./Dockerfile.dev" },
+
     "customizations": {
       "vscode": {
         "extensions": [
