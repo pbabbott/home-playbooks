@@ -1,3 +1,11 @@
+# TODO: this is here so ansible lint does not see an empty playbook
+- name: Ping linux hosts
+  hosts:
+    - web_servers
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping: {}
+
 # TODO: remove this once backup service is complete.
 # NOTE: azure cli needs to be installed before pip packages
 # TODO: remove this once config-backup-service is done
