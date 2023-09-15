@@ -4,6 +4,7 @@
   roles:
     - role: home.grafana-loki
 
+#TODO: Vector eats up too much log disk space
 - name: Use docker to setup vector
   hosts:
     - room_of_requirement
