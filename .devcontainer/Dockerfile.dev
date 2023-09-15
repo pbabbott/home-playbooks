@@ -12,6 +12,7 @@ RUN apt-get update \
 	jq \
 	sshpass \
 	zsh \
+	neofetch \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Setup user and home dir
@@ -25,6 +26,7 @@ RUN mkdir -p /home/${USER} \
 
 USER ${USER}
 WORKDIR /home/${USER}
+COPY .zshrc /home/${USER}/.zshrc
 
 ENV PATH="${PATH}:/home/${USER}/.local/bin"
 
