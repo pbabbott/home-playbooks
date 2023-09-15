@@ -8,3 +8,5 @@ code_server_config_dir: /home/albus/app_config/code-server/config
 
 # mosquitto_dir: /home/albus/app_config/mosquitto
 # zigbee2mqtt_dir: /home/albus/app_config/zigbee2mqtt
+
+drone_runner_name: dumbledore-runner

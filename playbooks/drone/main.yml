@@ -12,7 +12,12 @@
       drone_github_client_secret: "{{ drone.github_client_secret }}"
       drone_shared_secret: "{{ drone.shared_secret }}"
 
-    - role: home.drone-docker-runner
-      drone_shared_secret: "{{ drone.shared_secret }}"
 
 # TODO: Setup elder_wand drone configuration with ansible.
+
+
+- name: Drone runner on dumbledore
+  hosts: dumbledore
+  roles:
+    - role: home.drone-docker-runner
+      drone_shared_secret: "{{ drone.shared_secret }}"
