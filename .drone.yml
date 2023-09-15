@@ -7,8 +7,8 @@ platform:
   arch: arm64
 
 trigger:
-  branch:
-    - main
+  ref:
+    - refs/tags/*-dev
 
 steps:
   - name: Publish dev image
