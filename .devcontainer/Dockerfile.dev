@@ -36,4 +36,5 @@ RUN pip3 install \
     paramiko \
     pyopenssl \
     pywinrm \
-    pre-commit
+    pre-commit \
+	ansible-lint
