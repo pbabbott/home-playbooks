@@ -1,4 +1,16 @@
 
+- name: Setup DNS network on bananapi
+  hosts: bananapi
+  tasks:
+    - name: Create a network with custom IPAM config
+      community.docker.docker_network:
+        name: custom-dns
+        driver: bridge
+        ipam_driver: default
+
+        ipam_config:
+          - subnet: 172.31.0.0/24
+
 - name: Docker Installations on Banana PI (not root)
   hosts: bananapi
   roles:

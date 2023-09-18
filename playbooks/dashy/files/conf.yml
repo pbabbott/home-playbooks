@@ -31,53 +31,56 @@ sections:
         url: https://grafana.nas.local.abbottland.io
         target: newtab
         statusCheck: true
-        id: 2_1171_grafana
+        id: 1_1859_grafana
       - title: Loki
         description: Log Aggregator
         icon: hl-loki
         url: https://loki.nas.local.abbottland.io/ready
         target: newtab
         statusCheck: true
+        id: 2_1859_loki
       - title: Docker Registry
         description: Container Registry
         icon: hl-docker
         url: https://registry.nas.local.abbottland.io/ui/
         target: newtab
         statusCheck: true
+        id: 3_1859_dockerregistry
       - title: Docker Registry Mirror
         description: Pull-through cache for docker hub
         icon: hl-docker
         url: https://registry-mirror.nas.local.abbottland.io/ui/
         target: newtab
         statusCheck: true
+        id: 4_1859_dockerregistrymirror
       - title: Plex
         description: Plex Media Server
         icon: hl-plex
         url: https://plex.abbottland.io/identity
         target: newtab
         statusCheck: true
-        id: 2_1859_plex
+        id: 5_1859_plex
       - title: Verdaccio
         description: NPM Registry & Proxy
         icon: verdaccio.svg
         url: https://verdaccio.nas.local.abbottland.io
         target: newtab
         statusCheck: true
-        id: 3_1859_verdaccio
+        id: 6_1859_verdaccio
       - title: Portainer
         description: Container Management
         icon: hl-portainer
         url: https://portainer.nas.local.abbottland.io
         target: newtab
         statusCheck: true
-        id: 4_1859_portainer
+        id: 7_1859_portainer
       - title: HandBrake
         description: Video converter service
         icon: hl-handbrake
         url: https://handbrake.nas.local.abbottland.io
         target: newtab
         statusCheck: true
-        id: 6_1859_handbrake
+        id: 8_1859_handbrake
   - name: Raspberry Pi
     icon: hl-raspberrypi
     displayData:
@@ -95,28 +98,27 @@ sections:
         statusCheck: true
         statusCheckAllowInsecure: true
         id: 0_1171_mealie
-
       - title: Prometheus
         description: Metrics Aggregator
         icon: hl-prometheus
         url: http://192.168.4.24:9090
         target: newtab
         statusCheck: true
-        id: 3_1171_prometheus
+        id: 1_1171_prometheus
       - title: Drone
         description: CI/CD Server
         icon: hl-drone
         url: https://drone.abbottland.io
         target: newtab
         statusCheck: true
-        id: 4_1171_drone
+        id: 2_1171_drone
       - title: Portainer
         description: Container Management
         icon: hl-portainer
         url: https://portainer.raspberrypi.local.abbottland.io
         target: newtab
         statusCheck: true
-        id: 7_1171_portainer
+        id: 3_1171_portainer
   - name: Dumbledore
     icon: hl-raspberrypi
     displayData:
@@ -132,7 +134,14 @@ sections:
         url: https://homeassistant.abbottland.io
         target: newtab
         statusCheck: true
-        id: 1_1171_homeassistant
+        id: 0_1027_homeassistant
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://portainer.dumbledore.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 1_1027_portainer
   - name: Banana Pi
     icon: banana-svgrepo-com.svg
     displayData:
@@ -156,6 +165,13 @@ sections:
         target: newtab
         statusCheck: true
         id: 1_794_traefik
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://portainer.bananapi.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 2_794_portainer
   - name: Elder Wand
     icon: corsair-svgrepo-com.svg
     displayData:
@@ -171,7 +187,7 @@ sections:
         url: http://192.168.4.90:4000
         target: newtab
         statusCheck: true
-        id: 1_918_homefileservice
+        id: 0_918_homefileservice
   - name: Icons
     icon: fa fa-icons
     displayData:
