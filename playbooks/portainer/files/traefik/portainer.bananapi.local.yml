@@ -1,0 +1,24 @@
+
+http:
+  routers:
+    to-portainer-bpi-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`portainer.bananapi.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: portainer-bpi
+      priority: 2
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "bananapi.local.abbottland.io"
+            sans:
+              - "*.bananapi.local.abbottland.io"
+
+  services:
+    portainer-bpi:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.144:9000
+        passHostHeader: true

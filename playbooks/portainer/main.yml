@@ -1,6 +1,8 @@
 - name: Configure portainer
-  # TODO: Get this running on webservers via variables
-  hosts: rpi
+  hosts:
+    - rpi
+    - bananapi
+    - dumbledore
   tasks:
     - name: Ensure portainer data directory exists
       ansible.builtin.file:
@@ -26,9 +28,12 @@
                 - "{{ portainer_data_dir }}:/data"
                 - /var/run/docker.sock:/var/run/docker.sock
 
-# TODO: Configure traefik for rpi portainer
 - name: Traefik configuration for portainer
   hosts: bananapi
   roles:
     - role: abbottland.ingress.traefik_app
       traefik_app_file_name: 'portainer.rpi.local.yml'
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'portainer.bananapi.local.yml'
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'portainer.dumbledore.local.yml'

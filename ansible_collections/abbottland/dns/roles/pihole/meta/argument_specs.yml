@@ -1,0 +1,20 @@
+argument_specs:
+  main:
+    short_description: Sets up pihole server
+    options:
+      pihole_config_dir:
+        type: "str"
+        description: "Configuration directory for pihole"
+        required: true
+      host_tz:
+        type: "str"
+        description: "Host timezone"
+        require: true
+      host_puid:
+        type: "str"
+        description: "Host user id"
+        require: true
+      host_pgid:
+        type: "str"
+        description: "Host group id"
+        require: true

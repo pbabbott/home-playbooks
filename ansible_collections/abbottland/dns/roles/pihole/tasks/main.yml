@@ -47,6 +47,11 @@
 
     definition:
       version: "3"
+      networks:
+        network-pihole:
+          name: "custom-dns"
+          external: true
+
       services:
         pihole:
           container_name: pihole
@@ -64,3 +69,6 @@
             - '{{ pihole_config_dir }}/etc-pihole:/etc/pihole'
             - '{{ pihole_config_dir }}/etc-dnsmasq.d:/etc/dnsmasq.d'
           restart: always
+          networks:
+            network-pihole:
+              ipv4_address: 172.31.0.2           #Internal Docker Address of pihole

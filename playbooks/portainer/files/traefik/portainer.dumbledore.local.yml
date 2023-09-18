@@ -1,0 +1,24 @@
+
+http:
+  routers:
+    to-portainer-dumbledore-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`portainer.dumbledore.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: portainer-dumbledore
+      priority: 2
+      tls:
+        certResolver: cloudflareResolver
+        domains:
+          - main: "dumbledore.local.abbottland.io"
+            sans:
+              - "*.dumbledore.local.abbottland.io"
+
+  services:
+    portainer-dumbledore:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.157:9000
+        passHostHeader: true
