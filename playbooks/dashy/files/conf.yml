@@ -2,7 +2,7 @@ appConfig:
   language: en
   layout: auto
   iconSize: large
-  theme: colorful
+  theme: nord-frost
 pageInfo:
   title: Home Lab
   description: ''
@@ -142,6 +142,13 @@ sections:
         target: newtab
         statusCheck: true
         id: 1_1027_portainer
+      - title: VS Code Server
+        description: VS Code Workspaces
+        icon: hl-code
+        url: https://code.local.abbottland.io/
+        target: newtab
+        statusCheck: true
+        id: 2_1027_vscodeserver
   - name: Banana Pi
     icon: banana-svgrepo-com.svg
     displayData:
@@ -273,6 +280,14 @@ sections:
         url: https://github.com/pbabbott/home-web-apps
         target: newtab
         id: 2_379_homewebapps
+      - title: home-playbooks
+        description: vs code workspace
+        icon: hl-code
+        url: >-
+          https://code.local.abbottland.io/@pbabbott/home-playbooks-dev.main/apps/code-server/?folder=/home/coder/home-playbooks
+        target: newtab
+        statusCheck: true
+        id: 3_379_homeplaybooks
   - name: Azure
     icon: hl-azure
     displayData:
