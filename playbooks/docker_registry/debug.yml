@@ -1,0 +1,11 @@
+- name: Show docker daemon config on web servers
+  become: true
+  hosts:
+    - web_servers
+  tasks:
+    - name: Get contents of /etc/docker/daemon.json
+      command: "cat  /etc/docker/daemon.json"
+      register: daemon
+    - name: Show daemon.json contents
+      debug:
+        msg: "{{ daemon.stdout_lines }}"
