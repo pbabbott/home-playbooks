@@ -1,33 +1,50 @@
-# - name: Setup host metrics for PI
-#   hosts:
-#     - rpi
-#     - bananapi
-#   roles:
-#     - role: cloudalchemy.node_exporter
 
-# - name: Setup host metrics for NAS
-#   hosts: room_of_requirement
-#   roles:
-#     - role: home.prometheus-docker-node-exporter
+- name: Setup prometheus server
+  hosts:
+    - room_of_requirement
+  handlers:
+    - name: Restart prometheus container
+      community.docker.docker_container:
+        name: prometheus
+        restart: true
+  tasks:
+    - name: Ensure prometheus config directory exists
+      ansible.builtin.file:
+        path: "{{ prometheus_config_dir }}"
+        state: directory
+        mode: '0755'
 
-# - name: Configure elder_wand
-#   hosts: elder_wand
-#   tasks:
-#     - name: Firewall rule to allow HTTP on TCP port 9182
-#       community.windows.win_firewall_rule:
-#         name: Prometheus Metrics
-#         localport: 9182
-#         action: allow
-#         direction: in
-#         protocol: tcp
-#         profiles: private
-#         state: present
-#         enabled: yes
+    - name: Copy prometheus.yml to remote
+      ansible.builtin.copy:
+        src: ./files/prometheus.yml
+        dest: "{{ prometheus_config_dir }}/prometheus.yml"
+      register: prometheus_config
+      notify:
+        - Restart prometheus container
 
+    - name: Ensure prometheus server docker container is running
+      community.docker.docker_compose:
+        project_name: prometheus
+        definition:
+          version: "3.1"
+          networks:
+            loki:
+              name: grafana_loki
+              driver: bridge
+          services:
+            prometheus:
+              container_name: prometheus
+              image: prom/prometheus
+              restart: always
+              ports:
+                - 9090:9090
+              volumes:
+                - "{{ prometheus_config_dir }}/prometheus.yml:/etc/prometheus/prometheus.yml"
+              networks:
+                - loki
 
-# # TODO: setup prometheus metrics
-# # - role: abbottland.docker.docker_daemon
-# #       docker_daemon_metrics_ip_address: "{{ ansible_host }}"
-
-
-#     # - role: home.prometheus-server
+- name: Traefik configuration for prometheus
+  hosts: bananapi
+  roles:
+  - role: abbottland.ingress.traefik_app
+    traefik_app_file_name: 'prometheus.nas.local.yml'

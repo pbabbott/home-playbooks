@@ -1,0 +1,19 @@
+# nas.local.abbottland.io
+
+http:
+  routers:
+    to-prometheus-nas-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`prometheus.nas.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: prometheus-nas
+      tls: {}
+
+  services:
+    prometheus-nas:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.124:9090
+        passHostHeader: true

@@ -1,0 +1,43 @@
+- name: Metrics - node_exporter
+  hosts:
+    - web_servers
+  roles:
+    - prometheus.prometheus.node_exporter
+
+# NOTE: prometheus.prometheus.node_exporter requries systemd to function
+# thus docker is used on NAS
+- name: Setup host metrics for NAS
+  hosts: room_of_requirement
+  tasks:
+    - name: Ensure node_exporter is running
+      community.docker.docker_compose:
+        project_name: node_exporter
+        definition:
+          version: '3.8'
+          services:
+            node_exporter:
+              image: quay.io/prometheus/node-exporter:latest
+              container_name: node_exporter
+              ports:
+                - 9100:9100
+              command:
+                - '--path.rootfs=/host'
+              pid: host
+              restart: always
+              volumes:
+                - '/:/host:ro'
+
+
+- name: Configure elder_wand windows_exporter
+  hosts: elder_wand
+  tasks:
+    - name: Firewall rule to allow HTTP on TCP port 9182
+      community.windows.win_firewall_rule:
+        name: Prometheus Metrics
+        localport: 9182
+        action: allow
+        direction: in
+        protocol: tcp
+        profiles: private
+        state: present
+        enabled: yes

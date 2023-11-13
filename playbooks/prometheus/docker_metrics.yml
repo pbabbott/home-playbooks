@@ -1,0 +1,21 @@
+
+- name: Metrics - docker daemon
+  hosts:
+    - web_servers
+  become: true
+  roles:
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: metrics-addr
+      docker_daemon_value: "{{ ansible_host }}:9323"
+
+- name: Configure Docker Daemon on ROR for metrics
+  hosts: room_of_requirement
+  become: true
+  roles:
+    - role: abbottland.docker.docker_daemon
+      docker_daemon_key: metrics-addr
+      docker_daemon_value: "{{ ansible_host }}:9323"
+      docker_daemon_skip_restart: true
+
+- name: Restart docker on ASUSTOR
+  ansible.builtin.import_playbook: '../asustor_services/restart_docker.yml'

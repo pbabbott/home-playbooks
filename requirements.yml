@@ -1,8 +1,8 @@
 roles:
   - ryankwilliams.ssh_copy_id
   - gantsign.antigen_bundles
-  - cloudalchemy.node_exporter
 collections:
   - community.crypto
   - geerlingguy.mac
   - ansible.posix
+  - prometheus.prometheus

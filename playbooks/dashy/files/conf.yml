@@ -39,6 +39,13 @@ sections:
         target: newtab
         statusCheck: true
         id: 2_1859_loki
+      - title: Prometheus
+        description: Metrics Aggregator
+        icon: hl-prometheus
+        url: https://prometheus.nas.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 1_1171_prometheus
       - title: Docker Registry
         description: Container Registry
         icon: hl-docker
@@ -98,13 +105,6 @@ sections:
         statusCheck: true
         statusCheckAllowInsecure: true
         id: 0_1171_mealie
-      - title: Prometheus
-        description: Metrics Aggregator
-        icon: hl-prometheus
-        url: http://192.168.4.24:9090
-        target: newtab
-        statusCheck: true
-        id: 1_1171_prometheus
       - title: Drone
         description: CI/CD Server
         icon: hl-drone

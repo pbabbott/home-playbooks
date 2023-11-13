@@ -1,5 +1,0 @@
-# https://hub.docker.com/r/prom/prometheus
-
-galaxy_info:
-  author: Brandon Abbott
-  description: Ensure target host gets prometheus server up and running on it

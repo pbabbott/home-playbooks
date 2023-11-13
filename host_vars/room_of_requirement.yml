@@ -45,3 +45,5 @@ vector_compose_service_network:
 
 docker_daemon_loki_log_sink: localhost:3100
 docker_daemon_directory: /volume1/Docker
+
+prometheus_config_dir: /volume1/Docker/prometheus/config
