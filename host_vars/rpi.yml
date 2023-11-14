@@ -1,4 +1,3 @@
-drone_data_dir: /home/pi/app_config/drone/data
 drone_runner_name: rpi-runner
 
 dashy_config_dir: /home/pi/app_config/dashy

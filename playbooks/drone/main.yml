@@ -1,23 +1,22 @@
-- name: Traefik configuration for drone
-  hosts: bananapi
-  roles:
-    - role: abbottland.ingress.traefik_app
-      traefik_app_file_name: 'drone.yml'
-
 - name: Drone Docker Installations on RPI (not root)
-  hosts: rpi
+  hosts: dumbledore
   roles:
     - role: home.drone-server
       drone_github_client_id: "{{ drone.github_client_id }}"
       drone_github_client_secret: "{{ drone.github_client_secret }}"
       drone_shared_secret: "{{ drone.shared_secret }}"
 
-
-# TODO: Setup elder_wand drone configuration with ansible.
-
+# TODO: Setup x86 drone runner configuration with ansible.
 
 - name: Drone runner on dumbledore
   hosts: dumbledore
   roles:
     - role: home.drone-docker-runner
       drone_shared_secret: "{{ drone.shared_secret }}"
+
+
+- name: Traefik configuration for drone
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'drone.yml'

@@ -10,5 +10,6 @@ code_server_config_dir: /home/albus/app_config/code-server/config
 # zigbee2mqtt_dir: /home/albus/app_config/zigbee2mqtt
 
 drone_runner_name: dumbledore-runner
+drone_data_dir: /home/albus/app_config/drone/data
 
 portainer_data_dir: /home/albus/app_config/portainer_data
