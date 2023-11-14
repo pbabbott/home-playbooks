@@ -1,5 +1,5 @@
 - name: Install meaile on target
-  hosts: rpi
+  hosts: dumbledore
   tasks:
     - name: Ensure mealie_data_dir exists
       ansible.builtin.file:
@@ -12,11 +12,6 @@
 
         definition:
           version: "3.1"
-          # TODO: no need for external network here
-          networks:
-            default:
-              name: lsio
-              external: true
           services:
             mealie:
               container_name: mealie

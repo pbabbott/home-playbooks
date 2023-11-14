@@ -88,7 +88,8 @@ sections:
         target: newtab
         statusCheck: true
         id: 8_1859_handbrake
-  - name: Raspberry Pi
+
+  - name: Dumbledore
     icon: hl-raspberrypi
     displayData:
       sortBy: alphabetical
@@ -105,22 +106,6 @@ sections:
         statusCheck: true
         statusCheckAllowInsecure: true
         id: 0_1171_mealie
-      - title: Portainer
-        description: Container Management
-        icon: hl-portainer
-        url: https://portainer.raspberrypi.local.abbottland.io
-        target: newtab
-        statusCheck: true
-        id: 3_1171_portainer
-  - name: Dumbledore
-    icon: hl-raspberrypi
-    displayData:
-      sortBy: alphabetical
-      rows: 1
-      cols: 1
-      collapsed: false
-      hideForGuests: false
-    items:
       - title: Home Assistant
         description: Home Automations
         icon: hl-home-assistant
@@ -195,6 +180,22 @@ sections:
         target: newtab
         statusCheck: true
         id: 0_918_homefileservice
+  - name: Raspberry Pi
+    icon: hl-raspberrypi
+    displayData:
+      sortBy: alphabetical
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Portainer
+        description: Container Management
+        icon: hl-portainer
+        url: https://portainer.raspberrypi.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        id: 3_1171_portainer
   - name: Icons
     icon: fa fa-icons
     displayData:

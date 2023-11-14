@@ -11,5 +11,5 @@ http:
     mealie:
       loadBalancer:
         servers:
-        - url: http://192.168.4.24:9925
+        - url: http://192.168.4.157:9925
         passHostHeader: true
