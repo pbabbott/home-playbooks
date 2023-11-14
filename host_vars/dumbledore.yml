@@ -13,3 +13,5 @@ drone_runner_name: dumbledore-runner
 drone_data_dir: /home/albus/app_config/drone/data
 
 portainer_data_dir: /home/albus/app_config/portainer_data
+
+dashy_config_dir: /home/albus/app_config/dashy

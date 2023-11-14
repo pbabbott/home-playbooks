@@ -1,6 +1,6 @@
 
 - name: Install dashy on target
-  hosts: rpi
+  hosts: dumbledore
   handlers:
     - name: Restart dashy container
       community.docker.docker_container:
@@ -32,10 +32,6 @@
         project_name: dashy
         definition:
           version: "3.1"
-          networks:
-            default:
-              name: lsio
-              external: true
           services:
             dashy:
               container_name: dashy
