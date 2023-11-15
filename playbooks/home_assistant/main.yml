@@ -1,9 +1,4 @@
 
-- name: Docker Installations on RPI (not root)
-  hosts: dumbledore
-  roles:
-    - role: home.home-assistant
-
 - name: Traefik configuration for dashboard
   hosts: bananapi
   roles:
