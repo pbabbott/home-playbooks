@@ -3,6 +3,12 @@
     path: "{{ traefik_config_dir }}"
     state: directory
 
+- name: Ensure traekfik dynamic config directory exists
+  ansible.builtin.file:
+    path: "{{ traefik_dynamic_config_dir }}"
+    state: directory
+
+
 - name: Create acme.json empty file
   ansible.builtin.file:
     path: "{{ traefik_config_dir }}/acme.json"
@@ -42,7 +48,7 @@
         portainer:
           restart: always
           container_name: traefik
-          image: traefik:v2.9
+          image: traefik:v2.10
           environment:
             CLOUDFLARE_DNS_API_TOKEN: "{{ traefik_cloudflare_token }}"
           ports:

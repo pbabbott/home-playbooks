@@ -14,11 +14,11 @@
       become: true
 
 # TODO: Extract this out as its for home-file-service only
-- name: Install node-windows globally on elder_wand
-  hosts: elder_wand
-  tasks:
-    - name: Install node-windows
-      #ansible.builtin.win_shell
-      ansible.windows.win_shell: npm install -g node-windows
-      args:
-        creates: C:\Users\pbabb\AppData\Roaming\npm\node_modules\node-windows
+# - name: Install node-windows globally on elder_wand
+#   hosts: elder_wand
+#   tasks:
+#     - name: Install node-windows
+#       #ansible.builtin.win_shell
+#       ansible.windows.win_shell: npm install -g node-windows
+#       args:
+#         creates: C:\Users\pbabb\AppData\Roaming\npm\node_modules\node-windows

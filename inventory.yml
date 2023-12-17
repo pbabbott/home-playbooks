@@ -7,15 +7,17 @@ all:
       ansible_password: "{{ inventoryPasswords.localhost }}"
       ansible_sudo_pass: "{{ inventoryPasswords.localhost }}"
   children:
+    other:
+      hubs:
+        rpi:
+          ansible_host: 192.168.4.24
+          ansible_user: pi
+          ansible_password: "{{ inventoryPasswords.rpi }}"
+          ansible_sudo_pass: "{{ inventoryPasswords.rpi }}"
     remote:
       children:
         web_servers:
           hosts:
-            rpi:
-              ansible_host: 192.168.4.24
-              ansible_user: pi
-              ansible_password: "{{ inventoryPasswords.rpi }}"
-              ansible_sudo_pass: "{{ inventoryPasswords.rpi }}"
             bananapi:
               ansible_host: 192.168.4.144
               ansible_user: pi
