@@ -5,6 +5,12 @@
   roles:
     - role: home.verdaccio
 
+- name: Traefik configuration for verdaccio
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'verdaccio.nas.local.yml'
+
 - name: Get Verdaccio Token
   hosts:
     - room_of_requirement
@@ -33,11 +39,6 @@
       ansible.builtin.debug:
         msg: "Response: {{ verdaccio_token }}"
 
-- name: Traefik configuration for verdaccio
-  hosts: bananapi
-  roles:
-    - role: abbottland.ingress.traefik_app
-      traefik_app_file_name: 'verdaccio.nas.local.yml'
 
 - name: Configure elder_wand to connect to registry
   hosts: elder_wand

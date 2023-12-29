@@ -1,6 +1,5 @@
 - name: Configure portainer
   hosts:
-    - rpi
     - bananapi
     - dumbledore
   tasks:

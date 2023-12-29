@@ -3,11 +3,15 @@
     path: "{{ traefik_config_dir }}"
     state: directory
 
+- name: Ensure traekfik config/certs directory exists
+  ansible.builtin.file:
+    path: "{{ traefik_config_dir }}/certs"
+    state: directory
+
 - name: Ensure traekfik dynamic config directory exists
   ansible.builtin.file:
     path: "{{ traefik_dynamic_config_dir }}"
     state: directory
-
 
 - name: Create acme.json empty file
   ansible.builtin.file:
@@ -45,7 +49,21 @@
     definition:
       version: '3.2'
       services:
-        portainer:
+        tcd:
+          image: ldez/traefik-certs-dumper:v2.8.1
+          entrypoint: sh -c '
+            apk add jq
+            ; while ! [ -e /data/acme.json ]
+            || ! [ `jq ".[] | .Certificates | length" /data/acme.json` != 0 ]; do
+            sleep 1
+            ; done
+            && traefik-certs-dumper file --version v2 --watch
+            --source /data/acme.json --dest /data/certs'
+          volumes:
+            - /{{ traefik_config_dir }}/acme.json:/data/acme.json
+            - /{{ traefik_config_dir }}/certs:/data/certs
+
+        traefik:
           restart: always
           container_name: traefik
           image: traefik:v2.10

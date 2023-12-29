@@ -1,0 +1,30 @@
+# Installation
+
+- name: Install semaphore on target
+  hosts: dumbledore
+  tasks:
+    - name: Get semaphore up-and-running with docker-compose
+      community.docker.docker_compose:
+        project_name: semaphore
+
+        definition:
+          version: "3.1"
+          services:
+            semaphore:
+              container_name: semaphore
+              image: semaphoreui/semaphore:latest
+              restart: always
+              ports:
+                - 3001:3000
+              environment:
+                SEMAPHORE_DB_DIALECT: bolt
+                SEMAPHORE_ADMIN_PASSWORD: "{{semaphore.adminPassword}}"
+                SEMAPHORE_ADMIN_NAME: admin
+                SEMAPHORE_ADMIN_EMAIL: admin@localhost
+                SEMAPHORE_ADMIN: admin
+
+- name: Traefik configuration for semaphore
+  hosts: bananapi
+  roles:
+    - role: abbottland.ingress.traefik_app
+      traefik_app_file_name: 'semaphore.yml'

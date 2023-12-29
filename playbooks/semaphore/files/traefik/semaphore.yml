@@ -1,0 +1,17 @@
+http:
+  routers:
+    to-semaphore-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`semaphore.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: semaphore
+      tls: {}
+
+  services:
+    semaphore:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.157:3001
+        passHostHeader: true

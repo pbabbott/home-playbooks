@@ -7,8 +7,8 @@ all:
       ansible_password: "{{ inventoryPasswords.localhost }}"
       ansible_sudo_pass: "{{ inventoryPasswords.localhost }}"
   children:
-    other:
-      hubs:
+    hubs:
+      hosts:
         rpi:
           ansible_host: 192.168.4.24
           ansible_user: pi

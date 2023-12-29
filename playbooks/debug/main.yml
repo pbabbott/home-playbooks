@@ -1,6 +1,5 @@
 - hosts:
     - bananapi
-    - rpi
     - dumbledore
   name: Test web_server group vars
   tasks:
