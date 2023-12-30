@@ -1,0 +1,8 @@
+
+
+
+- name: Ping elder_wand
+  hosts: elder_wand
+  tasks:
+    - name: Ping host
+      ansible.windows.win_ping: {}

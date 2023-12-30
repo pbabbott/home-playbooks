@@ -1,0 +1,10 @@
+
+
+- name: Ping linux hosts as sudo
+  become: true
+  hosts:
+    - web_servers
+    - room_of_requirement
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping: {}

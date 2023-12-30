@@ -1,3 +1,6 @@
+ansible_password: "{{ inventoryPasswords.bananapi }}"
+ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
+
 # bananapi is dns server and should loop back to self
 dns_nameservers:
   - "127.0.0.1"

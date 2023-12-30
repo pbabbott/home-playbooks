@@ -1,17 +1,17 @@
-- name: Backup mealie data
-  hosts: rpi
-  tasks:
-    - name: Stop Mealie container
-      community.docker.docker_container:
-        name: mealie
-        state: stopped
+# - name: Backup mealie data
+#   hosts: rpi
+#   tasks:
+#     - name: Stop Mealie container
+#       community.docker.docker_container:
+#         name: mealie
+#         state: stopped
 
     # TODO: Setup config-back-up service call here
     # - name: Run config backup service
     #   community.docker.docker_container_exec:
 
 
-    - name: Start Mealie container
-      community.docker.docker_container:
-        name: mealie
-        state: started
+    # - name: Start Mealie container
+    #   community.docker.docker_container:
+    #     name: mealie
+    #     state: started

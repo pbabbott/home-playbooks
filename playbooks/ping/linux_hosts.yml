@@ -1,0 +1,8 @@
+
+- name: Ping linux hosts
+  hosts:
+    - web_servers
+    - room_of_requirement
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping: {}

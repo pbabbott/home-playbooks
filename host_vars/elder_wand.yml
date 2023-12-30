@@ -1,0 +1,1 @@
+ansible_password: "{{ inventoryPasswords.elder_wand }}"

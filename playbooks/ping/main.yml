@@ -1,15 +1,3 @@
-
-- name: Ping linux hosts
-  hosts:
-    - web_servers
-    - room_of_requirement
-  tasks:
-    - name: Ping host
-      ansible.builtin.ping: {}
-
-
-- name: Configure elder_wand
-  hosts: elder_wand
-  tasks:
-    - name: Ping host
-      ansible.windows.win_ping: {}
+- import_playbook: linux_hosts.yml
+- import_playbook: sudo_linux_hosts.yml
+- import_playbook: windows.yml
