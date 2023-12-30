@@ -8,9 +8,13 @@ all:
             bananapi:
               ansible_host: 192.168.4.144
               ansible_user: pi
+              ansible_password: "{{ inventoryPasswords.bananapi }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
             dumbledore:
               ansible_host: 192.168.4.157
               ansible_user: albus
+              ansible_password: "{{ inventoryPasswords.dumbledore }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
       hosts:
         elder_wand:
           # ansible_host: 192.168.4.90 # Ethernet
@@ -21,6 +25,9 @@ all:
           ansible_winrm_server_cert_validation: ignore
           ansible_winrm_transport: ntlm
           ansible_user: pbabb
+          ansible_password: "{{ inventoryPasswords.elder_wand }}"
         room_of_requirement:
           ansible_host: 192.168.4.124
           ansible_user: pabbott
+          ansible_password: "{{ inventoryPasswords.room_of_requirement }}"
+          ansible_sudo_pass: "{{ inventoryPasswords.room_of_requirement }}"
