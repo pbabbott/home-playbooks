@@ -1,0 +1,7 @@
+- hosts:
+    - web_servers
+  name: Test web_server group vars
+  tasks:
+    - name: Test one_cool_var
+      debug:
+        msg: "inventoryPasswords.rpi: {{ inventoryPasswords.rpi }}"
