@@ -98,6 +98,13 @@ sections:
       collapsed: false
       hideForGuests: false
     items:
+      - title: Semaphore
+        description: Ansible Playbooks
+        icon: hl-semaphore
+        url: https://semaphore.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
       - title: Mealie
         description: Recipe database
         icon: hl-mealie
