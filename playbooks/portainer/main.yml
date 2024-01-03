@@ -1,7 +1,6 @@
 - name: Configure portainer
   hosts:
-    - bananapi
-    - dumbledore
+    - web_servers
   tasks:
     - name: Ensure portainer data directory exists
       ansible.builtin.file:
