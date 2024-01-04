@@ -48,7 +48,7 @@ Don't forget to add `~/.local/bin` to your path!
 Install requirements
 
 ```sh
-$ ansible-galaxy install -r ./requirements.yml
+$ ansible-galaxy install -r ./ansible_collections/requirements.yml
 $ ansible-galaxy install -r ./roles/requirements.yml
 ```
 
