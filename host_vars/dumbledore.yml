@@ -19,3 +19,5 @@ portainer_data_dir: /home/albus/app_config/portainer_data
 
 dashy_config_dir: /home/albus/app_config/dashy
 mealie_data_dir: /home/albus/app_config/mealie_data
+
+semaphore_postgres_data_dir: /home/albus/app_config/semaphore/postgres

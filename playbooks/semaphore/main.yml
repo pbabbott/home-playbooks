@@ -1,27 +1,50 @@
-# Installation
-
 - name: Install semaphore on target
   hosts: dumbledore
   tasks:
+    - name: Ensure semaphore_postgres_data_dir exists
+      ansible.builtin.file:
+        path: "{{ semaphore_postgres_data_dir }}"
+        state: directory
+        mode: '0755'
     - name: Get semaphore up-and-running with docker-compose
       community.docker.docker_compose:
         project_name: semaphore
-
         definition:
           version: "3.1"
           services:
+            postgres:
+              restart: unless-stopped
+              image: postgres:latest
+              hostname: postgres
+              volumes:
+                - "{{ semaphore_postgres_data_dir }}:/var/lib/postgresql/data"
+              environment:
+                POSTGRES_USER: semaphore
+                POSTGRES_PASSWORD: "{{ semaphore.postgres.password }}"
+                POSTGRES_DB: semaphore
             semaphore:
               container_name: semaphore
               image: semaphoreui/semaphore:latest
               restart: always
               ports:
                 - 3001:3000
+              depends_on:
+                - postgres
               environment:
-                SEMAPHORE_DB_DIALECT: bolt
-                SEMAPHORE_ADMIN_PASSWORD: "{{semaphore.adminPassword}}"
-                SEMAPHORE_ADMIN_NAME: admin
-                SEMAPHORE_ADMIN_EMAIL: admin@localhost
-                SEMAPHORE_ADMIN: admin
+                SEMAPHORE_DB: semaphore
+                SEMAPHORE_DB_DIALECT: postgres
+                SEMAPHORE_DB_PORT: 5432
+                SEMAPHORE_DB_USER: semaphore
+                SEMAPHORE_DB_PASS: "{{ semaphore.postgres.password }}"
+                SEMAPHORE_DB_HOST: postgres
+
+                SEMAPHORE_ADMIN_PASSWORD: "{{ semaphore.admin.password }}"
+                SEMAPHORE_ADMIN_NAME: "{{ semaphore.admin.name }}"
+                SEMAPHORE_ADMIN_EMAIL: "{{ semaphore.admin.email }}"
+                SEMAPHORE_ADMIN: "{{ semaphore.admin.name }}"
+                SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ semaphore.accessKey }}"
+                SEMAPHORE_LDAP_ACTIVATED: 'no' # if you wish to use ldap, set to: 'yes'
+
 
 - name: Traefik configuration for semaphore
   hosts: bananapi
