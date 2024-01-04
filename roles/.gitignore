@@ -2,3 +2,4 @@
 
 !.gitignore
 !home.*
+!requirements.yml
