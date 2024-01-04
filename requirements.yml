@@ -1,6 +1,3 @@
-roles:
-  - ryankwilliams.ssh_copy_id
-  - gantsign.antigen_bundles
 collections:
   - community.crypto
   - geerlingguy.mac

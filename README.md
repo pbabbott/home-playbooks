@@ -33,9 +33,10 @@ Ansible Installation
 $ python -m pip install --user ansible
 ```
 Packages Installation
-```
-$ sudo apt install -y sshpass
 
+```sh
+$ sudo apt install -y sshpass
+```
 
 ## Other Notes
 
@@ -48,6 +49,7 @@ Install requirements
 
 ```sh
 $ ansible-galaxy install -r ./requirements.yml
+$ ansible-galaxy install -r ./roles/requirements.yml
 ```
 
 ## `main.yml`
