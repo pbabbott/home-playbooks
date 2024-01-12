@@ -23,3 +23,31 @@ steps:
       auto_tag: true
       dockerfile: ./.devcontainer/Dockerfile.dev
       context: ./.devcontainer/
+
+---
+
+kind: pipeline
+name: ci
+type: docker
+
+platform:
+  os: linux
+  arch: arm64
+
+trigger:
+  ref:
+    - refs/tags/*-semaphore
+
+steps:
+  - name: Publish dev image
+    image: plugins/docker
+    settings:
+      registry: https://registry.nas.local.abbottland.io
+      username: pbabbott
+      password:
+        from_secret: REGISTRY_PASSWORD
+      mirror: https://registry-mirror.nas.local.abbottland.io
+      repo: registry.nas.local.abbottland.io/semaphore
+      auto_tag: true
+      dockerfile: ./Dockerfile
+      context: ./

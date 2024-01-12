@@ -47,5 +47,5 @@
 - name: Traefik configuration for handbrake
   hosts: bananapi
   roles:
-    - role: abbottland.ingress.traefik_app
+    - role: home.traefik_app
       traefik_app_file_name: 'handbrake.nas.local.yml'
