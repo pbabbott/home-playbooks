@@ -1,5 +1,5 @@
 kind: pipeline
-name: ci
+name: devcontainer
 type: docker
 
 platform:
@@ -27,7 +27,7 @@ steps:
 ---
 
 kind: pipeline
-name: ci
+name: semaphore
 type: docker
 
 platform:
