@@ -1,5 +1,0 @@
-collections:
-  - community.crypto
-  - geerlingguy.mac
-  - ansible.posix
-  - prometheus.prometheus
