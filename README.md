@@ -45,11 +45,18 @@ Don't forget to add `~/.local/bin` to your path!
 # Playbooks
 
 ## Requirements
-Install requirements
+Install roles
 
 ```sh
-$ ansible-galaxy install -r ./collections/requirements.yml
 $ ansible-galaxy install -r ./roles/requirements.yml
+```
+
+### Collections
+
+In some of the playbooks, collections are needed. If there exists a folder such as in `playbooks/[name]/collections`  then run the following command to install pre-requisite collections for this playbook.
+
+```sh
+ansible-galaxy install -r ./playbooks/[name]/collections/requirements.yml
 ```
 
 ## `main.yml`
