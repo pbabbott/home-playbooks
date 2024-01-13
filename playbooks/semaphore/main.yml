@@ -24,7 +24,7 @@
             semaphore:
               container_name: semaphore
               # image: semaphoreui/semaphore:latest
-              image: registry.nas.local.abbottland.io/semaphore:0.0.7-semaphore
+              image: registry.nas.local.abbottland.io/semaphore:0.0.8-semaphore
               restart: always
               ports:
                 - 3001:3000
