@@ -7,3 +7,4 @@ RUN pip install pywinrm jmespath netaddr passlib requests matrix_client
 USER semaphore
 
 COPY ./ansible_collections/requirements.yml /home/semaphore/requirements.yml
+RUN ansible-galaxy collection install --upgrade -r /home/semaphore/requirements.yml
