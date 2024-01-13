@@ -1,0 +1,13 @@
+- name: Configure elder_wand windows_exporter
+  hosts: elder_wand
+  tasks:
+    - name: Firewall rule to allow HTTP on TCP port 9182
+      community.windows.win_firewall_rule:
+        name: Prometheus Metrics
+        localport: 9182
+        action: allow
+        direction: in
+        protocol: tcp
+        profiles: private
+        state: present
+        enabled: yes

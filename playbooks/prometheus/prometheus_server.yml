@@ -1,4 +1,3 @@
-
 - name: Setup prometheus server
   hosts:
     - room_of_requirement

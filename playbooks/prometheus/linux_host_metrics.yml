@@ -1,0 +1,5 @@
+- name: Metrics - node_exporter
+  hosts:
+    - web_servers
+  roles:
+    - prometheus.prometheus.node_exporter
