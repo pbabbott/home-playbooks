@@ -1,2 +1,5 @@
 vault_pass.txt
 htpasswd
+
+collections/*
+!collections/requirements.yml
