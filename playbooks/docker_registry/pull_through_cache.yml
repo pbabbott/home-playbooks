@@ -1,0 +1,9 @@
+#TODO: Convert collection to playbook
+- name: Setup Docker Registry as pull through cache
+  become: true
+  hosts:
+    - web_servers
+  roles:
+     - role: abbottland.docker.docker_daemon
+       docker_daemon_key: 'registry-mirrors'
+       docker_daemon_value: '["{{ docker_daemon_registry_mirror }}"]'

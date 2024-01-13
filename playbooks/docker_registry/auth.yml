@@ -1,0 +1,8 @@
+- name: Authorize servers to interact with artifact repository
+  hosts: dumbledore
+  tasks:
+    - name: Log into registry for custom image
+      community.docker.docker_login:
+        registry: registry.nas.local.abbottland.io
+        username: "{{ dockerRegistry.username }}"
+        password: "{{ dockerRegistry.password }}"
