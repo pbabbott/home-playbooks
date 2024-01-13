@@ -1,0 +1,7 @@
+- hosts:
+    - bananapi
+    - dumbledore
+  name: Test debug role in abbottland core
+  roles:
+    - role: abbottland.core.debug
+      message: 'Testing 123'
