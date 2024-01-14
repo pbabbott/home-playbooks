@@ -1,0 +1,9 @@
+
+- name: Update apt packages
+  hosts:
+    - dumbledore
+  tasks:
+    - name: Update apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
