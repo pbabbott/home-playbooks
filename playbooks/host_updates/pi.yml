@@ -1,7 +1,9 @@
 
 - name: Update apt packages
+  become: true
   hosts:
     - dumbledore
+    - bananapi
   tasks:
     - name: Update apt packages
       apt:
