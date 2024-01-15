@@ -4,8 +4,26 @@
   hosts:
     - dumbledore
     - bananapi
+  handlers:
+    - name: Notify Reboot Required
+      community.general.pushover:
+        msg: '{{ inventory_hostname }} requires a reboot due to apt package upgrade.'
+        app_token: "{{ pushover.app_token }}"
+        user_key: "{{ pushover.user_key }}"
+    - name: Notify Complete
+      community.general.pushover:
+        msg: '{{ inventory_hostname }} completed apt upgrade'
+        app_token: "{{ pushover.app_token }}"
+        user_key: "{{ pushover.user_key }}"
   tasks:
     - name: Update apt packages
       apt:
         upgrade: yes
         update_cache: yes
+      notify: Notify Complete
+    - name: Check if reboot is required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_file
+      changed_when: reboot_file.stat.exists
+      notify: Notify Reboot Required

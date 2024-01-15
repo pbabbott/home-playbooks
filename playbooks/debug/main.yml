@@ -6,3 +6,6 @@
     - name: Test one_cool_var
       debug:
         msg: "dns_nameservers: {{ dns_nameservers }}"
+    - name: Output inventory name
+      debug:
+        msg: "{{ inventory_hostname }}"

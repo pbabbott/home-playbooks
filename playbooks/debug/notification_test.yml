@@ -1,0 +1,12 @@
+
+
+- name: Send a test notification
+  hosts:
+    - dumbledore
+  tasks:
+    - name: Send Notification
+      community.general.pushover:
+        msg: 'Hello world from notification_test.yml'
+        app_token: "{{ pushover.app_token }}"
+        user_key: "{{ pushover.user_key }}"
+      delegate_to: localhost
