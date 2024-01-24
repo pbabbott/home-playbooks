@@ -1,0 +1,6 @@
+- name: "Copy {{ diun_file_name }} diun config to remote"
+  ansible.builtin.template:
+    src: "./files/diun.j2"
+    dest: "{{ diun_dynamic_config_dir }}/{{ diun_file_name }}"
+  notify:
+    - Restart diun container

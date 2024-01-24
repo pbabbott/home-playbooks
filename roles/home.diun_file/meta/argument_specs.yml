@@ -1,0 +1,15 @@
+argument_specs:
+  main:
+    options:
+      diun_dynamic_config_dir:
+        type: "str"
+        description: "The dynamic configuration directory for diun"
+        required: true
+      diun_file_name:
+        type: "str"
+        description: "The name of the file to copy"
+        required: true
+      diun_watch_image:
+        type: "str"
+        description: "The name of the image to be watched"
+        requried: true

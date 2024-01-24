@@ -20,4 +20,10 @@ portainer_data_dir: /home/albus/app_config/portainer_data
 dashy_config_dir: /home/albus/app_config/dashy
 mealie_data_dir: /home/albus/app_config/mealie_data
 
+semaphore_postgres_docker_image: postgres:latest@sha256:49c276fa02e3d61bd9b8db81dfb4784fe814f50f778dce5980a03817438293e3
 semaphore_postgres_data_dir: /home/albus/app_config/semaphore/postgres
+
+diun_docker_image: crazymax/diun:latest@sha256:44884433eec97e6dbb3286e49f7c55de698f468fda68f0dfc2c29a585bbc64c2
+diun_dynamic_config_dir: /home/albus/app_config/diun/config
+diun_data_dir: /home/albus/app_config/diun/data
+diun_config_dir: /home/albus/app_config/diun

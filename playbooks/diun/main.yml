@@ -1,0 +1,50 @@
+- name: Install diun on target
+  hosts: dumbledore
+  handlers:
+    - name: Restart diun container
+      community.docker.docker_container:
+        name: diun
+        restart: true
+  tasks:
+    - name: Ensure diun directories exists
+      loop:
+        - "{{ diun_config_dir }}"
+        - "{{ diun_dynamic_config_dir }}"
+        - "{{ diun_data_dir }}"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+    - name: Template the diun config to remote
+      ansible.builtin.template:
+        src: ./files/diun.j2
+        dest: "{{ diun_config_dir }}/diun.yml"
+      notify:
+        - Restart diun container
+
+    - name: Get diun up-and-running with docker-compose
+      community.docker.docker_compose:
+        project_name: diun
+        definition:
+          version: "3.5"
+          services:
+            diun:
+              container_name: diun
+              image: "{{ diun_docker_image }}"
+              restart: always
+              command: serve
+              volumes:
+                - "{{ diun_data_dir }}:/data"
+                - "{{ diun_dynamic_config_dir }}:/config"
+                - "{{ diun_config_dir }}/diun.yml:/etc/diun/diun.yml"
+#                - "/var/run/docker.sock:/var/run/docker.sock"
+              environment:
+                TZ: "{{ host_tz }}"
+                LOG_LEVEL: info
+                LOG_JSON: "false"
+
+- name: Diun configuration for diun
+  hosts: dumbledore
+  roles:
+    - role: home.diun_file
+      diun_file_name: 'diun.yml'
+      diun_watch_image: "{{ diun_docker_image }}"
