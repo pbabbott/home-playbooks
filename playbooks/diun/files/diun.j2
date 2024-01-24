@@ -12,6 +12,11 @@ providers:
     patterns:
       - ./config/*Dockerfile
 
+regopts:
+  - name: {{ docker_registry_host }}
+    username: {{ dockerRegistry.username }}
+    password: {{ dockerRegistry.password }}
+
 notif:
   pushover:
     token: {{ pushover.app_token }}

@@ -56,6 +56,6 @@
             - "{{ docker_registry_ui_port }}:80"
           environment:
             REGISTRY_TITLE: "{{ docker_registry_title }}"
-            REGISTRY_URL: "{{ docker_registry_host }}"
+            REGISTRY_URL: "https://{{ docker_registry_host }}"
             SINGLE_REGISTRY: "true"
             DELETE_IMAGES: "{{ (not docker_registry_proxy_enabled) | string }}"

@@ -1,0 +1,16 @@
+- name: Diun configuration for semaphore and postgres
+  hosts: dumbledore
+  roles:
+    - role: home.diun_file
+      diun_file_name: 'semphore_postgres.yml'
+      diun_watch_image: "{{ semaphore_postgres_docker_image }}"
+
+    - role: home.diun_file
+      diun_file_name: 'semaphore_custom.yml'
+      diun_watch_image: "{{ semaphore_image }}"
+      diun_registry_name: "{{ docker_registry_host }}"
+  tasks:
+    - name: Copy Dockerfile to remote
+      ansible.builtin.copy:
+        src: ./files/Dockerfile
+        dest: "{{ diun_dynamic_config_dir }}/semaphore.Dockerfile"

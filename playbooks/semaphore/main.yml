@@ -25,7 +25,7 @@
             semaphore:
               container_name: semaphore
               # image: semaphoreui/semaphore:latest
-              image: registry.nas.local.abbottland.io/semaphore:0.0.8-semaphore
+              image: "{{ semaphore_image }}"
               restart: always
               ports:
                 - 3001:3000
@@ -54,14 +54,4 @@
     - role: home.traefik_app
       traefik_app_file_name: 'semaphore.yml'
 
-- name: Diun configuration for semaphore and postgres
-  hosts: dumbledore
-  roles:
-    - role: home.diun_file
-      diun_file_name: 'semphore_postgres.yml'
-      diun_watch_image: "{{ semaphore_postgres_docker_image }}"
-  tasks:
-    - name: Copy Dockerfile to remote
-      ansible.builtin.copy:
-        src: ./files/Dockerfile
-        dest: "{{ diun_dynamic_config_dir }}/semaphore.Dockerfile"
+- ansible.builtin.import_playbook: './update_notifications.yml'
