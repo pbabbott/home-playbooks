@@ -1,3 +1,5 @@
+
+# diun.platform=linux/arm64
 FROM semaphoreui/semaphore:latest@sha256:5dd25a8ab67b31e557efb96722a9d3166526930c3463ff8c7df914f254a957ee
 
 USER root

@@ -1,18 +1,16 @@
 
 defaults:
   sortTags: semver
-#  watchRepo: true
-
 
 watch:
   schedule: "0 10 * * *"
 
 providers:
-#  docker:
-#    watchStopped: true
-#    endpoint: "unix:///var/run/docker.sock"
   file:
     directory: "/config"
+  dockerfile:
+    patterns:
+      - ./config/*Dockerfile
 
 notif:
   pushover:
