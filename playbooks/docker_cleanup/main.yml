@@ -6,8 +6,15 @@
     - dumbledore
     - room_of_requirement
     - bananapi
+  handlers:
+    - name: Notify Prune Complete
+      community.general.pushover:
+        msg: '{{ inventory_hostname }} completed docker system prune'
+        app_token: "{{ pushover.app_token }}"
+        user_key: "{{ pushover.user_key }}"
   tasks:
     - name: Prune everything
+      notify: Notify Prune Complete
       community.docker.docker_prune:
         containers: true
         images: true
