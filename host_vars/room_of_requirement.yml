@@ -9,6 +9,7 @@ pip_install_packages:
   - docker
   - docker-compose
   - passlib
+  - requests==2.28.1
 
 verdaccio_owner: "10001"
 verdaccio_group: "65533"
