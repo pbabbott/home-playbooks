@@ -1,6 +1,6 @@
 
 # diun.platform=linux/arm64
-FROM semaphoreui/semaphore:latest@sha256:5dd25a8ab67b31e557efb96722a9d3166526930c3463ff8c7df914f254a957ee
+FROM semaphoreui/semaphore:latest@sha256:47add7dba5172f9709cc251b36cbda187ca60b97bc417ce68cb182aa3e400346
 
 USER root
 RUN apk add --no-cache python3 py3-pip
