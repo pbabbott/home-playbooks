@@ -16,14 +16,24 @@
         app_token: "{{ pushover.app_token }}"
         user_key: "{{ pushover.user_key }}"
   tasks:
-    - name: Update apt packages
-      apt:
-        upgrade: yes
-        update_cache: yes
-      notify: Notify Complete
-    - name: Check if reboot is required
-      stat:
-        path: /var/run/reboot-required
-      register: reboot_file
-      changed_when: reboot_file.stat.exists
-      notify: Notify Reboot Required
+    - name: Apt
+      block:
+        - name: Update apt packages
+          apt:
+            upgrade: yes
+            update_cache: yes
+          notify: Notify Complete
+        - name: Check if reboot is required
+          stat:
+            path: /var/run/reboot-required
+          register: reboot_file
+          changed_when: reboot_file.stat.exists
+          notify: Notify Reboot Required
+      rescue:
+        - name: Notify Prune Failure
+          community.general.pushover:
+            title: "Error!"
+            pri: 1
+            msg: '{{ inventory_hostname }} failed apt upgrade'
+            app_token: "{{ pushover.app_token }}"
+            user_key: "{{ pushover.user_key }}"
