@@ -15,10 +15,15 @@
               restart: unless-stopped
               image: "{{ semaphore_postgres_docker_image }}"
               hostname: postgres
+              # ports:
+              #   - 5432:5432
               volumes:
                 - "{{ semaphore_postgres_data_dir }}:/var/lib/postgresql/data"
+                - /etc/timezone:/etc/timezone:ro
+                - /etc/localtime:/etc/localtime:ro
               environment:
                 TZ: "{{ host_tz }}"
+                PGTZ: "{{ host_tz }}"
                 POSTGRES_USER: semaphore
                 POSTGRES_PASSWORD: "{{ semaphore.postgres.password }}"
                 POSTGRES_DB: semaphore
@@ -31,6 +36,9 @@
                 - 3001:3000
               depends_on:
                 - postgres
+              volumes:
+                - /etc/timezone:/etc/timezone:ro
+                - /etc/localtime:/etc/localtime:ro
               environment:
                 TZ: "{{ host_tz }}"
                 SEMAPHORE_DB: semaphore
