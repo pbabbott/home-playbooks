@@ -32,7 +32,7 @@
                 TZ: "{{ host_tz }}"
                 SERVERURL: vpn.abbottland.io
                 SERVERPORT: 51820
-                PEERS: 2
+                PEERS: 3
               volumes:
                 - "{{ wireguard_config_dir }}:/config"
                 - /lib/modules:/lib/modules
