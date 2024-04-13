@@ -1,0 +1,37 @@
+
+- name: Install kuma on target
+  hosts: dumbledore
+  tasks:
+    - name: Ensure uptime_kuma_data_dir exists
+      ansible.builtin.file:
+        path: "{{ uptime_kuma_data_dir }}"
+        state: directory
+    - name: Get uptime_kuma up-and-running with docker-compose
+      community.docker.docker_compose:
+        project_name: uptime_kuma
+        definition:
+          version: "3.1"
+          services:
+            uptime_kuma:
+              restart: unless-stopped
+              image: "{{ uptime_kuma_docker_image }}"
+              ports:
+                - 3002:3001
+              volumes:
+                - "{{ uptime_kuma_data_dir }}:/app/data"
+              environment:
+                TZ: "{{ host_tz }}"
+                PGTZ: "{{ host_tz }}"
+
+- name: Traefik configuration for uptime_kuma
+  hosts: bananapi
+  roles:
+    - role: home.traefik_app
+      traefik_app_file_name: 'uptime_kuma.yml'
+
+- name: Diun configuration for uptime_kuma
+  hosts: dumbledore
+  roles:
+    - role: home.diun_file
+      diun_file_name: 'uptime_kuma.yml'
+      diun_watch_image: "{{ uptime_kuma_docker_image }}"

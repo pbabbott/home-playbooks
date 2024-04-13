@@ -105,6 +105,13 @@ sections:
         target: newtab
         statusCheck: true
         statusCheckAllowInsecure: true
+      - title: Uptime Kuma
+        description: Uptime Dashboard
+        icon: hl-uptime-kuma
+        url: https://kuma.local.abbottland.io
+        target: newtab
+        statusCheck: true
+        statusCheckAllowInsecure: true
       - title: Mealie
         description: Recipe database
         icon: hl-mealie

@@ -1,0 +1,17 @@
+http:
+  routers:
+    to-kuma-https:
+      entryPoints:
+        - "https"
+      rule: "Host(`kuma.local.abbottland.io`)"
+      middlewares:
+        - secured
+      service: kuma
+      tls: {}
+
+  services:
+    kuma:
+      loadBalancer:
+        servers:
+        - url: http://192.168.4.157:3002
+        passHostHeader: true

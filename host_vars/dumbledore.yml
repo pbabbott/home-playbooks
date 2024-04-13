@@ -28,3 +28,6 @@ diun_docker_image: crazymax/diun:latest@sha256:ab6e226e056e9d81b52c76201d7ae42fd
 diun_dynamic_config_dir: /home/albus/app_config/diun/config
 diun_data_dir: /home/albus/app_config/diun/data
 diun_config_dir: /home/albus/app_config/diun
+
+uptime_kuma_data_dir: /home/albus/app_config/uptime_kuma
+uptime_kuma_docker_image: louislam/uptime-kuma:1
