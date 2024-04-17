@@ -11,63 +11,37 @@
     - role: home.traefik_app
       traefik_app_file_name: 'verdaccio.nas.local.yml'
 
-- name: Get Verdaccio Token
-  hosts:
-    - room_of_requirement
-  tasks:
-    - name: Get Verdaccio Token
-      ansible.builtin.uri:
-        url: "{{ verdaccio_public_proto }}://{{ verdaccio_public_url }}/-/user/org.couchdb.user:{{ verdaccio_user }}"
-        method: PUT
-        body_format: json
-        status_code:
-          - 201
-        user: "{{ verdaccio_user }}"
-        password: "{{ verdaccio_pw }}"
-        force_basic_auth: true
-        headers:
-          Content-Type: application/json
-        body: '{"name":"{{ verdaccio_user }}","password":"{{ verdaccio_pw }}"}'
-        return_content: true
-      register: token_response
+- name: Get token from verdaccio
+  import_playbook: ./get_token.yml
 
-    - name: Set Token
-      ansible.builtin.set_fact:
-        verdaccio_token: "{{ (token_response.content | from_json).token }}"
+# - name: Configure elder_wand to connect to registry
+#   hosts: elder_wand
+#   tasks:
+#     - name: Ping host
+#       ansible.windows.win_ping: {}
 
-    - name: Show verdaccio_token
-      ansible.builtin.debug:
-        msg: "Response: {{ verdaccio_token }}"
+#     - name: Copy a single file
+#       ansible.windows.win_copy:
+#         src: ./files/.npmrc
+#         dest: C:\Users\pbabb\.npmrc
 
+#     - name: Set an environment variable for machine (NPM_REGISTRY)
+#       ansible.windows.win_environment:
+#         state: present
+#         name: NPM_REGISTRY
+#         value: "{{ verdaccio_public_url }}"
+#         level: machine
 
-- name: Configure elder_wand to connect to registry
-  hosts: elder_wand
-  tasks:
-    - name: Ping host
-      ansible.windows.win_ping: {}
+#     - name: Set an environment variable for machine (NPM_REGISTRY_PROTO)
+#       ansible.windows.win_environment:
+#         state: present
+#         name: NPM_REGISTRY_PROTO
+#         value: "{{ verdaccio_public_proto }}"
+#         level: machine
 
-    - name: Copy a single file
-      ansible.windows.win_copy:
-        src: ./files/.npmrc
-        dest: C:\Users\pbabb\.npmrc
-
-    - name: Set an environment variable for machine (NPM_REGISTRY)
-      ansible.windows.win_environment:
-        state: present
-        name: NPM_REGISTRY
-        value: "{{ verdaccio_public_url }}"
-        level: machine
-
-    - name: Set an environment variable for machine (NPM_REGISTRY_PROTO)
-      ansible.windows.win_environment:
-        state: present
-        name: NPM_REGISTRY_PROTO
-        value: "{{ verdaccio_public_proto }}"
-        level: machine
-
-    - name: Set an environment variable for machine (NPM_TOKEN)
-      ansible.windows.win_environment:
-        state: present
-        name: NPM_TOKEN
-        value: "{{ hostvars['room_of_requirement'].verdaccio_token }}"
-        level: machine
+#     - name: Set an environment variable for machine (NPM_TOKEN)
+#       ansible.windows.win_environment:
+#         state: present
+#         name: NPM_TOKEN
+#         value: "{{ hostvars['room_of_requirement'].verdaccio_token }}"
+#         level: machine

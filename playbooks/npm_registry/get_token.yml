@@ -1,0 +1,27 @@
+- name: Get Verdaccio Token
+  hosts:
+    - room_of_requirement
+  tasks:
+    - name: Get Verdaccio Token
+      ansible.builtin.uri:
+        url: "{{ verdaccio_public_proto }}://{{ verdaccio_public_url }}/-/user/org.couchdb.user:{{ verdaccio_user }}"
+        method: PUT
+        status_code: 201
+        user: "{{ verdaccio_user }}"
+        password: "{{ verdaccio_pw }}"
+        force_basic_auth: true
+        headers:
+          Content-Type: application/json
+        body:
+          name: "{{ verdaccio_user }}"
+          password: "{{ verdaccio_pw }}"
+        return_content: true
+      register: token_response
+
+    - name: Set Token
+      ansible.builtin.set_fact:
+        verdaccio_token: "{{ (token_response.content | from_json).token }}"
+
+    - name: Show verdaccio_token
+      ansible.builtin.debug:
+        msg: "Response: {{ verdaccio_token }}"
