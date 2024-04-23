@@ -5,6 +5,7 @@
   hosts:
     - web_servers
     - room_of_requirement
+    - phoenix
   tasks:
     - name: Ping host
       ansible.builtin.ping: {}

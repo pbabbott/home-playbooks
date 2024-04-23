@@ -16,6 +16,11 @@ all:
               ansible_password: "{{ inventoryPasswords.dumbledore }}"
               ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
       hosts:
+        phoenix:
+          ansible_host: 192.168.4.170
+          ansible_user: root
+          ansible_password: "{{ inventoryPasswords.phoenix }}"
+          ansible_sudo_pass: "{{ inventoryPasswords.phoenix }}"
         elder_wand:
           # ansible_host: 192.168.4.90 # Ethernet
           ansible_host: 192.168.4.134 # Wi-Fi
