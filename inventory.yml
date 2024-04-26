@@ -6,7 +6,7 @@ all:
         kubernetes_servers:
           hosts:
             kubernetes_controller:
-              ansible_host: 192.168.4.175
+              ansible_host: 192.168.4.176
               ansible_user: firebolt
               ansible_password: "{{ inventoryPasswords.kubernetes_controller }}"
               ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_controller }}"

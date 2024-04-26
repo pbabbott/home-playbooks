@@ -1,8 +1,0 @@
-
-- name: Install Docker
-  hosts:
-    - kubernetes_servers
-  become: true
-  roles:
-    - role: abbottland.docker.docker
-    - role: abbottland.docker.docker_permissions

@@ -1,10 +1,19 @@
 
 
-- name: Install Docker
+- name: Install Kubernetes Tools
   hosts:
     - kubernetes_servers
   become: true
   tasks:
+
+    - name: Apt - Install prerequsites
+      ansible.builtin.apt:
+        update_cache: yes
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+        state: present
 
     - name: Add kubernetes apt repository key.
       ansible.builtin.get_url:
@@ -20,8 +29,20 @@
         filename: kubernetes
         update_cache: yes
 
-    - name: Install kubectl
+    - name: Install kubernetes tools
       ansible.builtin.apt:
-        name: kubectl
+        name:
+          - kubectl
+          - kubeadm
+          - kubelet
         state: present
         update_cache: yes
+
+    - name: Hold packages
+      loop:
+        - kubectl
+        - kubeadm
+        - kubelet
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
