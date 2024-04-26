@@ -11,18 +11,25 @@
       - lsb-release
     state: present
 
-- name: Add Docker GPG key
-  apt_key:
+- name: Add docker apt repository key.
+  ansible.builtin.get_url:
     url: https://download.docker.com/linux/debian/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: '0644'
+    force: true
 
-# TODO: make this idempotent
 - name: Get DEB architecture
   ansible.builtin.command: dpkg --print-architecture
   register: deb_architecture
 
+- name: Add Docker APT repository (debug)
+  debug:
+    msg: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+
 - name: Add Docker APT repository
   apt_repository:
-    repo: deb [arch={{ deb_architecture.stdout }}] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+    repo: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 
 - name: Install Docker CE
   apt:
@@ -32,3 +39,8 @@
       - containerd.io
       - docker-compose-plugin
     update_cache: yes
+
+- name: Make sure a docker service is running
+  ansible.builtin.systemd_service:
+    state: started
+    name: docker

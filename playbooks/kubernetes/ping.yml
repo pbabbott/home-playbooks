@@ -1,0 +1,7 @@
+
+- name: Ping kubernetes_servers
+  hosts:
+    - kubernetes_servers
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping: {}
