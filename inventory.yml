@@ -8,8 +8,13 @@ all:
             kubernetes_controller:
               ansible_host: 192.168.4.176
               ansible_user: firebolt
-              ansible_password: "{{ inventoryPasswords.kubernetes_controller }}"
-              ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_controller }}"
+              ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+            kubernetes_worker_1:
+              ansible_host: 192.168.4.177
+              ansible_user: firebolt
+              ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
         web_servers:
           hosts:
             bananapi:

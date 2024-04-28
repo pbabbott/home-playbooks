@@ -1,0 +1,110 @@
+- name: Make Kubeconfig dir for user
+  hosts:
+    - kubernetes_controller
+  tasks:
+    - name: Ensure ~/.kube/ dir exists
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        mode: '0755'
+
+- name: Setup controller
+  hosts:
+    - kubernetes_controller
+  become: true
+  tasks:
+    - name: Check if Kubernetes is already initialized
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubernetes_initialized
+
+    - name: Create init token
+      register: init_token
+      ansible.builtin.command: kubeadm token generate
+
+    - name: Show init_token
+      when: not kubernetes_initialized.stat.exists
+      debug:
+        msg: "Token on host is {{ init_token }}"
+
+    - name: kubeadm init
+      when: not kubernetes_initialized.stat.exists
+      ansible.builtin.command: "kubeadm init --token {{init_token.stdout}} --pod-network-cidr=10.244.0.0/16"
+
+    - name: Get certificate hash
+      register: cert_hash
+      ansible.builtin.shell: "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'"
+
+    - name: Setup Kubeconfig
+      block:
+        - name: Copy admin.conf to user's home directory
+          copy:
+            src: /etc/kubernetes/admin.conf
+            dest: "/home/{{ ansible_user }}/.kube/config"
+            remote_src: true
+            force: true
+
+        - name: Set ownership of .kube/config
+          file:
+            path: "/home/{{ ansible_user }}/.kube/config"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: 0600
+
+- name: Install pod overlay and create token
+  hosts:
+    - kubernetes_controller
+  vars:
+    apt_install_packages:
+      - python3-pip
+    pip_install_packages:
+      - kubernetes
+  roles:
+    - role: abbottland.core.apt
+      become: true
+    - role: abbottland.core.pip
+  tasks:
+    - name: Download kube-flannel.yml
+      ansible.builtin.get_url:
+        url: https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+        dest: "/tmp/kube-flannel.yml"
+        force: yes
+    - name: Apply kube-flannel.yml
+      kubernetes.core.k8s:
+        state: present
+        src: "/tmp/kube-flannel.yml"
+
+
+- name: Join worker to cluster
+  hosts:
+    - kubernetes_worker_1
+  become: true
+  vars:
+    token: "{{ hostvars['kubernetes_controller']['token'].stdout }}"
+    controller_ip: "{{ hostvars['kubernetes_controller']['ansible_host'] }}"
+    cert_hash: "{{ hostvars['kubernetes_controller']['cert_hash'].stdout }}"
+  tasks:
+    - name: Check if worker node has joined the cluster
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: worker_joined
+
+    - name: Create join_token
+      register: join_token
+      when: not worker_joined.stat.exists
+      delegate_to: kubernetes_controller
+      ansible.builtin.command: kubeadm token create --description "{{ ansible_hostname }}"
+
+    - name: Show command for debugging purposes
+      when: not worker_joined.stat.exists
+      debug:
+        msg: "kubeadm join {{ controller_ip }}:6443 --token {{ join_token.stdout }} --discovery-token-ca-cert-hash sha256:{{ cert_hash }}"
+    - name: Join worker to cluster
+      ansible.builtin.command: "kubeadm join {{ controller_ip }}:6443 --token {{ join_token.stdout }} --discovery-token-ca-cert-hash sha256:{{ cert_hash }}"
+      when: not worker_joined.stat.exists
+
+    - name: Restart containerd
+      when: not worker_joined.stat.exists
+      ansible.builtin.systemd_service:
+        name: containerd
+        state: restarted

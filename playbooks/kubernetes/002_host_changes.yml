@@ -1,0 +1,42 @@
+
+- name: Disable Swap
+  hosts:
+    - kubernetes_servers
+  become: true
+  handlers:
+    - name: Restart kubelet
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: restarted
+  tasks:
+    - name: Check if swap is enabled
+      ansible.builtin.command: /sbin/swapon --show=NAME --noheadings
+      register: swap_enabled
+      failed_when: false
+
+    - name: Disable swap
+      ansible.builtin.command: "{{ item }}"
+      notify:
+        - Restart kubelet
+      with_items:
+        - /sbin/swapoff -a
+        - sed -ri '/\s*swap\s*\//s/^/#/' /etc/fstab
+      when: swap_enabled.stdout != ""
+
+- name: Enable IPv4 Packet forwarding
+  hosts:
+    - kubernetes_servers
+  become: true
+  handlers:
+    - name: Apply sysctl changes
+      ansible.builtin.command: sysctl --system
+  tasks:
+    - name: Enable IPv4 packet forwarding
+      notify: Apply sysctl changes
+      ansible.builtin.copy:
+        content: |
+          net.ipv4.ip_forward = 1
+        dest: /etc/sysctl.d/k8s.conf
+        owner: root
+        group: root
+        mode: 0644

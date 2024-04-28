@@ -46,3 +46,9 @@
       ansible.builtin.dpkg_selections:
         name: "{{ item }}"
         selection: hold
+
+    - name: Enable and start the kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: started
+        enabled: true

@@ -13,6 +13,7 @@ In order to run this playbook, the following must be installed:
 - ansible
 - paramiko
 - pyopenssl
+- kubernetes
 
 ### Linting
 - ansible-lint
@@ -49,6 +50,10 @@ Install roles
 
 ```sh
 $ ansible-galaxy install -r ./roles/requirements.yml
+```
+
+```sh
+$ ansible-galaxy collection install kubernetes.core
 ```
 
 ### Collections

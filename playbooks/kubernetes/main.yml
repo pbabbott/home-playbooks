@@ -1,0 +1,4 @@
+- import_playbook: ./001_containerd.yml
+- import_playbook: ./002_host_changes.yml
+- import_playbook: ./003_kube_tools.yml
+- import_playbook: ./004_kubelet.yml
