@@ -1,0 +1,22 @@
+- name: Set timezone and configure timesyncd
+  hosts:
+    - kubernetes_servers
+  become: true
+  tasks:
+  - name: Set Timezone
+    shell: timedatectl set-timezone America/Chicago
+
+  - name: Make sure timesyncd is stopped
+    systemd:
+      name: systemd-timesyncd.service
+      state: stopped
+
+  - name: Copy over the timesyncd config
+    template:
+      src: ./files/timesyncd.conf
+      dest: /etc/systemd/timesyncd.conf
+
+  - name: Make sure timesyncd is started
+    systemd:
+      name: systemd-timesyncd.service
+      state: started

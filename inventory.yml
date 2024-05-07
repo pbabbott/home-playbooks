@@ -6,15 +6,24 @@ all:
         kubernetes_servers:
           hosts:
             kubernetes_controller:
-              ansible_host: 192.168.4.176
+              ansible_host: 192.168.4.183
               ansible_user: firebolt
               ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
               ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
-            kubernetes_worker_1:
-              ansible_host: 192.168.4.177
-              ansible_user: firebolt
-              ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
-              ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+          children:
+            kubernetes_workers:
+              hosts:
+                kubernetes_worker_1:
+                  ansible_host: 192.168.4.182
+                  ansible_user: firebolt
+                  ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
+                  ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+                kubernetes_worker_2:
+                  ansible_host: 192.168.4.184
+                  ansible_user: firebolt
+                  ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
+                  ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+
         web_servers:
           hosts:
             bananapi:

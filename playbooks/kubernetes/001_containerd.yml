@@ -2,17 +2,19 @@
   hosts:
     - kubernetes_servers
   become: true
-  tasks:
-    - name: Apt - Install prerequsites
-      apt:
-        update_cache: yes
-        name:
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
-        state: present
+  vars:
+    apt_install_packages:
+      # Required for ansible
+      - python3-pip
 
+      # Required for containerd
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+  roles:
+    - role: abbottland.core.apt
+  tasks:
     - name: Add docker apt repository key.
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/debian/gpg

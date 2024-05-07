@@ -5,3 +5,23 @@
   tasks:
     - name: Ping host
       ansible.builtin.ping: {}
+
+
+# - name: Helm Status
+#   hosts: kubernetes_controller
+#   tasks:
+#     - name: Gather information of calico chart inside tigera-operator namespace
+#       kubernetes.core.helm_info:
+#         name: calico
+#         release_namespace: tigera-operator
+#       register: helm_info
+
+#     - name: debug
+#       debug:
+#         msg: "{{helm_info.status.status}}"
+
+
+#     - name: debug
+#       debug:
+#         msg: 'installing..'
+#       when: helm_info.status.status != 'deployed'

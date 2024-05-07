@@ -6,7 +6,7 @@
       ansible.builtin.file:
         path: "/home/{{ ansible_user }}/.kube"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
 - name: Setup controller
   hosts:
@@ -51,33 +51,44 @@
             group: "{{ ansible_user }}"
             mode: 0600
 
-- name: Install pod overlay and create token
+
+- name: Install pod overlay
   hosts:
     - kubernetes_controller
-  vars:
-    apt_install_packages:
-      - python3-pip
-    pip_install_packages:
-      - kubernetes
-  roles:
-    - role: abbottland.core.apt
-      become: true
-    - role: abbottland.core.pip
-  tasks:
-    - name: Download kube-flannel.yml
-      ansible.builtin.get_url:
-        url: https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
-        dest: "/tmp/kube-flannel.yml"
-        force: yes
-    - name: Apply kube-flannel.yml
-      kubernetes.core.k8s:
-        state: present
-        src: "/tmp/kube-flannel.yml"
+  handlers:
 
+  tasks:
+    - name: Download helm chart
+      kubernetes.core.helm_repository:
+        name: projectcalico
+        repo_url: "https://docs.tigera.io/calico/charts"
+
+    - name: Gather information of calico chart inside tigera-operator namespace
+      kubernetes.core.helm_info:
+        name: calico
+        release_namespace: tigera-operator
+      register: helm_info
+
+    - name: install calico
+      when: helm_info.status.status != 'deployed'
+      block:
+        - name: Copy values.yml
+          ansible.builtin.copy:
+            src: ./files/values.yml
+            dest: /tmp/values.yml
+        - name: Deploy calico chart using values files on target
+          kubernetes.core.helm:
+            name: calico
+            chart_version: v3.27.3
+            release_namespace: tigera-operator
+            create_namespace: true
+            chart_ref: projectcalico/tigera-operator
+            values_files:
+              - /tmp/values.yml
 
 - name: Join worker to cluster
   hosts:
-    - kubernetes_worker_1
+    - kubernetes_workers
   become: true
   vars:
     token: "{{ hostvars['kubernetes_controller']['token'].stdout }}"
@@ -108,3 +119,39 @@
       ansible.builtin.systemd_service:
         name: containerd
         state: restarted
+
+
+
+
+    # - name: Download tigera-operator.yaml
+    #   ansible.builtin.get_url:
+    #     url: https://raw.githubusercontent.com/projectcalico/calico/v3.27.3/manifests/tigera-operator.yaml
+    #     dest: "/tmp/tigera-operator.yaml"
+    #     force: yes
+    # - name: Apply tigera-operator.yaml
+    #   kubernetes.core.k8s:
+    #     state: present
+    #     src: "/tmp/tigera-operator.yaml"
+
+    # - name: Copy custom-resources.yaml
+    #   ansible.builtin.copy:
+    #     src: ./files/custom-resources.yaml
+    #     dest: /tmp/custom-resources.yaml
+    # - name: Apply custom-resources.yaml
+    #   kubernetes.core.k8s:
+    #     state: present
+    #     src: "/tmp/custom-resources.yaml"
+
+  # - name: Download kube-flannel.yml
+  #   ansible.builtin.get_url:
+  #     url: https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
+  #     dest: "/tmp/kube-flannel.yml"
+  #     force: yes
+  # - name: Apply kube-flannel.yml
+  #   kubernetes.core.k8s:
+  #     state: present
+  #     src: "/tmp/kube-flannel.yml"
+
+# TODO: bring down the bridge if flannel changed
+# sudo ip link delete cni0 type bridge
+# TODO: may need to restart coredns ?

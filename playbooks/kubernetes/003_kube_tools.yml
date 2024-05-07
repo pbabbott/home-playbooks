@@ -1,20 +1,16 @@
 
-
 - name: Install Kubernetes Tools
   hosts:
     - kubernetes_servers
   become: true
+  vars:
+    apt_install_packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+  roles:
+    - role: abbottland.core.apt
   tasks:
-
-    - name: Apt - Install prerequsites
-      ansible.builtin.apt:
-        update_cache: yes
-        name:
-          - apt-transport-https
-          - ca-certificates
-          - curl
-        state: present
-
     - name: Add kubernetes apt repository key.
       ansible.builtin.get_url:
         url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
@@ -52,3 +48,33 @@
         name: kubelet
         state: started
         enabled: true
+
+- name: Install Helm
+  hosts: kubernetes_controller
+  become: true
+  vars:
+    apt_install_packages:
+      - apt-transport-https
+  roles:
+    - role: abbottland.core.apt
+  tasks:
+    - name: Add helm apt repository key.
+      ansible.builtin.get_url:
+        url: https://baltocdn.com/helm/signing.asc
+        dest: /etc/apt/keyrings/helm.asc
+        mode: '0644'
+        force: true
+
+    - name: Add the helm apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/helm.asc] https://baltocdn.com/helm/stable/debian/ all main"
+        state: present
+        filename: helm
+        update_cache: yes
+
+    - name: Install helm
+      ansible.builtin.apt:
+        name:
+          - helm
+        state: present
+        update_cache: yes

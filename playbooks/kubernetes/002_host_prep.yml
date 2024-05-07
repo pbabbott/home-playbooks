@@ -5,9 +5,17 @@
   become: true
   handlers:
     - name: Restart kubelet
-      ansible.builtin.systemd_service:
-        name: kubelet
-        state: restarted
+      block:
+        - name: Check if kubelet is setup
+          stat:
+            path: /etc/kubernetes/kubelet.conf
+          register: kubelet_enabled
+
+        - name: Restart Kubelet Service
+          ansible.builtin.systemd_service:
+            name: kubelet
+            state: restarted
+          when: kubelet_enabled.stat.exists
   tasks:
     - name: Check if swap is enabled
       ansible.builtin.command: /sbin/swapon --show=NAME --noheadings
