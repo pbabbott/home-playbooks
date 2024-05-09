@@ -1,13 +1,21 @@
-# - name: Un-install kubernetes from cluster
-#   hosts:
-#     - kubernetes_servers
-#   become: true
-#   tasks:
-#     - name: Kubeadm reset
-#       command: kubeadm reset --force
-#     - name: take down bridge
-#       command: sudo ip link delete cni0 type bridge
-#     - name: remove /etc/cni/net.d
-#       file:
-#         path: /etc/cni/net.d
-#         state: absent
+- name: Un-install kubernetes from cluster
+  hosts:
+    - kubernetes_servers
+  become: true
+  tasks:
+
+    - name: Kubeadm reset
+      command: kubeadm reset --force
+
+    - name: Enable and restart the kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: restarted
+        enabled: true
+
+    # - name: take down bridge
+    #   command: sudo ip link delete cni0 type bridge
+    # - name: remove /etc/cni/net.d
+    #   file:
+    #     path: /etc/cni/net.d
+    #     state: absent
