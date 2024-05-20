@@ -1,0 +1,3 @@
+- import_playbook: ./custom_docker_network.yml
+- import_playbook: ./pihole.yml
+- import_playbook: ./cloudflare_ddns

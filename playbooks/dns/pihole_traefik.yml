@@ -1,0 +1,5 @@
+- name: DDNS and Traefik Installation on Banana PI via Docker (not root)
+  hosts: bananapi
+  roles:
+    - role: home.traefik_app
+      traefik_app_file_name: 'pihole.local.yml'

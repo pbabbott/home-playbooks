@@ -1,0 +1,17 @@
+
+- name: Setup DNS network on bananapi
+  hosts: bananapi
+  tasks:
+    - community.docker.docker_compose:
+        project_name: cloudflare-ddns
+
+        definition:
+          version: "2.1"
+          services:
+            cloudflare-ddns:
+              container_name: cloudflare-ddns
+              image:  oznu/cloudflare-ddns
+              restart: always
+              environment:
+                API_KEY: "{{ cloudflare.token }}"
+                ZONE: abbottland.io

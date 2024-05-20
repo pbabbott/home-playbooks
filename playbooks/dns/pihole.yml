@@ -1,0 +1,83 @@
+
+- name: Install pihole
+  hosts:
+    - bananapi
+
+  handlers:
+    - name: Restart pihole
+      community.docker.docker_container:
+        name: pihole
+        restart: true
+  tasks:
+    - name: "Ensure pihole app config directory exists"
+      ansible.builtin.file:
+        path: "{{ pihole_config_dir }}"
+        state: directory
+        mode: '0755'
+
+    # TODO: make sure this is idempotent
+    - name: "Ensure etc-pihole directory exists"
+      ansible.builtin.file:
+        path: "{{ pihole_config_dir }}/etc-pihole"
+        state: directory
+        mode: '0755'
+
+    - name: "Ensure dnsmasq.d directory exists"
+      ansible.builtin.file:
+        path: "{{ pihole_config_dir }}/etc-dnsmasq.d"
+        state: directory
+        mode: '0755'
+
+    - name: Copy custom.list to remote
+      register: dns_records
+      notify:
+        - Restart pihole
+      ansible.builtin.copy:
+        src: ./files/pihole/05-pihole-custom-cname.conf
+        dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
+
+    - name: Copy cname records to remote
+      notify:
+        - Restart pihole
+      ansible.builtin.copy:
+        src: ./files/pihole/custom.list
+        dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
+
+    - name: Copy internal dnsmasq config remote
+      notify:
+        - Restart pihole
+      ansible.builtin.copy:
+        src: ./files/pihole/02-internal.conf
+        dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/02-internal.conf"
+
+    - name: Ensure pihole is running
+      community.docker.docker_compose:
+        project_name: pihole
+
+        definition:
+          version: "3"
+          networks:
+            network-pihole:
+              name: "custom-dns"
+              external: true
+
+          services:
+            pihole:
+              container_name: pihole
+              image: pihole/pihole:latest
+              ports:
+                - "53:53/tcp"
+                - "53:53/udp"
+                - "8081:80/tcp"
+              environment:
+                TZ: "{{ host_tz }}"
+                WEBPASSWORD: "{{ pihole.password }}"
+                PIHOLE_UID: "{{ host_puid }}"
+                PIHOLE_GID: "{{ host_pgid }}"
+              volumes:
+                - '{{ pihole_config_dir }}/etc-pihole:/etc/pihole'
+                - '{{ pihole_config_dir }}/etc-dnsmasq.d:/etc/dnsmasq.d'
+              restart: always
+              networks:
+                network-pihole:
+                  ipv4_address: 172.31.0.2           #Internal Docker Address of pihole

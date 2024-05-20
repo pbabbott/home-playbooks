@@ -1,4 +1,0 @@
-
-galaxy_info:
-  author: Brandon Abbott
-  description: Use docker compose to install oznu/cloudflare-ddns on target

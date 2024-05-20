@@ -1,11 +1,5 @@
 - name: DDNS and Traefik Installation on Banana PI via Docker (not root)
   hosts: bananapi
   roles:
-    - role: abbottland.ingress.traefik
-      traefik_cloudflare_token: "{{ cloudflare.token }}"
-
-    - role: home.traefik_app
-      traefik_app_file_name: 'pihole.local.yml'
-
     - role: home.traefik_app
       traefik_app_file_name: 'proxmox.local.yml'
