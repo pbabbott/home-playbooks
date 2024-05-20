@@ -63,7 +63,7 @@
           services:
             # Dumps data from acme.json into /data/certs
             tcd:
-              image: ldez/traefik-certs-dumper:v2.8.3
+              image: "{{ tcd_docker_image }}"
               container_name: tcd
               entrypoint: sh -c '
                 apk add jq
@@ -80,7 +80,7 @@
             traefik:
               restart: always
               container_name: traefik
-              image: traefik:v2.10
+              image: "{{ traefik_docker_image }}"
               environment:
                 CLOUDFLARE_DNS_API_TOKEN: "{{ traefik_cloudflare_token }}"
               ports:
