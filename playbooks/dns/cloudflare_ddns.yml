@@ -2,7 +2,8 @@
 - name: Setup DNS network on bananapi
   hosts: bananapi
   tasks:
-    - community.docker.docker_compose:
+    - name: "Setup cloudflare-ddns"
+      community.docker.docker_compose:
         project_name: cloudflare-ddns
 
         definition:

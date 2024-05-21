@@ -3,14 +3,21 @@ http:
     addprefix-pihole:
       addPrefix:
         prefix: "/admin"
+    redirect-to-admin:
+      redirectRegex:
+        regex: "^https://pihole.local.abbottland.io/admin/$"
+        replacement: "https://pihole.local.abbottland.io"
+        permanent: true
+
 
   routers:
-    to-pihole-https:
+    to-pihole-admin-https:
       entryPoints:
         - "https"
       rule: "Host(`pihole.local.abbottland.io`)"
       middlewares:
         - secured
+        - redirect-to-admin
         - addprefix-pihole
       tls: {}
       service: pihole

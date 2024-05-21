@@ -2,7 +2,6 @@
 - name: Install pihole
   hosts:
     - bananapi
-
   handlers:
     - name: Restart pihole
       community.docker.docker_container:
@@ -60,11 +59,10 @@
             network-pihole:
               name: "custom-dns"
               external: true
-
           services:
             pihole:
               container_name: pihole
-              image: pihole/pihole:latest
+              image: "{{ pihole_docker_image }}"
               ports:
                 - "53:53/tcp"
                 - "53:53/udp"

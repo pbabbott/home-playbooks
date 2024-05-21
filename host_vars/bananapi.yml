@@ -11,6 +11,7 @@ traefik_docker_image: traefik:v2.11.2
 
 tcd_docker_image: ldez/traefik-certs-dumper:v2.8.3
 
+pihole_docker_image: pihole/pihole:2024.05.0
 pihole_config_dir: /home/pi/app_config/pihole
 
 wireguard_config_dir: /home/pi/app_config/wireguard/config
