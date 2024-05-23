@@ -7,47 +7,60 @@
       community.docker.docker_container:
         name: pihole
         restart: true
+  vars:
+    pihole_backup_dir: /mnt/pihole_backups
   tasks:
-    - name: "Ensure pihole app config directory exists"
-      ansible.builtin.file:
-        path: "{{ pihole_config_dir }}"
-        state: directory
-        mode: '0755'
 
-    # TODO: make sure this is idempotent
-    - name: "Ensure etc-pihole directory exists"
-      ansible.builtin.file:
-        path: "{{ pihole_config_dir }}/etc-pihole"
-        state: directory
-        mode: '0755'
+    - name: Setup config files
+      block:
+        - name: "Ensure pihole app config directory exists"
+          ansible.builtin.file:
+            path: "{{ pihole_config_dir }}"
+            state: directory
+            mode: '0755'
 
-    - name: "Ensure dnsmasq.d directory exists"
-      ansible.builtin.file:
-        path: "{{ pihole_config_dir }}/etc-dnsmasq.d"
-        state: directory
-        mode: '0755'
+        # TODO: make sure this is idempotent
+        - name: "Ensure etc-pihole directory exists"
+          ansible.builtin.file:
+            path: "{{ pihole_config_dir }}/etc-pihole"
+            state: directory
+            mode: '0755'
 
-    - name: Copy custom.list to remote
-      register: dns_records
-      notify:
-        - Restart pihole
-      ansible.builtin.copy:
-        src: ./files/pihole/05-pihole-custom-cname.conf
-        dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
+        - name: "Ensure dnsmasq.d directory exists"
+          ansible.builtin.file:
+            path: "{{ pihole_config_dir }}/etc-dnsmasq.d"
+            state: directory
+            mode: '0755'
 
-    - name: Copy cname records to remote
-      notify:
-        - Restart pihole
-      ansible.builtin.copy:
-        src: ./files/pihole/custom.list
-        dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
+        - name: Copy custom.list to remote
+          register: dns_records
+          notify:
+            - Restart pihole
+          ansible.builtin.copy:
+            src: ./files/pihole/05-pihole-custom-cname.conf
+            dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
 
-    - name: Copy internal dnsmasq config remote
-      notify:
-        - Restart pihole
-      ansible.builtin.copy:
-        src: ./files/pihole/02-internal.conf
-        dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/02-internal.conf"
+        - name: Copy cname records to remote
+          notify:
+            - Restart pihole
+          ansible.builtin.copy:
+            src: ./files/pihole/custom.list
+            dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
+
+        - name: Copy internal dnsmasq config remote
+          notify:
+            - Restart pihole
+          ansible.builtin.copy:
+            src: ./files/pihole/02-internal.conf
+            dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/02-internal.conf"
+
+    - name: Mount an NFS volume
+      ansible.posix.mount:
+        src: 192.168.4.124:/volume1/Backups/pihole
+        path: "{{ pihole_backup_dir }}"
+        opts: rw,sync,hard
+        state: mounted
+        fstype: nfs
 
     - name: Ensure pihole is running
       community.docker.docker_compose:
@@ -75,6 +88,7 @@
               volumes:
                 - '{{ pihole_config_dir }}/etc-pihole:/etc/pihole'
                 - '{{ pihole_config_dir }}/etc-dnsmasq.d:/etc/dnsmasq.d'
+                - '{{ pihole_backup_dir }}:/backups'
               restart: always
               networks:
                 network-pihole:
