@@ -19,9 +19,9 @@
         - name: Create cron job for pihole backup
           cron:
             name: "Pihole cleanup"
-            minute: "5"
-            hour: "22"
-            job: "{{ cron_scripts_dir }}/remove_old_backups.sh"
+            special_time: "daily"
+            job: "{{ cron_scripts_dir }}/remove_old_backups.sh >{{cron_scripts_dir}}/remove_old_backups.log 2>&1"
+            user: "{{ ansible_user }}"
 
     - name: Run backups nightly
       block:
@@ -34,6 +34,6 @@
         - name: Create cron job for pihole backup
           cron:
             name: "Pihole backup"
-            minute: "0"
-            hour: "22"
-            job: "{{ cron_scripts_dir }}/pihole_backup.sh"
+            special_time: "daily"
+            job: "{{ cron_scripts_dir }}/pihole_backup.sh >{{cron_scripts_dir}}/pihole_backup.log 2>&1"
+            user: "{{ ansible_user }}"
