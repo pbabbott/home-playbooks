@@ -11,7 +11,7 @@
     pihole_backup_dir: /mnt/pihole_backups
   tasks:
 
-    - name: Setup config files
+    - name: Setup config directories
       block:
         - name: "Ensure pihole app config directory exists"
           ansible.builtin.file:
@@ -19,7 +19,6 @@
             state: directory
             mode: '0755'
 
-        # TODO: make sure this is idempotent
         - name: "Ensure etc-pihole directory exists"
           ansible.builtin.file:
             path: "{{ pihole_config_dir }}/etc-pihole"
@@ -32,15 +31,18 @@
             state: directory
             mode: '0755'
 
-        - name: Copy custom.list to remote
-          register: dns_records
-          notify:
-            - Restart pihole
-          ansible.builtin.copy:
-            src: ./files/pihole/05-pihole-custom-cname.conf
-            dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
+    - name: Setup config files
+      block:
+        # Plan is to use external-dns to manage CNAME records
+        # - name: Copy cname records to remote
+        #   register: dns_records
+        #   notify:
+        #     - Restart pihole
+        #   ansible.builtin.copy:
+        #     src: ./files/pihole/05-pihole-custom-cname.conf
+        #     dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
 
-        - name: Copy cname records to remote
+        - name: Copy custom.list to remote
           notify:
             - Restart pihole
           ansible.builtin.copy:

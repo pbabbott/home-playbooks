@@ -1,5 +1,10 @@
+
+192.168.4.90 elderwand.local.abbottland.io
 192.168.4.144 bananapi.local.abbottland.io
 192.168.4.124 nas.local.abbottland.io
-192.168.4.90 elderwand.local.abbottland.io
 192.168.4.157 dumbledore.local.abbottland.io
+
 192.168.4.170 phoenix.local.abbottland.io
+192.168.4.182 k8s-worker-1.local.abbottland.io
+192.168.4.183 k8s-controller.local.abbottland.io
+192.168.4.184 k8s-worker-2.local.abbottland.io
