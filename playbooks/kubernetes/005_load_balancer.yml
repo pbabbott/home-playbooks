@@ -1,0 +1,46 @@
+
+- name: Setup HAProxy Load Balancer
+  hosts:
+    - bananapi
+  vars:
+    haproxy_config_dir: /home/pi/app_config/haproxy
+    haproxy_docker_image: haproxytech/haproxy-alpine:2.4
+  tasks:
+    - name: Create a bridge network for load balancing
+      community.docker.docker_network:
+        name: lb-network
+        driver: bridge
+    - name: Setup config directories
+      block:
+        - name: "Ensure haproxy config directory exists"
+          ansible.builtin.file:
+            path: "{{ haproxy_config_dir }}"
+            state: directory
+            mode: '0755'
+    - name: Setup config files
+      block:
+        - name: Copy haproxy.cfg to remote
+          ansible.builtin.copy:
+            src: ./files/haproxy.cfg
+            dest: "{{ haproxy_config_dir }}/haproxy.cfg"
+
+    - name: Ensure haproxy is running
+      community.docker.docker_compose:
+        project_name: haproxy
+        definition:
+          version: "3"
+          networks:
+            lb-network:
+              name: "lb-network"
+          services:
+            haproxy:
+              container_name: haproxy
+              image: "{{ haproxy_docker_image }}"
+              ports:
+                - "4000:80/tcp"
+                - "4001:8404/tcp"
+              environment:
+                TZ: "{{ host_tz }}"
+              volumes:
+                - '{{ haproxy_config_dir }}:/usr/local/etc/haproxy:ro'
+              restart: always
