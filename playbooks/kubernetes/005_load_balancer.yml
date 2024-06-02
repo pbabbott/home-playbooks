@@ -5,6 +5,11 @@
   vars:
     haproxy_config_dir: /home/pi/app_config/haproxy
     haproxy_docker_image: haproxytech/haproxy-alpine:2.4
+  handlers:
+    - name: Restart haproxy container
+      community.docker.docker_container:
+        name: haproxy
+        restart: true
   tasks:
     - name: Create a bridge network for load balancing
       community.docker.docker_network:
@@ -23,6 +28,8 @@
           ansible.builtin.copy:
             src: ./files/haproxy.cfg
             dest: "{{ haproxy_config_dir }}/haproxy.cfg"
+          notify:
+            - Restart haproxy container
 
     - name: Ensure haproxy is running
       community.docker.docker_compose:
@@ -37,7 +44,8 @@
               container_name: haproxy
               image: "{{ haproxy_docker_image }}"
               ports:
-                - "4000:80/tcp"
+                - "80:80/tcp"
+                - "443:443/tcp"
                 - "4001:8404/tcp"
               environment:
                 TZ: "{{ host_tz }}"
