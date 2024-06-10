@@ -1,3 +1,4 @@
+- import_playbook: ./000_nfs.yml
 - import_playbook: ./000_qemu.yml
 - import_playbook: ./000_timezone.yml
 - import_playbook: ./001_containerd.yml

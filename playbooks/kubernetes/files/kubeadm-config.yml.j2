@@ -4,7 +4,11 @@ networking:
   podSubnet: 10.244.0.0/16
 bootstrapTokens:
 - token: "{{bootstrap_token}}"
+apiServer:
+  extraArgs:
+    feature-gates: LoadBalancerIPMode=true
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 serverTLSBootstrap: false
+

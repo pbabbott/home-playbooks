@@ -12,8 +12,9 @@
       - curl
       - gnupg
       - lsb-release
-  roles:
-    - role: abbottland.core.apt
+  # roles:
+  #   - role: abbottland.core.apt
+  
   tasks:
     - name: Add docker apt repository key.
       ansible.builtin.get_url:
@@ -30,7 +31,6 @@
       debug:
         msg: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
 
-
     - name: Add Docker APT repository
       apt_repository:
         repo: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
@@ -41,7 +41,7 @@
         update_cache: yes
 
     - name: Make sure containerd service is running
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         state: started
         name: containerd
 
@@ -63,7 +63,7 @@
   become: true
   handlers:
     - name: Restart containerd
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: containerd
         state: restarted
   tasks:

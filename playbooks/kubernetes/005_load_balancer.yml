@@ -11,10 +11,10 @@
         name: haproxy
         restart: true
   tasks:
-    - name: Create a bridge network for load balancing
-      community.docker.docker_network:
-        name: lb-network
-        driver: bridge
+    # - name: Create a bridge network for load balancing
+    #   community.docker.docker_network:
+    #     name: lb-network
+    #     driver: bridge
     - name: Setup config directories
       block:
         - name: "Ensure haproxy config directory exists"
@@ -36,17 +36,11 @@
         project_name: haproxy
         definition:
           version: "3"
-          networks:
-            lb-network:
-              name: "lb-network"
           services:
             haproxy:
+              network_mode: host
               container_name: haproxy
               image: "{{ haproxy_docker_image }}"
-              ports:
-                - "80:80/tcp"
-                - "443:443/tcp"
-                - "4001:8404/tcp"
               environment:
                 TZ: "{{ host_tz }}"
               volumes:

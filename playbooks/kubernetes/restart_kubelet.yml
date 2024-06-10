@@ -1,0 +1,11 @@
+
+- name: Restart kubelet everywhere
+  hosts:
+    - kubernetes_servers
+  become: true
+  tasks:
+    - name: Enable and restart the kubelet service
+      ansible.builtin.systemd:
+        name: kubelet
+        state: restarted
+        enabled: true
