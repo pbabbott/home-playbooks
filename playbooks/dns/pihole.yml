@@ -56,13 +56,13 @@
             src: ./files/pihole/02-internal.conf
             dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/02-internal.conf"
 
-    - name: Mount an NFS volume
-      ansible.posix.mount:
-        src: 192.168.4.124:/volume1/Backups/pihole
-        path: "{{ pihole_backup_dir }}"
-        opts: rw,sync,hard
-        state: mounted
-        fstype: nfs
+    # - name: Mount an NFS volume
+    #   ansible.posix.mount:
+    #     src: 192.168.4.124:/volume1/Backups/pihole
+    #     path: "{{ pihole_backup_dir }}"
+    #     opts: rw,sync,hard
+    #     state: mounted
+    #     fstype: nfs
 
     - name: Ensure pihole is running
       community.docker.docker_compose:
