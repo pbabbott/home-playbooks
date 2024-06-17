@@ -12,8 +12,8 @@
       - curl
       - gnupg
       - lsb-release
-  # roles:
-  #   - role: abbottland.core.apt
+  roles:
+    - role: abbottland.core.apt
   
   tasks:
     - name: Add docker apt repository key.
