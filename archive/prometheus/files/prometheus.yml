@@ -9,8 +9,6 @@ global:
 
 scrape_configs:
   # Gaming PC
-
-
   - job_name: 'home_file_service'
     static_configs:
       - targets: ['192.168.4.90:4000']
