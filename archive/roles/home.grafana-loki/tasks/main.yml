@@ -44,7 +44,8 @@
             - "3100:3100"
           volumes:
             - "{{ loki_data_dir }}:/loki_data"
-            - "{{ loki_config_dir }}:/etc/loki"
+            - "{{ l
+            oki_config_dir }}:/etc/loki"
           networks:
             - loki
         grafana:
