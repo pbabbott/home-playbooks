@@ -71,14 +71,7 @@
 # #   roles:
 # #     - role: home.shell_config
 
-# - name: Install items to localhost with sudo
-#   become: true
-#   hosts: localhost
-#   roles:
-#     - home.gh_cli
-
 # # - name: Configure Local Computer
 # #   hosts: localhost
 # #   roles:
 # #     - role: abbottland.core.pip
-# #     - role: home.fnm

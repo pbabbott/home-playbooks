@@ -42,7 +42,6 @@ Old code from previous attempts at dev env configuration.
 - name: Install Tools
   hosts: all
   roles:
-    - role: home.neofetch
     - name: Configure Oh-My-ZSH
       role: gantsign.antigen_bundles
       users:
