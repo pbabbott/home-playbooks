@@ -31,7 +31,7 @@ $ python get-pip.py --user
 
 Ansible Installation
 ```sh
-$ python -m pip install --user ansible
+$ python -m pip install --user ansible==9
 ```
 Packages Installation
 
