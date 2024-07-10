@@ -24,7 +24,6 @@
 - name: Metrics - node_exporter
   hosts:
     - web_servers
-    - kubernetes_servers
     - phoenix
   roles:
     - role: prometheus.prometheus.node_exporter
