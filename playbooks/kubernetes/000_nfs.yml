@@ -2,6 +2,7 @@
 - name: Install NFS common utils
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   tasks:
     - name: Install kubernetes tools

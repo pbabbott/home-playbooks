@@ -64,7 +64,6 @@
 - name: Install pod overlay
   hosts:
     - kubernetes_controller
-
   tasks:
     - name: Download helm chart
       kubernetes.core.helm_repository:
@@ -97,6 +96,7 @@
 - name: Join worker to cluster
   hosts:
     - kubernetes_workers
+    - kubernetes_external_workers
   become: true
   vars:
     token: "{{ hostvars['kubernetes_controller']['token'].stdout }}"

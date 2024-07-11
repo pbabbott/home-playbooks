@@ -3,6 +3,13 @@ all:
   children:
     remote:
       children:
+        kubernetes_external_workers:
+          hosts:
+            dumbledore:
+              ansible_host: 192.168.4.157
+              ansible_user: albus
+              ansible_password: "{{ inventoryPasswords.dumbledore }}"
+              ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
         kubernetes_servers:
           hosts:
             kubernetes_controller:
@@ -23,7 +30,6 @@ all:
                   ansible_user: firebolt
                   ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
                   ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
-
         web_servers:
           hosts:
             bananapi:
@@ -31,11 +37,6 @@ all:
               ansible_user: pi
               ansible_password: "{{ inventoryPasswords.bananapi }}"
               ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
-            # dumbledore:
-            #   ansible_host: 192.168.4.157
-            #   ansible_user: albus
-            #   ansible_password: "{{ inventoryPasswords.dumbledore }}"
-            #   ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
       hosts:
         phoenix:
           ansible_host: 192.168.4.170

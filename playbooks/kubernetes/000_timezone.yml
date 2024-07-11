@@ -1,6 +1,7 @@
 - name: Set timezone and configure timesyncd
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   tasks:
   - name: Set Timezone

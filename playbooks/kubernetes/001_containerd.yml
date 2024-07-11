@@ -1,6 +1,7 @@
 - name: Install containerd.io
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   vars:
     apt_install_packages:
@@ -48,6 +49,7 @@
 - name: Setup permissions
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   roles:
     - role: abbottland.docker.docker_permissions
@@ -60,6 +62,7 @@
 - name: Configure containerd
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   handlers:
     - name: Restart containerd

@@ -2,6 +2,7 @@
 - name: Ping kubernetes_servers
   hosts:
     - kubernetes_servers
+    - dumbledore
   tasks:
     - name: Ping host
       ansible.builtin.ping: {}

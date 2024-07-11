@@ -2,6 +2,7 @@
 - name: Install Kubernetes Tools
   hosts:
     - kubernetes_servers
+    - kubernetes_external_workers
   become: true
   vars:
     apt_install_packages:
@@ -11,6 +12,11 @@
   roles:
     - role: abbottland.core.apt
   tasks:
+    - name: Ensure keyrings directory exists
+      ansible.builtin.file:
+        path: "/etc/apt/keyrings"
+        state: directory
+        mode: '0755'
     - name: Add kubernetes apt repository key.
       ansible.builtin.get_url:
         url: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
@@ -50,7 +56,9 @@
         enabled: true
 
 - name: Install Helm
-  hosts: kubernetes_controller
+  hosts: 
+    - kubernetes_controller
+    - kubernetes_external_workers
   become: true
   vars:
     apt_install_packages:
