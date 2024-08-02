@@ -23,7 +23,7 @@
 
 - name: Metrics - node_exporter
   hosts:
-    - web_servers
+    - bananapi
     - chimaera
   roles:
     - role: prometheus.prometheus.node_exporter
