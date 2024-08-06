@@ -1,8 +1,10 @@
-- import_playbook: ./000_dns.yml
-- import_playbook: ./000_nfs.yml
-- import_playbook: ./000_qemu.yml
-- import_playbook: ./000_timezone.yml
-- import_playbook: ./001_containerd.yml
-- import_playbook: ./002_host_prep.yml
-- import_playbook: ./003_kube_tools.yml
-- import_playbook: ./004_kubelet.yml
+# This one requires a reboot + proxmox changes
+# - import_playbook: ./000_qemu.yml
+
+- import_playbook: ./001_dns.yml
+- import_playbook: ./001_nfs.yml
+- import_playbook: ./001_timezone.yml
+- import_playbook: ./002_containerd.yml
+- import_playbook: ./003_host_prep.yml
+- import_playbook: ./004_kube_tools.yml
+- import_playbook: ./005_kubelet.yml
