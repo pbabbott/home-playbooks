@@ -1,0 +1,24 @@
+
+
+- name: Setup Redis
+  hosts: room_of_requirement 
+  tasks:
+    - name: Ensure redis directory exists
+      ansible.builtin.file:
+        path: "{{ redis_data_dir }}"
+        state: directory
+        mode: '0755'
+    - name: Ensure redis is up-and-running
+      community.docker.docker_compose:
+        project_name: redis
+        definition:
+          version: "3.7"
+          services:
+            redis:
+              image: redis:7.4
+              container_name: redis
+              restart: always
+              volumes:
+                - "{{ redis_data_dir }}:/data"
+              ports:
+                - 6379:6379

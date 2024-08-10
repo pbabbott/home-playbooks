@@ -11,6 +11,9 @@ pip_install_packages:
   - passlib
   - requests==2.28.1
 
+
+redis_data_dir: /volume1/Docker/redis/data
+
 verdaccio_owner: "10001"
 verdaccio_group: "65533"
 verdaccio_config_dir: /volume1/Docker/verdaccio/config
