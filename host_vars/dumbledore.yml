@@ -2,6 +2,7 @@ ansible_password: "{{ inventoryPasswords.dumbledore }}"
 ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
 
 pironman_tools_directory: /home/albus/pironman
+pironman_monitor_directory: /home/albus/pironman_monitor
 
 vector_config_directory: /home/albus/app_config/vector
 

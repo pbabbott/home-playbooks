@@ -1,0 +1,14 @@
+[Unit]
+Description=Watch pironman files and trigger configuration changes
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/albus/pironman_monitor/monitor.sh
+Restart=always
+User=albus
+WorkingDirectory=/home/albus/pironman_monitor
+StandardOutput=append:/var/log/pironman/watch-file.log
+StandardError=append:/var/log/pironman/watch-file.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,54 @@
+- name: Install inotify-tools
+  become: true
+  hosts: dumbledore
+  tasks:
+    - name: Ensure inotify-tools is installed
+      ansible.builtin.apt:
+        update_cache: true
+        name: inotify-tools
+        state: present
+
+- name: Setup Pironman Monitor
+  hosts: dumbledore
+  tasks:
+    - name: Ensure monitor config directory exists
+      ansible.builtin.file:
+        path: "{{ pironman_monitor_directory }}"
+        state: directory
+        mode: '0755'
+    - name: Ensure monitor color file exists
+      ansible.builtin.file:
+        path: "{{ pironman_monitor_directory }}/color.txt"
+        state: touch
+    - name: Copy monitor script to remote
+      ansible.builtin.copy:
+        src: ./files/monitor.sh
+        dest: "{{ pironman_monitor_directory }}/monitor.sh"
+        mode: '0755'
+
+
+# Helpful check status command
+# sudo systemctl status pironman_monitor.service
+
+- name: Setup systemd service for Pironman Monitor
+  hosts: dumbledore
+  become: true
+  tasks:
+    - name: Ensure monitor config directory exists
+      ansible.builtin.file:
+        path: "/var/log/pironman"
+        state: directory
+        mode: '0755'
+    - name: Ensure systemd service file exists
+      ansible.builtin.template:
+        src: ./files/pironman_monitor.service.j2
+        dest: /etc/systemd/system/pironman_monitor.service
+        mode: '0644'
+      notify:
+        - Reload systemd
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: yes
+        state: restarted
+        name: pironman_monitor.service

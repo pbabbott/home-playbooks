@@ -49,19 +49,19 @@
           path: /boot/config.txt
 
 #rgb_color = 0a1aff
-- name: Set config file
-  hosts:
-    - dumbledore
-  tasks:
-    - name: Copy config file to remote
-      ansible.builtin.copy:
-        src: ./files/config.txt
-        dest: "/opt/pironman/config.txt"
-      notify:
-        - Restart Pironman
-  handlers:
-    - name: Restart Pironman
-      become: true
-      ansible.builtin.command: pironman restart
-      args:
-        chdir: "{{ pironman_tools_directory }}"
+# - name: Set config file
+#   hosts:
+#     - dumbledore
+#   tasks:
+#     - name: Copy config file to remote
+#       ansible.builtin.copy:
+#         src: ./files/config.txt
+#         dest: "/opt/pironman/config.txt"
+#       notify:
+#         - Restart Pironman
+#   handlers:
+#     - name: Restart Pironman
+#       become: true
+#       ansible.builtin.command: pironman restart
+#       args:
+#         chdir: "{{ pironman_tools_directory }}"
