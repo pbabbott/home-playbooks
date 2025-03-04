@@ -43,6 +43,11 @@ all:
               ansible_password: "{{ inventoryPasswords.bananapi }}"
               ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
       hosts:
+        marauders_map:
+          ansible_host: 192.168.5.91
+          ansible_user: firebolt
+          ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
+          ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
         chimaera:
           ansible_host: 192.168.4.192
           ansible_user: root
