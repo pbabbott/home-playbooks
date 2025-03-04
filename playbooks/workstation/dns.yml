@@ -1,0 +1,28 @@
+---
+- name: Update DNS on Ubuntu 24 VMs
+  hosts:
+    - marauders_map
+  become: true
+  vars:
+    primary_dns: 192.168.4.144
+    secondary_dns: 1.1.1.1
+  tasks:
+    - name: Update DNS servers in systemd-resolved configuration
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/resolved.conf
+        regexp: '^DNS='
+        line: "DNS={{ primary_dns }} {{ secondary_dns }}"
+        state: present
+      notify: Restart systemd-resolved
+
+    - name: Ensure systemd-resolved is running
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart systemd-resolved
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: restarted

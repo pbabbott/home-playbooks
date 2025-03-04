@@ -1,0 +1,7 @@
+- name: Install Docker
+  hosts: marauders_map
+  become: true
+  roles:
+    - role: abbottland.docker.docker
+    - role: abbottland.docker.docker_permissions
+
