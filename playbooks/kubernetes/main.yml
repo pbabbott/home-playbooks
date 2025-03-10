@@ -2,7 +2,7 @@
 # - import_playbook: ./000_qemu.yml
 
 - import_playbook: ./001_dns.yml
-- import_playbook: ./001_nfs.yml
+- import_playbook: ./001_storage.yml
 - import_playbook: ./001_timezone.yml
 - import_playbook: ./002_containerd.yml
 - import_playbook: ./003_host_prep.yml

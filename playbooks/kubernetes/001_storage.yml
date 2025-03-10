@@ -1,0 +1,31 @@
+
+# - name: Install NFS common utils
+#   hosts:
+#     - kubernetes_servers
+#     - kubernetes_external_workers
+#   become: true
+#   tasks:
+#     - name: Install kubernetes tools
+#       ansible.builtin.apt:
+#         name:
+#           - nfs-common
+#         state: present
+#         update_cache: yes
+
+
+- name: Install open-iscsi on dumbledore
+  hosts:
+    - kubernetes_external_workers
+  become: true
+  tasks:
+    - name: Install open-iscsi
+      ansible.builtin.apt:
+        name:
+          - open-iscsi
+        state: present
+        update_cache: yes
+    - name: Enable iscsi in systemctl
+      ansible.builtin.systemd:
+        name: iscsi
+        enabled: yes
+        state: started
