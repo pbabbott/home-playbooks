@@ -1,0 +1,8 @@
+- name: Label Kubernetes node as physical
+  hosts:
+    - kubernetes_controller
+  tasks:
+    - name: Label node as physical
+      ansible.builtin.command: kubectl label node dumbledore host_type=physical --overwrite
+      register: label_node_result
+      ignore_errors: yes

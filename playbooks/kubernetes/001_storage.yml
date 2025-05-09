@@ -30,30 +30,31 @@
         enabled: yes
         state: started
 
-- name: Format and mount SSD for Longhorn
-  hosts: kubernetes_workers
-  become: yes
-  tasks:
-    - name: Ensure the SSD is formatted with ext4
-      filesystem:
-        fstype: ext4
-        dev: /dev/vda
+# TODO: Update this to match my notes in Obsidian
+# - name: Format and mount SSD for Longhorn
+#   hosts: kubernetes_workers
+#   become: yes
+#   tasks:
+#     # - name: Ensure the SSD is formatted with ext4
+#     #   filesystem:
+#     #     fstype: ext4
+#     #     dev: /dev/vda
 
-    - name: Create mount directory
-      file:
-        path: /mnt/longhorn-ssd
-        state: directory
-        mode: '0755'
+#     - name: Create mount directory
+#       file:
+#         path: /mnt/longhorn-ssd
+#         state: directory
+#         mode: '0755'
 
-    - name: Mount the SSD
-      mount:
-        path: /mnt/longhorn-ssd
-        src: /dev/vda
-        fstype: ext4
-        state: mounted
+#     - name: Mount the SSD
+#       mount:
+#         path: /mnt/longhorn-ssd
+#         src: /dev/vda
+#         fstype: ext4
+#         state: mounted
 
-    - name: Persist the mount in /etc/fstab
-      lineinfile:
-        path: /etc/fstab
-        line: "/dev/vda /mnt/longhorn-ssd ext4 defaults 0 0"
-        state: present
+#     - name: Persist the mount in /etc/fstab
+#       lineinfile:
+#         path: /etc/fstab
+#         line: "/dev/vda /mnt/longhorn-ssd ext4 defaults 0 0"
+#         state: present
