@@ -1,0 +1,27 @@
+- name: Enable kube-controller-manager, kube-scheduler and etcd metrics
+  hosts:
+    - kubernetes_controller
+  become: true
+  tasks:
+    - name: Copy kube-controller-manager manifest
+      copy:
+        src: kube-controller-manager.yaml
+        dest: /etc/kubernetes/manifests/kube-controller-manager.yaml
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Copy kube-scheduler manifest
+      copy:
+        src: kube-scheduler.yaml
+        dest: /etc/kubernetes/manifests/kube-scheduler.yaml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Copy etcd manifest
+      copy:
+        src: etcd.yaml
+        dest: /etc/kubernetes/manifests/etcd.yaml
+        owner: root
+        group: root
+        mode: '0644'
