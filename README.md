@@ -82,3 +82,12 @@ Enable-PSRemoting -SkipNetworkProfileCheck -Force
 winrm set winrm/config/service/auth '@{Basic="true"}'
 winrm set winrm/config/service '@{AllowUnencrypted="true"}'
 ```
+
+# Terraform + Proxmox Provisioning
+
+Terraform manages VM lifecycle on Proxmox; Ansible handles configuration inside those VMs. Terraform provisions the machines; Ansible configures them.
+
+- **Terraform** (`terraform/`): Creates and destroys Proxmox VMs (clone from cloud-init template, CPU, memory, disk, network).
+- **Ansible**: Targets existing hosts (including Terraform-provisioned VMs). Inventory can reference hostnames or IPs from `terraform output`.
+
+For Terraform setup, conventions (VM ID ranges, storage), and day-to-day commands, see **[terraform/README.md](terraform/README.md)** and **[terraform/docs/getting-started.md](terraform/docs/getting-started.md)**.
