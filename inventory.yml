@@ -10,6 +10,7 @@ all:
               ansible_user: albus
               ansible_password: "{{ inventoryPasswords.dumbledore }}"
               ansible_sudo_pass: "{{ inventoryPasswords.dumbledore }}"
+              host_type: physical
         kubernetes_servers:
           hosts:
             kubernetes_controller:
@@ -17,6 +18,7 @@ all:
               ansible_user: firebolt
               ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
               ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+              host_type: virtual
           children:
             kubernetes_workers:
               hosts:
@@ -25,16 +27,19 @@ all:
                   ansible_user: firebolt
                   ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
                   ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+                  host_type: virtual
                 kubernetes_worker_2:
                   ansible_host: 192.168.4.195
                   ansible_user: firebolt
                   ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
                   ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+                  host_type: virtual
                 kubernetes_worker_3:
                   ansible_host: 192.168.5.81
                   ansible_user: firebolt
                   ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
                   ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+                  host_type: virtual
         web_servers:
           hosts:
             bananapi:
@@ -42,17 +47,20 @@ all:
               ansible_user: pi
               ansible_password: "{{ inventoryPasswords.bananapi }}"
               ansible_sudo_pass: "{{ inventoryPasswords.bananapi }}"
+              host_type: physical
       hosts:
         marauders_map:
           ansible_host: 192.168.5.91
           ansible_user: firebolt
           ansible_password: "{{ inventoryPasswords.kubernetes_node }}"
           ansible_sudo_pass: "{{ inventoryPasswords.kubernetes_node }}"
+          host_type: virtual
         chimaera:
           ansible_host: 192.168.4.192
           ansible_user: root
           ansible_password: "{{ inventoryPasswords.phoenix }}"
           ansible_sudo_pass: "{{ inventoryPasswords.phoenix }}"
+          host_type: physical
         elder_wand:
           # ansible_host: 192.168.4.90 # Ethernet
           ansible_host: 192.168.4.134 # Wi-Fi
@@ -63,8 +71,11 @@ all:
           ansible_winrm_transport: ntlm
           ansible_user: pbabb
           ansible_password: "{{ inventoryPasswords.elder_wand }}"
+          host_type: physical
+          shutdown_exempt: true
         room_of_requirement:
           ansible_host: 192.168.4.124
           ansible_user: pabbott
           ansible_password: "{{ inventoryPasswords.room_of_requirement }}"
           ansible_sudo_pass: "{{ inventoryPasswords.room_of_requirement }}"
+          host_type: physical

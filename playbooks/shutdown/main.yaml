@@ -1,0 +1,12 @@
+
+- name: Shutdown physical hosts
+  become: true
+  hosts:
+    - remote
+  tasks:
+    - name: Shutdown virtual hosts
+      when: host_type == "virtual" and shutdown_exempt is not defined
+      community.general.shutdown: {}
+    - name: Shutdown physical hosts
+      when: host_type == "physical" and shutdown_exempt is not defined
+      community.general.shutdown: {}
