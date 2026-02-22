@@ -1,6 +1,10 @@
 
 all:
   children:
+    # Proxmox node(s); used by playbooks/proxmox/create-ubuntu-template.yml (e.g. chimaera).
+    proxmox_hosts:
+      hosts:
+        chimaera: {}
     remote:
       children:
         kubernetes_external_workers:

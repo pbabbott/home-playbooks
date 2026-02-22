@@ -1,0 +1,128 @@
+---
+# Create a Proxmox cloud-init template from an Ubuntu cloud image.
+# Run against the Proxmox host (e.g. group proxmox_hosts). Terraform clones from
+# this template and injects sshkeys/ipconfig per VM; see terraform/docs.
+#
+# Required: vmid (e.g. 900). Pass with: -e vmid=900
+# Optional: template_name, storage, ubuntu_release, memory, cores,
+#           template_disk_resize, ipconfig0, ciuser, cipassword,
+#           create_ubuntu_template_ssh_key_path (path on Proxmox host)
+#
+- name: Create Ubuntu cloud-init template on Proxmox
+  hosts: proxmox_hosts
+  become: true
+  vars:
+    # Required: VMID for the template (e.g. 900). Pass with -e vmid=900. Prevents overwriting existing VMs.
+    vmid: "{{ vmid }}"
+    template_name: "{{ template_name | default('ubuntu-cloud') }}"
+    storage: "{{ storage | default('local-lvm') }}"
+    ubuntu_release: "{{ ubuntu_release | default('jammy') }}"
+    # Optional: resize template disk (e.g. '+20G'). Clones can still override via Terraform.
+    template_disk_resize: "{{ template_disk_resize | default('') }}"
+    ipconfig0: "{{ ipconfig0 | default('ip=dhcp') }}"
+    memory: "{{ memory | default(1024) }}"
+    cores: "{{ cores | default(1) }}"
+    # Path on Proxmox host to SSH public key file (optional). Terraform sets keys per clone.
+    create_ubuntu_template_ssh_key_path: "{{ create_ubuntu_template_ssh_key_path | default('') }}"
+    ubuntu_image_url: "https://cloud-images.ubuntu.com/{{ ubuntu_release }}/current/{{ ubuntu_release }}-server-cloudimg-amd64.img"
+    image_name: "{{ ubuntu_release }}-server-cloudimg-amd64.img"
+    template_work_dir: "{{ template_work_dir | default('/var/lib/vz/template/iso') }}"
+  tasks:
+    - name: Require valid vmid
+      ansible.builtin.fail:
+        msg: "vmid must be a positive integer (e.g. 900). Run with: ansible-playbook ... -e vmid=900"
+      when: vmid | default('') | string | trim == '' or not (vmid | string is match('^[0-9]+$'))
+
+    - name: Create work directory for cloud image
+      ansible.builtin.file:
+        path: "{{ template_work_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Download Ubuntu cloud image
+      ansible.builtin.get_url:
+        url: "{{ ubuntu_image_url }}"
+        dest: "{{ template_work_dir }}/{{ image_name }}"
+        force: false
+        mode: "0644"
+      register: image_download
+
+    - name: Create VM
+      ansible.builtin.command:
+        cmd: >
+          qm create {{ vmid }}
+          --name {{ template_name }}
+          --memory {{ memory }}
+          --cores {{ cores }}
+          --net0 virtio,bridge=vmbr0
+      changed_when: true
+
+    - name: Import cloud image into storage
+      ansible.builtin.command:
+        cmd: "qm importdisk {{ vmid }} {{ template_work_dir }}/{{ image_name }} {{ storage }}"
+      changed_when: true
+
+    - name: Attach disk as SCSI 0
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --scsihw virtio-scsi-pci --scsi0 {{ storage }}:vm-{{ vmid }}-disk-0"
+      changed_when: true
+
+    - name: Resize template disk
+      ansible.builtin.command:
+        cmd: "qm resize {{ vmid }} scsi0 {{ template_disk_resize }}"
+      when: template_disk_resize | length > 0
+
+    - name: Add cloud-init drive
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --ide2 {{ storage }}:cloudinit"
+      changed_when: true
+
+    - name: Set boot order and serial console
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --boot order=scsi0 --serial0 socket --vga serial0"
+      changed_when: true
+
+    - name: Set cloud-init ipconfig0
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --ipconfig0 {{ ipconfig0 }}"
+      changed_when: true
+
+    - name: Set cloud-init user
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --ciuser {{ ciuser }}"
+      when: ciuser is defined and ciuser | length > 0
+
+    - name: Set cloud-init password
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --cipassword {{ cipassword }}"
+      when: cipassword is defined and cipassword | length > 0
+      no_log: true
+
+    - name: Check SSH key file exists on Proxmox host
+      ansible.builtin.stat:
+        path: "{{ create_ubuntu_template_ssh_key_path }}"
+      register: ssh_key_stat
+      when: create_ubuntu_template_ssh_key_path | length > 0
+
+    - name: Fail if SSH key path given but file missing
+      ansible.builtin.fail:
+        msg: "SSH key file not found on Proxmox host: {{ create_ubuntu_template_ssh_key_path }}"
+      when:
+        - create_ubuntu_template_ssh_key_path | length > 0
+        - not ssh_key_stat.stat.exists | default(false)
+
+    - name: Set cloud-init SSH key from file on Proxmox host
+      ansible.builtin.command:
+        cmd: "qm set {{ vmid }} --sshkey {{ create_ubuntu_template_ssh_key_path }}"
+      when:
+        - create_ubuntu_template_ssh_key_path | length > 0
+        - ssh_key_stat.stat.exists | default(false)
+
+    - name: Convert VM to template
+      ansible.builtin.command:
+        cmd: "qm template {{ vmid }}"
+      changed_when: true
+
+    - name: Template ready
+      ansible.builtin.debug:
+        msg: "Template '{{ template_name }}' (VMID {{ vmid }}) is ready for Terraform clones. Optional: install qemu-guest-agent in clones (e.g. via Ansible)."

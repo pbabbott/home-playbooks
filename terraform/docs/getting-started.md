@@ -16,15 +16,19 @@ Run all commands from the **terraform** directory (`cd terraform` from repo root
    # Edit terraform.tfvars: API URL, token, node name, template name, storage, SSH key path.
    ```
 
-3. **Cloud-init template**  
-   Ensure a template exists (e.g. VMID 900). Use `scripts/create-ubuntu-template.sh` as a reference — run it with the desired VMID as the first argument, e.g. `./scripts/create-ubuntu-template.sh 900`; set `template_name` in tfvars to match.
-
-4. **Initialize Terraform**
+3. **Initialize Terraform**
    ```bash
    terraform init
+ 
    ```
-
 ---
+
+## Create a template
+
+In this project, all proxmox templates are stored in the 900 ID range.
+
+See [create-ubuntu-template.md](create-ubuntu-template.md) for how to build a template and full documentation for `scripts/create-ubuntu-template.sh`.
+
 
 ## Common commands
 
