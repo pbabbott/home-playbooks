@@ -39,3 +39,5 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 alias apv="ansible-playbook -e @./vault.yml"
 alias encrypt="ansible-vault encrypt ./vault.yml"
 alias decrypt="ansible-vault decrypt ./vault.yml"
+
+alias chimaera="ssh root@192.168.4.192"
