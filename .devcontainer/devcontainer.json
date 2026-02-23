@@ -11,7 +11,7 @@
     },
   },
   "mounts": [
-    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh,readonly"
+    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/coder/.ssh,readonly"
   ],
   "customizations": {
     "vscode": {
