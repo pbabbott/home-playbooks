@@ -21,8 +21,9 @@ The playbook performs these steps in order:
 7. **Optionally resize** the template disk (e.g. `+20G`) when `template_disk_resize` is set.
 8. **Add** a cloud-init drive (IDE2) so user, SSH keys, and network config can be injected when cloning.
 9. **Set** boot order (scsi0), serial console, and VGA to serial for Proxmox console access.
-10. **Set** cloud-init ipconfig0 (default `ip=dhcp`), and optionally ciuser, cipassword, and SSH key (from workstation path or Proxmox path).
-11. **Convert** the VM to a template so it cannot be started and is only used for cloning.
+10. **Set** cloud-init ipconfig0 (default `ip=dhcp`), and optionally ciuser and cipassword.
+11. **Optionally inject** an SSH public key: from your workstation (path copied to the Proxmox host and set via `qm set --sshkey`) or from an existing file path on the Proxmox host.
+12. **Convert** the VM to a template so it cannot be started and is only used for cloning.
 
 The template is minimal and cloud-init–ready; Terraform injects SSH keys and network (e.g. static IP) per clone. For VMID conventions (e.g. 900 for templates), see [terraform/docs/preferences-and-conventions.md](../../terraform/docs/preferences-and-conventions.md).
 
