@@ -1,17 +1,29 @@
 {
-    "build": { "dockerfile": "./Dockerfile.dev" },
-
-    "customizations": {
-      "vscode": {
-        "extensions": [
-            "streetsidesoftware.code-spell-checker",
-            "redhat.ansible",
-            "oderwat.indent-rainbow",
-            "tamasfe.even-better-toml",
-            "redhat.vscode-yaml",
-            "Gruntfuggly.todo-tree",
-            "yzhang.markdown-all-in-one"
-        ]
-      }
+  "build": {
+    "dockerfile": "./Dockerfile.dev"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "streetsidesoftware.code-spell-checker",
+        "redhat.ansible",
+        "oderwat.indent-rainbow",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "Gruntfuggly.todo-tree",
+        "yzhang.markdown-all-in-one"
+      ]
     }
+  },
+  "postStartCommand": "/workspaces/home-playbooks/.devcontainer/init-script.sh"
+  
 }

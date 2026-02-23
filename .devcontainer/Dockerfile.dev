@@ -12,7 +12,6 @@ RUN apt-get update \
 	jq \
 	sshpass \
 	zsh \
-	neofetch \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Setup user and home dir
