@@ -81,29 +81,37 @@ if [[ -n "${local_public_key_path}" ]]; then
   "${scp_cmd[@]}" "${local_public_key_path}" "${remote_target}:${remote_ssh_key_path}"
 fi
 
-quote_for_remote() {
-  printf "%q" "$1"
-}
-
-remote_env=(
-  "VMID=$(quote_for_remote "${UBUNTU_TEMPLATE_VMID}")"
-  "TEMPLATE_NAME=$(quote_for_remote "${UBUNTU_TEMPLATE_NAME}")"
-  "STORAGE=$(quote_for_remote "${UBUNTU_TEMPLATE_STORAGE}")"
-  "WORK_DIR=$(quote_for_remote "${UBUNTU_TEMPLATE_WORK_DIR}")"
-  "IMAGE_NAME=$(quote_for_remote "${image_name}")"
-  "IMAGE_URL=$(quote_for_remote "${image_url}")"
-  "DISK_RESIZE=$(quote_for_remote "${UBUNTU_TEMPLATE_DISK_RESIZE:-}")"
-  "MEMORY=$(quote_for_remote "${UBUNTU_TEMPLATE_MEMORY}")"
-  "CORES=$(quote_for_remote "${UBUNTU_TEMPLATE_CORES}")"
-  "BRIDGE=$(quote_for_remote "${UBUNTU_TEMPLATE_BRIDGE}")"
-  "IPCONFIG0=$(quote_for_remote "${UBUNTU_TEMPLATE_IPCONFIG0}")"
-  "CIUSER=$(quote_for_remote "${UBUNTU_TEMPLATE_CIUSER:-}")"
-  "CIPASSWORD=$(quote_for_remote "${UBUNTU_TEMPLATE_CIPASSWORD:-}")"
-  "SSH_KEY_PATH=$(quote_for_remote "${remote_ssh_key_path}")"
-)
-
-"${ssh_cmd[@]}" "${remote_target}" "${remote_env[*]} bash -se" <<'REMOTE_SCRIPT'
+"${ssh_cmd[@]}" "${remote_target}" bash -se -- \
+  "${UBUNTU_TEMPLATE_VMID}" \
+  "${UBUNTU_TEMPLATE_NAME}" \
+  "${UBUNTU_TEMPLATE_STORAGE}" \
+  "${UBUNTU_TEMPLATE_WORK_DIR}" \
+  "${image_name}" \
+  "${image_url}" \
+  "${UBUNTU_TEMPLATE_DISK_RESIZE:-}" \
+  "${UBUNTU_TEMPLATE_MEMORY}" \
+  "${UBUNTU_TEMPLATE_CORES}" \
+  "${UBUNTU_TEMPLATE_BRIDGE}" \
+  "${UBUNTU_TEMPLATE_IPCONFIG0}" \
+  "${UBUNTU_TEMPLATE_CIUSER:-}" \
+  "${UBUNTU_TEMPLATE_CIPASSWORD:-}" \
+  "${remote_ssh_key_path}" <<'REMOTE_SCRIPT'
 set -euo pipefail
+
+VMID="$1"
+TEMPLATE_NAME="$2"
+STORAGE="$3"
+WORK_DIR="$4"
+IMAGE_NAME="$5"
+IMAGE_URL="$6"
+DISK_RESIZE="$7"
+MEMORY="$8"
+CORES="$9"
+BRIDGE="${10}"
+IPCONFIG0="${11}"
+CIUSER="${12}"
+CIPASSWORD="${13}"
+SSH_KEY_PATH="${14}"
 
 if qm status "${VMID}" >/dev/null 2>&1; then
   qm stop "${VMID}" >/dev/null 2>&1 || true
