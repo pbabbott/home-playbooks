@@ -20,12 +20,10 @@ terraform/
 │       ├── main.tf          # proxmox_vm_qemu resource
 │       ├── variables.tf     # Module inputs
 │       └── outputs.tf       # vm_id, vm_name, ip_address
-├── scripts/
-│   └── create-ubuntu-template.sh  # Build cloud-init template (VMID required)
 └── docs/
     ├── terraform-overview.md     # This file
     ├── getting-started.md        # Setup and common commands
-    └── template-script-parity.md # Template script vs old notes
+    └── create-ubuntu-template.md # Redirect to playbooks/proxmox (templates = Ansible)
 ```
 
 ---
@@ -92,15 +90,15 @@ A single reusable module that creates one Proxmox VM by cloning a cloud-init tem
 
 ---
 
-## Scripts
+## Templates
 
-- **scripts/create-ubuntu-template.sh** — Builds an Ubuntu cloud-init template on the Proxmox host (or a machine with Proxmox CLI). **VMID is required** as first argument (e.g. `./create-ubuntu-template.sh 900`) to avoid overwriting existing VMs. Supports env vars for release (jammy/noble), disk resize, and optional cloud-init defaults. See [template-script-parity.md](template-script-parity.md) for details and parity with older notes.
+VM templates (e.g. Ubuntu cloud-init, VMID 900) are **managed by Ansible**, not by Terraform. Create or update templates using the playbook documented in [playbooks/proxmox/README.md](../../playbooks/proxmox/README.md). Set `template_name` in `terraform.tfvars` to match the template you create.
 
 ---
 
 ## How it fits together
 
-1. **Template** — Create a cloud-init template (e.g. VMID 900) using the script or by hand. Set `template_name` in `terraform.tfvars` to match.
+1. **Template** — Create a cloud-init template (e.g. VMID 900) using the Ansible playbook (see [playbooks/proxmox/README.md](../../playbooks/proxmox/README.md)). Set `template_name` in `terraform.tfvars` to match.
 2. **Root variables** — Values in `terraform.tfvars` (and optionally env vars) feed into `variables.tf`. Provider config in `provider.tf` uses the API variables.
 3. **Fleet definition** — `var.nonprod_vms` is a map of VM name → VMID. `main.tf` loops over this map with `for_each` and instantiates the `vm` module once per entry.
 4. **Module** — Each module instance gets one VMID and one name from the map, plus shared values (node, template, storage, SSH key, etc.) from root variables. The module creates a single `proxmox_vm_qemu` resource (clone + cloud-init).

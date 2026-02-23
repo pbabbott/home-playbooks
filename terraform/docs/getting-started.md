@@ -25,9 +25,7 @@ Run all commands from the **terraform** directory (`cd terraform` from repo root
 
 ## Create a template
 
-In this project, all proxmox templates are stored in the 900 ID range.
-
-See [create-ubuntu-template.md](create-ubuntu-template.md) for how to build a template and full documentation for `scripts/create-ubuntu-template.sh`.
+In this project, Proxmox VM templates are **managed by Ansible**. Templates use the 900 ID range. To create or update an Ubuntu cloud-init template, see [playbooks/proxmox/README.md](../../playbooks/proxmox/README.md).
 
 
 ## Common commands

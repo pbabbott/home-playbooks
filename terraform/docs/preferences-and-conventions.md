@@ -6,7 +6,7 @@ We use fixed ID ranges so VMs are easy to find in the Proxmox UI and in automati
 
 | Range | Purpose | Notes |
 |-------|---------|--------|
-| **900** | Templates | Created by hand or `scripts/create-ubuntu-template.sh`. Not managed by Terraform. |
+| **900** | Templates | Created by Ansible ([playbooks/proxmox/README.md](../../playbooks/proxmox/README.md)) or by hand. Not managed by Terraform. |
 | **200** | Production infra | e.g. k8s nodes, core services. |
 | **300** | Non-prod | Test, staging, experiments. |
 | **500** | Dev workstations | Personal or shared dev VMs. |

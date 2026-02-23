@@ -7,7 +7,6 @@ This directory is the place to manage the home Proxmox server via Terraform scri
 | Doc | Purpose |
 |-----|---------|
 | [docs/getting-started.md](docs/getting-started.md) | First-time setup, common commands, and workflows |
-| [docs/create-ubuntu-template.md](docs/create-ubuntu-template.md) | How to run the Ubuntu cloud-init template script and what it creates in Proxmox |
+| [docs/create-ubuntu-template.md](docs/create-ubuntu-template.md) | Redirect to playbooks/proxmox — templates are managed by Ansible |
 | [docs/terraform-overview.md](docs/terraform-overview.md) | Directory layout, how root and module fit together, variable flow |
 | [docs/preferences-and-conventions.md](docs/preferences-and-conventions.md) | VM ID ranges, naming, and storage conventions |
-| [docs/template-script-parity.md](docs/template-script-parity.md) | Template script vs old notes, env vars |

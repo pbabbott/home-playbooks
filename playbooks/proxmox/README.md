@@ -2,42 +2,126 @@
 
 Playbooks that run against the Proxmox host(s) (inventory group `proxmox_hosts`).
 
+---
+
 ## create-ubuntu-template.yml
 
-Creates a Proxmox cloud-init template from an Ubuntu cloud image. Same outcome as [terraform/scripts/create-ubuntu-template.sh](../../terraform/scripts/create-ubuntu-template.sh); see [terraform/docs/create-ubuntu-template.md](../../terraform/docs/create-ubuntu-template.md) for details.
+Creates a Proxmox cloud-init template from an Ubuntu cloud image. The resulting template is used by **Terraform** to clone VMs (see [terraform/docs/getting-started.md](../../terraform/docs/getting-started.md) and [terraform/docs/terraform-overview.md](../../terraform/docs/terraform-overview.md)).
 
-**Required:** `vmid` (e.g. 900). Pass with `-e vmid=900`.
+### What the playbook does
 
-**Run from repo root:**
+The playbook performs these steps in order:
+
+1. **Download** the Ubuntu cloud image for the chosen release (if not already present on the Proxmox host).
+2. **Create** a new Proxmox VM with the given VMID, name, memory, and cores.
+3. **Import** the cloud image as a disk into the configured Proxmox storage.
+4. **Attach** the disk as SCSI 0 (virtio-scsi) so the VM can boot from it.
+5. **Optionally resize** the template disk (e.g. `+20G`) so clones have more space by default.
+6. **Add** a cloud-init drive (IDE2) so user, SSH keys, and network config can be injected when cloning.
+7. **Set** boot order (scsi0), serial console, and VGA to serial for Proxmox console access.
+8. **Optionally set** cloud-init defaults on the template (user, password, SSH key, IP config); Terraform overrides these per clone.
+9. **Convert** the VM to a template so it cannot be started and is only used for cloning.
+
+The template is minimal and cloud-init–ready; Terraform injects SSH keys and network (e.g. static IP) per clone. For VMID conventions (e.g. 900 for templates), see [terraform/docs/preferences-and-conventions.md](../../terraform/docs/preferences-and-conventions.md).
+
+### What is created in Proxmox
+
+After a successful run you will have:
+
+| Resource | Description |
+|----------|-------------|
+| **Template** | A non-startable VM (VMID you chose, e.g. 900) named e.g. `ubuntu-cloud`. |
+| **Disk** | One primary disk (SCSI 0) from the Ubuntu cloud image, optionally resized. |
+| **Cloud-init drive** | IDE2 cloud-init drive on the template; each clone gets its own cloud-init data from Terraform. |
+
+Terraform uses this template to **clone** VMs; it does not start or modify the template itself. Optional: install `qemu-guest-agent` in each clone after first boot (or via Ansible) for better IP reporting in Proxmox.
+
+**By design, the playbook does not:**
+
+- **Set `onboot 1` on the template** — Templates are not started. If you want cloned VMs to start on host boot, configure that on the clone (e.g. via Terraform or Proxmox UI).
+- **Boot the template or install qemu-guest-agent in it** — Cloud-init runs only at first boot, so the template is never started. Install qemu-guest-agent in each clone after first boot (or via Ansible) for better IP reporting in Proxmox.
+
+### Requirements
+
+- **VMID** must be set explicitly (e.g. 900 for templates) so the playbook does not overwrite an existing VM. Pass it with `-e vmid=900`.
+- **Storage** must exist on the Proxmox host (default: `local-lvm`).
+- **Network** bridge (default: `vmbr0`) must exist for the VM’s net0.
+- If you set `create_ubuntu_template_ssh_key_path`, the file must exist on the Proxmox host.
+
+### Configuration (extra vars)
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `vmid` | *(required)* | Proxmox VM/template ID (e.g. 900). Pass with `-e vmid=900`. |
+| `template_name` | `ubuntu-cloud` | Name of the template in Proxmox. |
+| `storage` | `local-lvm` | Proxmox storage ID for the disk and cloud-init drive. |
+| `ubuntu_release` | `jammy` | Ubuntu release: `jammy` (22.04) or `noble` (24.04). |
+| `template_disk_resize` | *(empty)* | Optional resize, e.g. `+20G`. |
+| `memory` | `1024` | Template VM memory (MB). Clones get their own via Terraform. |
+| `cores` | `1` | Template VM cores. |
+| `ipconfig0` | `ip=dhcp` | Cloud-init network config for the template. |
+| `ciuser` | *(empty)* | Optional default cloud-init user. |
+| `cipassword` | *(empty)* | Optional default cloud-init password. |
+| `create_ubuntu_template_ssh_key_path` | *(empty)* | Path on the Proxmox host to an SSH public key file. |
+| `template_work_dir` | `/var/lib/vz/template/iso` | Directory on the Proxmox host for the downloaded image. |
+
+### How to run
+
+Run from **repo root**. The playbook targets the Proxmox host via inventory group `proxmox_hosts`; you do not need to log in to the host first.
+
+**Basic: template with VMID 900 (Ubuntu 22.04 Jammy)**
 
 ```bash
 ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=900
 ```
 
-**Optional extra vars** (match the script’s env vars):
+This creates a template named `ubuntu-cloud` (VMID 900), using `local-lvm` and the default Jammy cloud image.
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `template_name` | `ubuntu-cloud` | Template name in Proxmox. |
-| `storage` | `local-lvm` | Proxmox storage ID. |
-| `ubuntu_release` | `jammy` | e.g. `jammy` (22.04) or `noble` (24.04). |
-| `template_disk_resize` | *(empty)* | e.g. `+20G`. |
-| `memory` | `1024` | MB. |
-| `cores` | `1` | vCPU count. |
-| `ipconfig0` | `ip=dhcp` | Cloud-init network. |
-| `ciuser` | *(empty)* | Optional default cloud-init user. |
-| `cipassword` | *(empty)* | Optional default cloud-init password. |
-| `create_ubuntu_template_ssh_key_path` | *(empty)* | Path on Proxmox host to SSH public key file. |
-| `template_work_dir` | `/var/lib/vz/template/iso` | Directory for downloaded image. |
-
-**Examples:**
+**Ubuntu 24.04 (Noble) with a larger disk**
 
 ```bash
-# Ubuntu 24.04, larger disk
-ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=901 -e ubuntu_release=noble -e template_disk_resize=+20G
-
-# Custom name and storage
-ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=901 -e template_name=ubuntu-jammy-ci -e storage=ssd-lvm
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=900 -e ubuntu_release=noble -e template_disk_resize=+20G
 ```
 
-Ensure the VMID is free on the Proxmox node (e.g. `qm list`) and that `template_name` / VMID match your Terraform config.
+**Custom template name and storage**
+
+```bash
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=900 -e template_name=ubuntu-jammy-ci -e storage=ssd-lvm
+```
+
+**With optional cloud-init defaults (e.g. for manual clones in the UI)**
+
+```bash
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml -e vmid=900 \
+  -e ciuser=admin -e cipassword='your-secure-password' \
+  -e create_ubuntu_template_ssh_key_path=/root/.ssh/authorized_keys.pub
+```
+
+**All options in one go**
+
+```bash
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml \
+  -e vmid=901 \
+  -e template_name=ubuntu-noble \
+  -e storage=local-lvm \
+  -e ubuntu_release=noble \
+  -e template_disk_resize=+32G \
+  -e memory=2048 \
+  -e cores=2
+```
+
+### Ensuring correctness
+
+1. **Avoid overwriting VMs**  
+   Always pass an explicit VMID (e.g. 900). Check that the VMID is free on the Proxmox host before running (e.g. `qm list` on the host, or via Ansible).
+
+2. **Re-download the image**  
+   If you need a fresh image, remove the existing file on the Proxmox host from `template_work_dir` (default `/var/lib/vz/template/iso`), then run the playbook again.
+
+3. **Match Terraform and conventions**  
+   Use the same template name and VMID in `terraform/terraform.tfvars` and [terraform/docs/preferences-and-conventions.md](../../terraform/docs/preferences-and-conventions.md). For example, if you create template `ubuntu-cloud` with VMID 900, set `template_name = "ubuntu-cloud"` in tfvars and ensure no other VM uses 900.
+
+4. **Avoid secrets in extra vars**  
+   Don’t put real passwords in `-e cipassword=...` if you’re concerned about process list or shell history; omit and set per clone via Proxmox UI or Terraform if needed.
+
+When the playbook finishes, the template is ready for Terraform clones. Use [terraform/docs/getting-started.md](../../terraform/docs/getting-started.md) to configure Terraform and run `terraform plan` / `terraform apply`.
