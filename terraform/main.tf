@@ -7,14 +7,16 @@ module "nonprod_vm" {
   vmid           = each.value
   name           = each.key
   target_node   = var.proxmox_node
-  template_name = var.template_name
+  template_name = local.nonprod_template_name
   cores         = 2
   memory        = 2048
   disk_size     = "20G"
   storage       = var.storage
   bridge        = var.bridge
-  ssh_public_key = file(var.ssh_public_key_path)
+  ssh_public_key = file(pathexpand(var.ssh_public_key_path))
   ip_config     = "ip=dhcp"
+
+  depends_on = [terraform_data.ubuntu_template]
 }
 
 # Optional: VM on onboard SSD — uncomment and add to nonprod_vms or create a separate module

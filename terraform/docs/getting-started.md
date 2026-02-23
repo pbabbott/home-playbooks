@@ -13,7 +13,7 @@ Run all commands from the **terraform** directory (`cd terraform` from repo root
    Copy the example tfvars and fill in your values (do not commit real secrets):
    ```bash
    cp terraform.tfvars.example terraform.tfvars
-   # Edit terraform.tfvars: API URL, token, node name, template name, storage, SSH key path.
+   # Edit terraform.tfvars: API URL/token plus template/VM settings (template name, storage, SSH key paths, etc.).
    ```
 
 3. **Initialize Terraform**
@@ -23,9 +23,15 @@ Run all commands from the **terraform** directory (`cd terraform` from repo root
    ```
 ---
 
-## Create a template
+## Create or refresh the Ubuntu template
 
-In this project, Proxmox VM templates are **managed by Ansible**. Templates use the 900 ID range. To create or update an Ubuntu cloud-init template, see [playbooks/proxmox/README.md](../../playbooks/proxmox/README.md).
+Template creation is Terraform-managed in this directory. After setting template variables in `terraform.tfvars` (especially `create_ubuntu_template = true`), run:
+
+```bash
+terraform apply -target=terraform_data.ubuntu_template
+```
+
+For full variable list and behavior, see [create-ubuntu-template.md](create-ubuntu-template.md).
 
 
 ## Common commands
@@ -34,7 +40,7 @@ In this project, Proxmox VM templates are **managed by Ansible**. Templates use 
 |--------|---------|
 | `terraform init` | Download providers and prepare the working directory. Run after clone or when changing provider/backend. |
 | `terraform plan` | Show what would change (no changes applied). Use before apply. |
-| `terraform apply` | Create or update VMs to match the config. Use `-auto-approve` to skip the prompt. |
+| `terraform apply` | Create or update template/VM resources to match the config. Use `-auto-approve` to skip the prompt. |
 | `terraform apply -destroy` | Destroy all resources managed by this config. |
 | `terraform destroy` | Same as `apply -destroy`. |
 | `terraform output` | List output values (e.g. VM IDs, names, IPs). |
