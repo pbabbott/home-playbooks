@@ -10,3 +10,4 @@ This directory is the place to manage the home Proxmox server via Terraform scri
 | [docs/create-ubuntu-template.md](docs/create-ubuntu-template.md) | Build/update the Ubuntu cloud-init template with Terraform |
 | [docs/terraform-overview.md](docs/terraform-overview.md) | Directory layout, how root and module fit together, variable flow |
 | [docs/preferences-and-conventions.md](docs/preferences-and-conventions.md) | VM ID ranges, naming, and storage conventions |
+| [docs/proxmox-storage.md](docs/proxmox-storage.md) | How storage pools map to Terraform variables and VM/template placement |
