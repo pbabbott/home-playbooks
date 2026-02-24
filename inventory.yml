@@ -1,7 +1,7 @@
 
 all:
   children:
-    # Proxmox node(s); used by playbooks/proxmox/create-ubuntu-template.yml (e.g. chimaera).
+    # Proxmox node(s); used by Terraform template/VM provisioning (e.g. chimaera).
     proxmox_hosts:
       hosts:
         chimaera: {}

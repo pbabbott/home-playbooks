@@ -62,7 +62,7 @@ variable "nonprod_vms" {
   }
 }
 
-# Ubuntu template build settings (defaults based on playbooks/proxmox README command history: 02/22/2026)
+# Ubuntu template build settings
 variable "create_ubuntu_template" {
   description = "If true, Terraform manages the Ubuntu cloud-init template before VM clones (provider-native VM config plus minimal SSH helpers)."
   type        = bool
@@ -158,6 +158,12 @@ variable "ubuntu_template_cipassword" {
   type        = string
   default     = ""
   sensitive   = true
+}
+
+variable "ubuntu_template_ssh_public_key_path_on_proxmox" {
+  description = "Optional path to an SSH public key file that already exists on the Proxmox host. Used when local ssh_public_key_path is unavailable."
+  type        = string
+  default     = ""
 }
 
 variable "ubuntu_template_work_dir" {

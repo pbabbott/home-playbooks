@@ -14,7 +14,6 @@ ssh_public_key_path = "~/.ssh/id_ed25519.pub"
 # VM ID convention: 900 = templates, 200 = production, 300 = non-prod, 500 = dev workstations
 
 # Ubuntu cloud-init template build (Terraform-managed)
-# These defaults mirror the latest successful command in playbooks/proxmox/README.md (02/22/2026).
 create_ubuntu_template       = true
 ubuntu_template_name_prefix  = "tf-template-ubuntu"
 ubuntu_template_primary_release = "noble"
@@ -30,6 +29,7 @@ ubuntu_template_bridge       = "vmbr0"
 ubuntu_template_ipconfig0    = "ip=dhcp"
 # ubuntu_template_ciuser         = "admin"
 # ubuntu_template_cipassword     = "change-me"
+# ubuntu_template_ssh_public_key_path_on_proxmox = "/root/.ssh/authorized_keys.pub"
 # ubuntu_template_proxmox_ssh_host = "chimaera" # optional, defaults to proxmox_node
 ubuntu_template_proxmox_ssh_user = "root"
 ubuntu_template_proxmox_ssh_port = 22

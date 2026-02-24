@@ -9,6 +9,7 @@ Terraform-native VM settings (CPU, memory, network, cloud-init, boot order, seri
 Small inline `local-exec` steps are still used only for provider gaps:
 
 - Download the Ubuntu cloud image to the Proxmox host if missing.
+- Import image into storage (`qm importdisk`) and attach as `scsi0`.
 - Optional `qm resize` for `scsi0`.
 - `qm template` conversion after VM creation.
 
@@ -31,14 +32,11 @@ ubuntu_template_disk_resize     = "+32G"
 ubuntu_template_memory          = 6144
 ubuntu_template_cores           = 4
 ssh_public_key_path             = "~/.ssh/id_ed25519.pub"
+# ubuntu_template_ssh_public_key_path_on_proxmox = "/root/.ssh/authorized_keys.pub"
 ```
 
 With this model, adding a second template is just one map entry (for example `jammy = 902`).
 Template names are generated automatically as `<ubuntu_template_name_prefix>-<release>` (for example `tf-template-ubuntu-noble`).
-
-Defaults are based on the latest successful command history entry in `playbooks/proxmox/README.md` dated `02/22/2026`.
-
----
 
 ## 2) Build or refresh the template
 
@@ -59,4 +57,5 @@ Or run a normal apply (`terraform apply`) if you also want Terraform to manage V
 - Template VMIDs are driven by `ubuntu_template_vmids` (release -> vmid).
 - `ubuntu_template_primary_release` controls which built template cloned VMs use by default.
 - The same `ssh_public_key_path` variable is used for both template creation and cloned VMs.
+- If `ssh_public_key_path` does not exist locally, you can set `ubuntu_template_ssh_public_key_path_on_proxmox` to a key file that already exists on the Proxmox host.
 - VM clone modules use the generated primary template name (`<prefix>-<primary_release>`) when template creation is enabled.

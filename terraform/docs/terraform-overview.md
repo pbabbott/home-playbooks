@@ -50,7 +50,7 @@ terraform/
 
 - **ubuntu-template.tf** — Defines two resources for template creation when `create_ubuntu_template = true`:
   - `terraform_data.ubuntu_template_image` — small helper to ensure each Ubuntu cloud image is present on the Proxmox host.
-  - `proxmox_vm_qemu.ubuntu_template` — provider-managed template VM resources generated with `for_each` over `ubuntu_template_vmids` (release -> vmid), plus short local-exec steps for `qm resize` and `qm template`.
+  - `proxmox_vm_qemu.ubuntu_template` — provider-managed template VM resources generated with `for_each` over `ubuntu_template_vmids` (release -> vmid), plus short local-exec steps for `qm importdisk`, `qm set --scsi0`, optional `qm resize`, and `qm template`.
 - **main.tf** — Defines the VMs. Currently a single `module "nonprod_vm"` with `for_each = var.nonprod_vms`, so one VM is created per entry in the map. Each instance gets the same template, node, storage, and SSH key; only `vmid` and `name` vary per VM. The module depends on template creation resource so an enabled template build happens first.
 - **outputs.tf** — Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and `nonprod_vm_ip_addresses` as maps keyed by VM name. Use these for Ansible inventory or scripts (e.g. `terraform output -json nonprod_vm_ip_addresses`).
 
