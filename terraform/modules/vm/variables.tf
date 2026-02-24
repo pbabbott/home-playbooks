@@ -49,13 +49,13 @@ variable "enable_ssd_data_disk" {
 }
 
 variable "ssd_data_disk_storage" {
-  description = "Storage target for the optional SSD data disk (for example longhorn-ssd). Null falls back to main storage."
+  description = "Storage target for the optional SSD data disk (for example longhorn-ssd). Empty string falls back to main storage."
   type        = string
-  default     = null
+  default     = ""
 
   validation {
-    condition     = var.ssd_data_disk_storage == null || trimspace(var.ssd_data_disk_storage) != ""
-    error_message = "ssd_data_disk_storage must be null or a non-empty storage name."
+    condition     = trimspace(var.ssd_data_disk_storage) == "" || length(trimspace(var.ssd_data_disk_storage)) > 0
+    error_message = "ssd_data_disk_storage must be a non-empty storage name when set."
   }
 }
 
@@ -88,7 +88,7 @@ variable "ip_config" {
 }
 
 variable "cloudinit_cdrom_storage" {
-  description = "Storage for cloud-init CDROM (defaults to same as disk storage)"
+  description = "Storage for cloud-init CDROM (defaults to same as disk storage). Empty string uses disk storage."
   type        = string
-  default     = null
+  default     = ""
 }

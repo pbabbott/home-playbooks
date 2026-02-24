@@ -1,5 +1,5 @@
 locals {
-  ssd_data_disk_storage = coalesce(var.ssd_data_disk_storage, var.storage)
+  ssd_data_disk_storage = trimspace(var.ssd_data_disk_storage) != "" ? var.ssd_data_disk_storage : var.storage
 }
 
 resource "proxmox_vm_qemu" "vm" {
@@ -22,7 +22,7 @@ resource "proxmox_vm_qemu" "vm" {
   dynamic "disk" {
     for_each = var.enable_ssd_data_disk ? [1] : []
     content {
-      slot    = "scsi1"
+      slot    = 1
       size    = var.ssd_data_disk_size
       type    = "scsi"
       storage = local.ssd_data_disk_storage
@@ -35,7 +35,7 @@ resource "proxmox_vm_qemu" "vm" {
   }
 
   # Cloud-init
-  cloudinit_cdrom_storage = coalesce(var.cloudinit_cdrom_storage, var.storage)
+  cloudinit_cdrom_storage = trimspace(var.cloudinit_cdrom_storage) != "" ? var.cloudinit_cdrom_storage : var.storage
   ipconfig0               = var.ip_config
   sshkeys                 = var.ssh_public_key
 

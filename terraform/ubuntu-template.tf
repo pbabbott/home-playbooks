@@ -48,9 +48,9 @@ resource "terraform_data" "ubuntu_template_image" {
     command     = <<-EOT
       set -euo pipefail
 
-      ssh_cmd=(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$PROXMOX_SSH_PORT")
-      remote_target="$PROXMOX_SSH_USER@$PROXMOX_SSH_HOST"
-      "${ssh_cmd[@]}" "$remote_target" "mkdir -p \"$WORK_DIR\" && if [ ! -f \"$IMAGE_PATH\" ]; then wget -q -O \"$IMAGE_PATH\" \"$IMAGE_URL\"; fi"
+      ssh_cmd=(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$$PROXMOX_SSH_PORT")
+      remote_target="$$PROXMOX_SSH_USER@$$PROXMOX_SSH_HOST"
+      "$${ssh_cmd[@]}" "$$remote_target" "mkdir -p \"$$WORK_DIR\" && if [ ! -f \"$$IMAGE_PATH\" ]; then wget -q -O \"$$IMAGE_PATH\" \"$$IMAGE_URL\"; fi"
     EOT
 
     environment = {
@@ -75,28 +75,30 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
   cores  = var.ubuntu_template_cores
   memory = var.ubuntu_template_memory
 
-  os_type  = "cloud-init"
-  scsihw   = "virtio-scsi-pci"
-  vm_state = "stopped"
-  agent    = 0
-  boot     = "order=scsi0"
+  os_type = "cloud-init"
+  scsihw  = "virtio-scsi-pci"
+  agent   = 0
+  boot    = "order=scsi0"
 
   network {
     model  = "virtio"
     bridge = var.ubuntu_template_bridge
   }
 
-  # Attach the downloaded cloud image as the primary boot disk.
+  # Placeholder boot disk; provisioner imports cloud image and attaches as scsi0.
   disk {
-    slot = "scsi0"
-    type = "ignore"
+    size    = "4G"
+    type    = "scsi"
+    storage = local.template_storage
+    slot    = 0
   }
 
-  # Add a cloud-init drive to the template.
+  # Cloud-init drive (ide2 = slot 2 in provider 2.9).
   disk {
-    slot    = "ide2"
-    type    = "cloudinit"
+    size    = "1M"
+    type    = "virtio"
     storage = local.template_storage
+    slot    = 2
   }
 
   ipconfig0 = var.ubuntu_template_ipconfig0
@@ -114,24 +116,7 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
     type = "serial0"
   }
 
-  # Recreate when core template-shaping inputs change.
-  force_recreate_on_change_of = sha256(jsonencode({
-    release        = each.key
-    vmid           = tostring(each.value.vmid)
-    template_name  = each.value.name
-    image_path     = each.value.image_path
-    image_url      = each.value.image_url
-    storage        = local.template_storage
-    ssh_key_path   = local.template_ssh_key_path
-    disk_resize    = var.ubuntu_template_disk_resize
-    bridge         = var.ubuntu_template_bridge
-    ipconfig0      = var.ubuntu_template_ipconfig0
-    ciuser         = var.ubuntu_template_ciuser
-    cipassword_sha = sha256(var.ubuntu_template_cipassword)
-    memory         = tostring(var.ubuntu_template_memory)
-    cores          = tostring(var.ubuntu_template_cores)
-    ssh_key_sha    = local.cloud_init_public_key != "" ? sha256(local.cloud_init_public_key) : ""
-  }))
+  # Provider 2.9: no force_recreate_on_change_of; use taint or lifecycle if needed.
 
   # Provider gap: no first-class "qm template" conversion or disk resize hook.
   provisioner "local-exec" {
@@ -140,21 +125,21 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
     command     = <<-EOT
       set -euo pipefail
 
-      ssh_cmd=(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$PROXMOX_SSH_PORT")
-      remote_target="$PROXMOX_SSH_USER@$PROXMOX_SSH_HOST"
+      ssh_cmd=(ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new -p "$$PROXMOX_SSH_PORT")
+      remote_target="$$PROXMOX_SSH_USER@$$PROXMOX_SSH_HOST"
 
-      "${ssh_cmd[@]}" "$remote_target" "qm importdisk \"$UBUNTU_TEMPLATE_VMID\" \"$UBUNTU_TEMPLATE_IMAGE_PATH\" \"$UBUNTU_TEMPLATE_STORAGE\""
-      "${ssh_cmd[@]}" "$remote_target" "qm set \"$UBUNTU_TEMPLATE_VMID\" --scsihw virtio-scsi-pci --scsi0 \"$UBUNTU_TEMPLATE_STORAGE:vm-$UBUNTU_TEMPLATE_VMID-disk-0\""
+      "$${ssh_cmd[@]}" "$$remote_target" "qm importdisk \"$$UBUNTU_TEMPLATE_VMID\" \"$$UBUNTU_TEMPLATE_IMAGE_PATH\" \"$$UBUNTU_TEMPLATE_STORAGE\""
+      "$${ssh_cmd[@]}" "$$remote_target" "qm set \"$$UBUNTU_TEMPLATE_VMID\" --scsihw virtio-scsi-pci --scsi0 \"$$UBUNTU_TEMPLATE_STORAGE:vm-$$UBUNTU_TEMPLATE_VMID-disk-0\""
 
-      if [[ -n "$UBUNTU_TEMPLATE_DISK_RESIZE" ]]; then
-        "${ssh_cmd[@]}" "$remote_target" "qm resize \"$UBUNTU_TEMPLATE_VMID\" scsi0 \"$UBUNTU_TEMPLATE_DISK_RESIZE\""
+      if [[ -n "$$UBUNTU_TEMPLATE_DISK_RESIZE" ]]; then
+        "$${ssh_cmd[@]}" "$$remote_target" "qm resize \"$$UBUNTU_TEMPLATE_VMID\" scsi0 \"$$UBUNTU_TEMPLATE_DISK_RESIZE\""
       fi
 
-      if [[ -n "$UBUNTU_TEMPLATE_SSH_KEY_PATH_ON_PROXMOX" ]]; then
-        "${ssh_cmd[@]}" "$remote_target" "qm set \"$UBUNTU_TEMPLATE_VMID\" --sshkey \"$UBUNTU_TEMPLATE_SSH_KEY_PATH_ON_PROXMOX\""
+      if [[ -n "$$UBUNTU_TEMPLATE_SSH_KEY_PATH_ON_PROXMOX" ]]; then
+        "$${ssh_cmd[@]}" "$$remote_target" "qm set \"$$UBUNTU_TEMPLATE_VMID\" --sshkey \"$$UBUNTU_TEMPLATE_SSH_KEY_PATH_ON_PROXMOX\""
       fi
 
-      "${ssh_cmd[@]}" "$remote_target" "qm template \"$UBUNTU_TEMPLATE_VMID\""
+      "$${ssh_cmd[@]}" "$$remote_target" "qm template \"$$UBUNTU_TEMPLATE_VMID\""
     EOT
 
     environment = {

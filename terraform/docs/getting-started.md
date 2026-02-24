@@ -17,7 +17,8 @@ For a smoother first run, skim these docs in order:
 ## First-time setup
 
 1. **Create a Proxmox API token**  
-   In Proxmox: Datacenter -> Permissions -> Users -> Add API Token. Grant VM create/delete/clone rights on the target node and storage.
+   In Proxmox: Datacenter → Permissions → Users → Add API Token. Grant VM create/delete/clone rights on the target node and storage.  
+   If `terraform plan` later fails with **501 no such file '/json/access/users'**, see [proxmox-api-token.md](proxmox-api-token.md) (disable Privilege Separation or grant Sys.Audit).
 
 2. **Create `terraform.tfvars` from the example**  
    Copy the example values and fill in your environment-specific settings:
