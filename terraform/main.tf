@@ -13,7 +13,7 @@ module "nonprod_vm" {
   disk_size     = "20G"
   storage       = var.storage
   bridge        = var.bridge
-  ssh_public_key = file(pathexpand(var.ssh_public_key_path))
+  ssh_public_key = file(local.cloud_init_public_key_path)
   ip_config     = "ip=dhcp"
 
   depends_on = [proxmox_vm_qemu.ubuntu_template]
@@ -32,6 +32,6 @@ module "nonprod_vm" {
 #   disk_size     = "20G"
 #   storage       = var.storage_ssd != "" ? var.storage_ssd : var.storage
 #   bridge        = var.bridge
-#   ssh_public_key = file(var.ssh_public_key_path)
+#   ssh_public_key = file(local.cloud_init_public_key_path)
 #   ip_config     = "ip=dhcp"
 # }

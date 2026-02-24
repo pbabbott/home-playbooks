@@ -23,7 +23,7 @@ variable "proxmox_node" {
 variable "template_name" {
   description = "Name of the cloud-init template to clone from"
   type        = string
-  default     = "ubuntu-noble-cloud"
+  default     = "tf-template-ubuntu-noble"
 }
 
 variable "storage" {
@@ -38,8 +38,9 @@ variable "storage_ssd" {
 }
 
 variable "ssh_public_key_path" {
-  description = "Path to SSH public key file for cloud-init"
+  description = "Path to SSH public key file used by cloud-init for both template and cloned VMs"
   type        = string
+  default     = "~/.ssh/id_ed25519.pub"
 }
 
 variable "bridge" {
@@ -82,7 +83,7 @@ variable "ubuntu_template_vmid" {
 variable "ubuntu_template_name" {
   description = "Name of the Ubuntu template to create."
   type        = string
-  default     = "ubuntu-noble-cloud"
+  default     = "tf-template-ubuntu-noble"
 }
 
 variable "ubuntu_template_storage" {
@@ -155,12 +156,6 @@ variable "ubuntu_template_cipassword" {
   sensitive   = true
 }
 
-variable "ubuntu_template_ssh_public_key_path" {
-  description = "Optional local SSH public key path to inject in template. Empty means fallback to var.ssh_public_key_path."
-  type        = string
-  default     = ""
-}
-
 variable "ubuntu_template_work_dir" {
   description = "Directory on the Proxmox host where cloud images and temporary ssh key files are stored."
   type        = string
@@ -188,10 +183,4 @@ variable "ubuntu_template_proxmox_ssh_port" {
     condition     = var.ubuntu_template_proxmox_ssh_port > 0 && var.ubuntu_template_proxmox_ssh_port <= 65535
     error_message = "ubuntu_template_proxmox_ssh_port must be between 1 and 65535."
   }
-}
-
-variable "ubuntu_template_proxmox_ssh_private_key_path" {
-  description = "Optional private key path for SSH to Proxmox. Empty uses default SSH agent/config behavior."
-  type        = string
-  default     = ""
 }
