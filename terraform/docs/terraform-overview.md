@@ -16,29 +16,12 @@ terraform/
 ├── outputs.tf               # Outputs (VM IDs, names, IPs)
 ├── terraform.tfvars.example # Example tfvars - copy to terraform.tfvars
 ├── .gitignore               # Ignores .terraform/, state, *.tfvars
-├── modules/
-│   └── vm/                  # Reusable VM module (clone + cloud-init)
-│       ├── main.tf          # proxmox_vm_qemu resource
-│       ├── variables.tf     # Module inputs
-│       └── outputs.tf       # vm_id, vm_name, ip_address
-└── docs/
-    ├── terraform-overview.md          # This file
-    ├── getting-started.md             # Setup and common workflows
-    ├── create-ubuntu-template.md      # Template build workflow and variables
-    ├── preferences-and-conventions.md # VM IDs, naming, and conventions
-    └── proxmox-storage.md             # Storage pools and Terraform mapping
+└── modules/
+    └── vm/                  # Reusable VM module (clone + cloud-init)
+        ├── main.tf          # proxmox_vm_qemu resource
+        ├── variables.tf     # Module inputs
+        └── outputs.tf       # vm_id, vm_name, ip_address
 ```
-
----
-
-## Documentation map
-
-| Doc | Focus |
-|-----|-------|
-| [getting-started.md](getting-started.md) | First-time setup and day-to-day commands |
-| [create-ubuntu-template.md](create-ubuntu-template.md) | Managing the Ubuntu cloud-init template resources |
-| [preferences-and-conventions.md](preferences-and-conventions.md) | VM ID ranges, naming, and storage conventions |
-| [proxmox-storage.md](proxmox-storage.md) | How Proxmox storage pools map to Terraform variables |
 
 ---
 
@@ -62,12 +45,12 @@ terraform/
 
 ### Resources and outputs
 
-- **ubuntu-template.tf** - Defines two resources used when `create_ubuntu_template = true`:
-  - `terraform_data.ubuntu_template_image` ensures each cloud image exists on the Proxmox host.
-  - `proxmox_vm_qemu.ubuntu_template` creates template VMs using `for_each` over `ubuntu_template_vmids` (release -> vmid), then runs small `local-exec` steps for `qm importdisk`, `qm set --scsi0`, optional `qm resize`, and `qm template`.
 - **main.tf** - Defines VMs using `module "nonprod_vm"` with `for_each = var.nonprod_vms`, so one module instance is created per map entry.
   - Non-prod worker VMs (name contains `-worker-`) are configured to attach an additional SSD-backed data disk when `enable_nonprod_worker_ssd_data_disk = true`.
 - **outputs.tf** - Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and `nonprod_vm_ip_addresses` as maps keyed by VM name.
+- **ubuntu-template.tf** - Defines two resources used when `create_ubuntu_template = true`:
+  - `terraform_data.ubuntu_template_image` ensures each cloud image exists on the Proxmox host.
+  - `proxmox_vm_qemu.ubuntu_template` creates template VMs using `for_each` over `ubuntu_template_vmids` (release -> vmid), then runs small `local-exec` steps for `qm importdisk`, `qm set --scsi0`, optional `qm resize`, and `qm template`.
 
 ---
 
@@ -86,7 +69,7 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 - Configures cloud-init (`sshkeys`, `ipconfig0`, and optional `cloudinit_cdrom_storage` override).
 - Enables QEMU guest agent reporting (`agent = 1`) for IP discovery when available in the guest.
 
-### Inputs (variables.tf)
+### Inputs (modules/vm/variables.tf)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
@@ -103,7 +86,7 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 | `ip_config` | no | Cloud-init network (default `ip=dhcp`). |
 | `cloudinit_cdrom_storage` | no | Override storage for cloud-init CDROM. |
 
-### Outputs (outputs.tf)
+### Outputs (modules/vm/outputs.tf)
 
 | Output | Description |
 |--------|-------------|
@@ -117,8 +100,8 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 
 Ubuntu templates (900-range VMIDs by convention) are managed through:
 
-- `terraform_data.ubuntu_template_image`
-- `proxmox_vm_qemu.ubuntu_template`
+- **`terraform_data.ubuntu_template_image`** — Ensures each Ubuntu cloud image is present on the Proxmox host (download/copy into the work dir); runs first so the template VMs can import the disk.
+- **`proxmox_vm_qemu.ubuntu_template`** — Creates the actual template VMs (one per release in `ubuntu_template_vmids`), runs `qm importdisk` / `qm set` / `qm template`, and is the clone source used by the VM module.
 
 Set `create_ubuntu_template = true` to enable template creation and configure template map variables in `terraform.tfvars`. For details, see [create-ubuntu-template.md](create-ubuntu-template.md).
 
