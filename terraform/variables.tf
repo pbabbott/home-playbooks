@@ -37,6 +37,23 @@ variable "storage_ssd" {
   default     = ""
 }
 
+variable "enable_nonprod_worker_ssd_data_disk" {
+  description = "If true, non-prod worker VMs (name contains \"-worker-\") get an additional SSD data disk."
+  type        = bool
+  default     = true
+}
+
+variable "nonprod_worker_ssd_data_disk_size" {
+  description = "Size for the additional SSD data disk on non-prod worker VMs."
+  type        = string
+  default     = "256G"
+
+  validation {
+    condition     = trimspace(var.nonprod_worker_ssd_data_disk_size) != ""
+    error_message = "nonprod_worker_ssd_data_disk_size must be a non-empty size string."
+  }
+}
+
 variable "ssh_public_key_path" {
   description = "Path to SSH public key file used by cloud-init for both template and cloned VMs"
   type        = string

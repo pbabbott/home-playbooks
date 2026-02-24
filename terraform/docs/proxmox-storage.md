@@ -1,65 +1,99 @@
-# Proxmox Storage Overview
+# Proxmox storage guide for this Terraform stack
 
-This document explains the different storage locations visible in the Proxmox VE interface on the `chimaera` node.
+This document maps Proxmox storage pools to the Terraform variables in this directory.
 
----
+For broader context, see:
 
-## Storage Types
-
-### `local` (chimaera)
-
-The `local` storage pool is a **directory-based storage** located at `/var/lib/vz` on the Proxmox host filesystem. It is enabled by default on every Proxmox installation.
-
-**What it stores:**
-- **ISO images** – installation media for VMs (`.iso` files)
-- **CT Templates** – container templates used to create LXC containers
-- **VZDump backup files** – backups created by Proxmox's built-in backup tool
-
-**What it does NOT store:**
-- VM disk images (those belong in block-level storage like `local-lvm`)
-
-In this setup, `local` is using **5.69 GB of 100.86 GB** (about 5.6%), which is typical — it mostly holds ISOs and templates rather than active VM data.
+- [terraform-overview.md](terraform-overview.md)
+- [preferences-and-conventions.md](preferences-and-conventions.md)
 
 ---
 
-### `local-lvm` (chimaera)
+## Storage controls in Terraform
 
-The `local-lvm` storage pool is an **LVM-Thin (Logical Volume Manager)** storage backend. It is also created by default during Proxmox installation and lives in the same physical disk/partition as `local`, but uses a separate LVM thin pool.
-
-**What it stores:**
-- **VM disk images** – the actual virtual hard drives for QEMU/KVM VMs (raw format)
-- **CT volumes** – root filesystem volumes for LXC containers
-- **Cloud-init drives** – small (~4 MB) drives used to pass configuration data to cloud VMs at first boot
-
-**Why LVM-Thin?**
-LVM-Thin supports **thin provisioning**, meaning you can allocate more disk space than physically exists and only use what's actually written. It also enables **fast snapshots and clones** without copying data upfront, which is why it's preferred for VM disks.
-
-In this setup, you can see disk images for:
-- VMs 200–203 (Kubernetes nodes) — 25.23 GB each
-- VM 500 (marauders-map) — 72.48 GB
-- VM 900 (ubuntu-cloud) — base template disk only (no active disk visible, just cloudinit)
+| Variable | Defined in | What it controls |
+|---|---|---|
+| `storage` | root `variables.tf` | Default VM disk storage for module-managed VMs (`main.tf` currently passes `var.storage`). |
+| `storage_ssd` | root `variables.tf` | Optional fast storage target; used when a module call passes it as `storage`. |
+| `enable_nonprod_worker_ssd_data_disk` | root `variables.tf` | Toggle that enables an additional SSD data disk for non-prod worker VMs. |
+| `nonprod_worker_ssd_data_disk_size` | root `variables.tf` | Size of that worker SSD data disk (default `256G`). |
+| `ubuntu_template_storage` | root `variables.tf` | Optional override for template disk/cloud-init storage; if empty, template build falls back to `storage`. |
+| `cloudinit_cdrom_storage` | `modules/vm/variables.tf` | Optional per-VM override for cloud-init CDROM storage; if unset, module falls back to VM disk `storage`. |
+| `enable_ssd_data_disk` / `ssd_data_disk_storage` / `ssd_data_disk_size` | `modules/vm/variables.tf` | Module-level controls for an optional second disk attached at `scsi1`. |
 
 ---
 
-### `longhorn-ssd` (chimaera)
+## Common Proxmox storage pools
 
-This is a **custom storage pool** (not a default Proxmox storage) backed by an SSD. It stores large VM disk images for the Kubernetes worker nodes (VMs 201–203), each provisioned at **274.88 GB**.
+### `local`
 
-The name `longhorn-ssd` suggests this storage is used to back [Longhorn](https://longhorn.io/), a distributed block storage system for Kubernetes. In this architecture, each worker node gets a large dedicated SSD-backed disk that Longhorn uses to provide persistent volumes to workloads running in the cluster.
+Directory-based storage (`/var/lib/vz` by default). Typically used for:
+
+- ISO images
+- CT templates
+- Backups
+
+Usually **not** where you place actively running VM disks.
+
+### `local-lvm`
+
+LVM-thin storage usually used for:
+
+- VM disks
+- CT volumes
+- Cloud-init drives
+
+Good default for general-purpose VM workloads.
+
+### `longhorn-ssd` (custom)
+
+Example of a custom, SSD-backed storage target used for higher-performance or larger-disk workloads.
+In this repo it is represented by `storage_ssd`.
+
+The name suggests use with [Longhorn](https://longhorn.io/) workloads, but the Terraform code treats it as a normal Proxmox storage value.
 
 ---
 
-## Summary Table
+## How current code places disks
 
-| Storage | Type | Primary Use | Notes |
-|---|---|---|---|
-| `local` | Directory | ISOs, CT templates, backups | Small footprint, not for VM disks |
-| `local-lvm` | LVM-Thin | VM disks, CT volumes, cloud-init | Supports snapshots & thin provisioning |
-| `longhorn-ssd` | LVM/Directory (SSD) | Large VM disks for K8s workers | Likely backing Longhorn distributed storage |
+1. **Template build (`ubuntu-template.tf`)**
+   - Uses `ubuntu_template_storage` when set.
+   - Otherwise falls back to `storage`.
+   - This affects template disk import/attach and cloud-init drive placement.
+
+2. **Non-prod VM module calls (`main.tf`)**
+   - Current active module uses `storage = var.storage`.
+   - Worker nodes (name contains `-worker-`) get an additional SSD data disk when `enable_nonprod_worker_ssd_data_disk = true`.
+   - Worker data disk storage uses `storage_ssd` when set, otherwise falls back to `storage`.
+
+3. **VM module internals (`modules/vm/main.tf`)**
+   - Main disk uses `var.storage`.
+   - Optional worker data disk uses `scsi1` with `ssd_data_disk_storage` and `ssd_data_disk_size`.
+   - Cloud-init CDROM uses `coalesce(var.cloudinit_cdrom_storage, var.storage)`.
 
 ---
 
-## Quick Rule of Thumb
+## Practical selection guidance
 
-> Use **`local`** for files (ISOs, templates, backups).  
-> Use **`local-lvm`** or a dedicated storage pool for **running VM and container disks**.
+- Use `storage` for the baseline pool most VMs should use.
+- Set `ubuntu_template_storage` only when template disks should live somewhere different from VM defaults.
+- Keep `storage_ssd` as an opt-in target for workloads that need faster or larger storage.
+
+Example `terraform.tfvars` pattern:
+
+```hcl
+storage                  = "local-lvm"
+storage_ssd              = "longhorn-ssd"
+ubuntu_template_storage  = "local-lvm"
+```
+
+---
+
+## Validation checklist
+
+When storage-related applies fail, verify:
+
+1. The storage name matches exactly what Proxmox reports.
+2. The storage allows the required content type (`images` for VM disks).
+3. The target node can access that storage.
+4. Template build settings (`ubuntu_template_storage`) and VM settings (`storage`/`storage_ssd`) are aligned with intended placement.
