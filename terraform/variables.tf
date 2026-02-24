@@ -63,7 +63,7 @@ variable "nonprod_vms" {
 
 # Ubuntu template build settings (defaults based on playbooks/proxmox README command history: 02/22/2026)
 variable "create_ubuntu_template" {
-  description = "If true, Terraform runs qm commands over SSH to (re)create the Ubuntu cloud-init template before VM clones."
+  description = "If true, Terraform manages the Ubuntu cloud-init template before VM clones (provider-native VM config plus minimal SSH helpers)."
   type        = bool
   default     = false
 }

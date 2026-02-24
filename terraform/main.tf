@@ -16,7 +16,7 @@ module "nonprod_vm" {
   ssh_public_key = file(pathexpand(var.ssh_public_key_path))
   ip_config     = "ip=dhcp"
 
-  depends_on = [terraform_data.ubuntu_template]
+  depends_on = [proxmox_vm_qemu.ubuntu_template]
 }
 
 # Optional: VM on onboard SSD — uncomment and add to nonprod_vms or create a separate module

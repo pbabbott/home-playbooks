@@ -1,11 +1,16 @@
 # Creating an Ubuntu cloud-init template for Proxmox (Terraform)
 
-Template creation now lives in this Terraform stack. Terraform runs the `qm` workflow over SSH via:
+Template creation now lives in this Terraform stack. It is primarily managed by the Proxmox provider resource:
 
-- `template.tf` (`terraform_data.ubuntu_template`)
-- `scripts/create-ubuntu-template.sh`
+- `template.tf` (`proxmox_vm_qemu.ubuntu_template`)
 
-The script performs the same steps as the old playbook flow: download Ubuntu cloud image, `qm create`, `qm importdisk`, attach disk/cloud-init, set boot+serial, apply cloud-init options, and `qm template`.
+Terraform-native VM settings (CPU, memory, network, cloud-init, boot order, serial console, cloud-init drive, SSH keys) are configured in `proxmox_vm_qemu`.
+
+Small inline `local-exec` steps are still used only for provider gaps:
+
+- Download the Ubuntu cloud image to the Proxmox host if missing.
+- Optional `qm resize` for `scsi0`.
+- `qm template` conversion after VM creation.
 
 ---
 
@@ -34,7 +39,7 @@ Defaults are based on the latest successful command history entry in `playbooks/
 From `terraform/`:
 
 ```bash
-terraform apply -target=terraform_data.ubuntu_template
+terraform apply -target=proxmox_vm_qemu.ubuntu_template
 ```
 
 Or run a normal apply (`terraform apply`) if you also want Terraform to manage VM clones in the same run.
@@ -44,6 +49,6 @@ Or run a normal apply (`terraform apply`) if you also want Terraform to manage V
 ## Notes
 
 - The template build is **optional**; it only runs when `create_ubuntu_template = true`.
-- If template settings change, Terraform replaces `terraform_data.ubuntu_template` and reruns the `qm` commands.
-- The script recreates the VM/template for the configured `ubuntu_template_vmid` to guarantee the final template matches the declared settings.
+- If core template settings change, Terraform recreates `proxmox_vm_qemu.ubuntu_template` (via `force_recreate_on_change_of`) so the template remains consistent.
+- The template is recreated for the configured `ubuntu_template_vmid` when those core inputs change.
 - VM clone modules use `ubuntu_template_name` when template creation is enabled, so the clone source stays in sync.

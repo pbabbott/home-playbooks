@@ -28,7 +28,7 @@ Run all commands from the **terraform** directory (`cd terraform` from repo root
 Template creation is Terraform-managed in this directory. After setting template variables in `terraform.tfvars` (especially `create_ubuntu_template = true`), run:
 
 ```bash
-terraform apply -target=terraform_data.ubuntu_template
+terraform apply -target=proxmox_vm_qemu.ubuntu_template
 ```
 
 For full variable list and behavior, see [create-ubuntu-template.md](create-ubuntu-template.md).

@@ -11,13 +11,11 @@ terraform/
 ├── provider.tf              # Proxmox provider config (API URL, token)
 ├── versions.tf              # Terraform + provider version constraints
 ├── variables.tf             # Root variables (API, template build, VM fleet)
-├── template.tf              # Ubuntu template build orchestration (qm via SSH)
+├── template.tf              # Ubuntu template build (provider-native + minimal SSH helpers)
 ├── main.tf                  # VM definitions (non-prod fleet via module)
 ├── outputs.tf               # Outputs (VM IDs, names, IPs)
 ├── terraform.tfvars.example # Example tfvars — copy to terraform.tfvars
 ├── .gitignore               # Ignores .terraform/, state, *.tfvars
-├── scripts/
-│   └── create-ubuntu-template.sh # Runs qm create/import/set/template sequence
 ├── modules/
 │   └── vm/                  # Reusable VM module (clone + cloud-init)
 │       ├── main.tf          # proxmox_vm_qemu resource
@@ -50,7 +48,9 @@ terraform/
 
 ### Resources and outputs
 
-- **template.tf** — Defines `terraform_data.ubuntu_template`, which runs `scripts/create-ubuntu-template.sh` when `create_ubuntu_template = true`. The resource tracks template inputs with `triggers_replace`, so settings changes rebuild the template.
+- **template.tf** — Defines two resources for template creation when `create_ubuntu_template = true`:
+  - `terraform_data.ubuntu_template_image` — small helper to ensure the Ubuntu cloud image is present on the Proxmox host.
+  - `proxmox_vm_qemu.ubuntu_template` — the provider-managed VM/template definition (CPU, memory, disks, network, cloud-init, boot, console), plus short local-exec steps for `qm resize` and `qm template`.
 - **main.tf** — Defines the VMs. Currently a single `module "nonprod_vm"` with `for_each = var.nonprod_vms`, so one VM is created per entry in the map. Each instance gets the same template, node, storage, and SSH key; only `vmid` and `name` vary per VM. The module depends on template creation resource so an enabled template build happens first.
 - **outputs.tf** — Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and `nonprod_vm_ip_addresses` as maps keyed by VM name. Use these for Ansible inventory or scripts (e.g. `terraform output -json nonprod_vm_ip_addresses`).
 
@@ -97,7 +97,7 @@ A single reusable module that creates one Proxmox VM by cloning a cloud-init tem
 
 ## Templates
 
-VM templates (e.g. Ubuntu cloud-init, VMID 900/901 range) are managed in Terraform through `terraform_data.ubuntu_template`. Terraform executes the same `qm` sequence used previously in Ansible, but now from `terraform/scripts/create-ubuntu-template.sh`.
+VM templates (e.g. Ubuntu cloud-init, VMID 900/901 range) are managed in Terraform through `proxmox_vm_qemu.ubuntu_template`.
 
 Set `create_ubuntu_template = true` to enable this behavior and configure `ubuntu_template_*` variables in `terraform.tfvars`. For usage details, see [create-ubuntu-template.md](create-ubuntu-template.md).
 
@@ -105,7 +105,7 @@ Set `create_ubuntu_template = true` to enable this behavior and configure `ubunt
 
 ## How it fits together
 
-1. **Template** — Optionally build the Ubuntu cloud-init template (e.g. VMID 901) using `terraform_data.ubuntu_template` (`create_ubuntu_template = true`).
+1. **Template** — Optionally build the Ubuntu cloud-init template (e.g. VMID 901) using `proxmox_vm_qemu.ubuntu_template` (`create_ubuntu_template = true`).
 2. **Root variables** — Values in `terraform.tfvars` (and optionally env vars) feed into `variables.tf`. Provider config in `provider.tf` uses the API variables.
 3. **Fleet definition** — `var.nonprod_vms` is a map of VM name → VMID. `main.tf` loops over this map with `for_each` and instantiates the `vm` module once per entry.
 4. **Module** — Each module instance gets one VMID and one name from the map, plus shared values (node, template, storage, SSH key, etc.) from root variables. The module creates a single `proxmox_vm_qemu` resource (clone + cloud-init). If template creation is enabled, VM creation waits for template build.
