@@ -15,8 +15,11 @@ For broader context, see:
 |---|---|---|
 | `storage` | root `variables.tf` | Default VM disk storage for module-managed VMs (`main.tf` currently passes `var.storage`). |
 | `storage_ssd` | root `variables.tf` | Optional fast storage target; used when a module call passes it as `storage`. |
+| `enable_nonprod_worker_ssd_data_disk` | root `variables.tf` | Toggle that enables an additional SSD data disk for non-prod worker VMs. |
+| `nonprod_worker_ssd_data_disk_size` | root `variables.tf` | Size of that worker SSD data disk (default `256G`). |
 | `ubuntu_template_storage` | root `variables.tf` | Optional override for template disk/cloud-init storage; if empty, template build falls back to `storage`. |
 | `cloudinit_cdrom_storage` | `modules/vm/variables.tf` | Optional per-VM override for cloud-init CDROM storage; if unset, module falls back to VM disk `storage`. |
+| `enable_ssd_data_disk` / `ssd_data_disk_storage` / `ssd_data_disk_size` | `modules/vm/variables.tf` | Module-level controls for an optional second disk attached at `scsi1`. |
 
 ---
 
@@ -60,10 +63,12 @@ The name suggests use with [Longhorn](https://longhorn.io/) workloads, but the T
 
 2. **Non-prod VM module calls (`main.tf`)**
    - Current active module uses `storage = var.storage`.
-   - A commented example shows how to use `var.storage_ssd` for selected VMs.
+   - Worker nodes (name contains `-worker-`) get an additional SSD data disk when `enable_nonprod_worker_ssd_data_disk = true`.
+   - Worker data disk storage uses `storage_ssd` when set, otherwise falls back to `storage`.
 
 3. **VM module internals (`modules/vm/main.tf`)**
    - Main disk uses `var.storage`.
+   - Optional worker data disk uses `scsi1` with `ssd_data_disk_storage` and `ssd_data_disk_size`.
    - Cloud-init CDROM uses `coalesce(var.cloudinit_cdrom_storage, var.storage)`.
 
 ---

@@ -42,6 +42,34 @@ variable "storage" {
   type        = string
 }
 
+variable "enable_ssd_data_disk" {
+  description = "If true, attach an additional SSD-backed data disk on scsi1."
+  type        = bool
+  default     = false
+}
+
+variable "ssd_data_disk_storage" {
+  description = "Storage target for the optional SSD data disk (for example longhorn-ssd). Null falls back to main storage."
+  type        = string
+  default     = null
+
+  validation {
+    condition     = var.ssd_data_disk_storage == null || trimspace(var.ssd_data_disk_storage) != ""
+    error_message = "ssd_data_disk_storage must be null or a non-empty storage name."
+  }
+}
+
+variable "ssd_data_disk_size" {
+  description = "Size for the optional SSD data disk (for example 256G)."
+  type        = string
+  default     = "256G"
+
+  validation {
+    condition     = trimspace(var.ssd_data_disk_size) != ""
+    error_message = "ssd_data_disk_size must be a non-empty size string."
+  }
+}
+
 variable "bridge" {
   description = "Bridge for the network interface"
   type        = string

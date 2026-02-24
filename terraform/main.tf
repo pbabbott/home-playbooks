@@ -4,17 +4,20 @@ module "nonprod_vm" {
 
   source = "./modules/vm"
 
-  vmid           = each.value
-  name           = each.key
-  target_node   = var.proxmox_node
-  template_name = local.nonprod_template_name
-  cores         = 2
-  memory        = 2048
-  disk_size     = "20G"
-  storage       = var.storage
-  bridge        = var.bridge
-  ssh_public_key = local.cloud_init_public_key
-  ip_config     = "ip=dhcp"
+  vmid                  = each.value
+  name                  = each.key
+  target_node           = var.proxmox_node
+  template_name         = local.nonprod_template_name
+  cores                 = 2
+  memory                = 2048
+  disk_size             = "20G"
+  storage               = var.storage
+  enable_ssd_data_disk  = var.enable_nonprod_worker_ssd_data_disk && can(regex("-worker-", each.key))
+  ssd_data_disk_storage = trimspace(var.storage_ssd) != "" ? var.storage_ssd : var.storage
+  ssd_data_disk_size    = var.nonprod_worker_ssd_data_disk_size
+  bridge                = var.bridge
+  ssh_public_key        = local.cloud_init_public_key
+  ip_config             = "ip=dhcp"
 
   depends_on = [proxmox_vm_qemu.ubuntu_template]
 }

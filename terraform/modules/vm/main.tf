@@ -1,3 +1,7 @@
+locals {
+  ssd_data_disk_storage = coalesce(var.ssd_data_disk_storage, var.storage)
+}
+
 resource "proxmox_vm_qemu" "vm" {
   vmid        = var.vmid
   name        = var.name
@@ -13,6 +17,16 @@ resource "proxmox_vm_qemu" "vm" {
     size    = var.disk_size
     type    = "scsi"
     storage = var.storage
+  }
+
+  dynamic "disk" {
+    for_each = var.enable_ssd_data_disk ? [1] : []
+    content {
+      slot    = "scsi1"
+      size    = var.ssd_data_disk_size
+      type    = "scsi"
+      storage = local.ssd_data_disk_storage
+    }
   }
 
   network {
