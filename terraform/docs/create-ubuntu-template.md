@@ -19,16 +19,22 @@ Small inline `local-exec` steps are still used only for provider gaps:
 Set these values in `terraform.tfvars` (or keep the defaults if they match your environment):
 
 ```hcl
-create_ubuntu_template         = true
-ubuntu_template_vmid           = 901
-ubuntu_template_name           = "tf-template-ubuntu-noble"
-ubuntu_template_storage        = "local-lvm"
-ubuntu_template_ubuntu_release = "noble"
-ubuntu_template_disk_resize    = "+32G"
-ubuntu_template_memory         = 6144
-ubuntu_template_cores          = 4
-ssh_public_key_path            = "~/.ssh/id_ed25519.pub"
+create_ubuntu_template          = true
+ubuntu_template_name_prefix     = "tf-template-ubuntu"
+ubuntu_template_primary_release = "noble"
+ubuntu_template_vmids = {
+  noble = 901
+  # jammy = 902
+}
+ubuntu_template_storage         = "local-lvm"
+ubuntu_template_disk_resize     = "+32G"
+ubuntu_template_memory          = 6144
+ubuntu_template_cores           = 4
+ssh_public_key_path             = "~/.ssh/id_ed25519.pub"
 ```
+
+With this model, adding a second template is just one map entry (for example `jammy = 902`).
+Template names are generated automatically as `<ubuntu_template_name_prefix>-<release>` (for example `tf-template-ubuntu-noble`).
 
 Defaults are based on the latest successful command history entry in `playbooks/proxmox/README.md` dated `02/22/2026`.
 
@@ -50,6 +56,7 @@ Or run a normal apply (`terraform apply`) if you also want Terraform to manage V
 
 - The template build is **optional**; it only runs when `create_ubuntu_template = true`.
 - If core template settings change, Terraform recreates `proxmox_vm_qemu.ubuntu_template` (via `force_recreate_on_change_of`) so the template remains consistent.
-- The template is recreated for the configured `ubuntu_template_vmid` when those core inputs change.
+- Template VMIDs are driven by `ubuntu_template_vmids` (release -> vmid).
+- `ubuntu_template_primary_release` controls which built template cloned VMs use by default.
 - The same `ssh_public_key_path` variable is used for both template creation and cloned VMs.
-- VM clone modules use `ubuntu_template_name` when template creation is enabled, so the clone source stays in sync.
+- VM clone modules use the generated primary template name (`<prefix>-<primary_release>`) when template creation is enabled.

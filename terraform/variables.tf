@@ -69,37 +69,35 @@ variable "create_ubuntu_template" {
   default     = false
 }
 
-variable "ubuntu_template_vmid" {
-  description = "VMID for the Ubuntu template."
-  type        = number
-  default     = 901
-
-  validation {
-    condition     = var.ubuntu_template_vmid > 0
-    error_message = "ubuntu_template_vmid must be a positive integer."
-  }
-}
-
-variable "ubuntu_template_name" {
-  description = "Name of the Ubuntu template to create."
+variable "ubuntu_template_name_prefix" {
+  description = "Template naming prefix. Template names are built as <prefix>-<release>."
   type        = string
-  default     = "tf-template-ubuntu-noble"
+  default     = "tf-template-ubuntu"
 }
 
-variable "ubuntu_template_storage" {
-  description = "Storage to use for template disk/cloud-init. Empty means fallback to var.storage."
-  type        = string
-  default     = ""
-}
-
-variable "ubuntu_template_ubuntu_release" {
-  description = "Ubuntu release to download for the cloud image."
+variable "ubuntu_template_primary_release" {
+  description = "Release key used as clone source when create_ubuntu_template=true (for example noble => tf-template-ubuntu-noble)."
   type        = string
   default     = "noble"
 
   validation {
-    condition     = contains(["jammy", "noble"], var.ubuntu_template_ubuntu_release)
-    error_message = "ubuntu_template_ubuntu_release must be either 'jammy' or 'noble'."
+    condition     = can(var.ubuntu_template_vmids[var.ubuntu_template_primary_release])
+    error_message = "ubuntu_template_primary_release must exist as a key in ubuntu_template_vmids."
+  }
+}
+
+variable "ubuntu_template_vmids" {
+  description = "Map of Ubuntu release -> template VMID. Add more entries (for example jammy = 902) to manage multiple templates."
+  type        = map(number)
+  default = {
+    noble = 901
+  }
+
+  validation {
+    condition = alltrue([
+      for vmid in values(var.ubuntu_template_vmids) : vmid > 0
+    ])
+    error_message = "All ubuntu_template_vmids values must be positive integers."
   }
 }
 
@@ -129,6 +127,12 @@ variable "ubuntu_template_cores" {
     condition     = var.ubuntu_template_cores > 0
     error_message = "ubuntu_template_cores must be greater than 0."
   }
+}
+
+variable "ubuntu_template_storage" {
+  description = "Storage to use for template disk/cloud-init. Empty means fallback to var.storage."
+  type        = string
+  default     = ""
 }
 
 variable "ubuntu_template_bridge" {

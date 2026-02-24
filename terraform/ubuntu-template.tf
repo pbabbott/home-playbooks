@@ -2,32 +2,40 @@ locals {
   # Use one SSH public key path for cloud-init everywhere (template + cloned VMs).
   cloud_init_public_key_path = pathexpand(var.ssh_public_key_path)
 
-  # Clone modules automatically use the template built in this stack when enabled.
-  nonprod_template_name = var.create_ubuntu_template ? var.ubuntu_template_name : var.template_name
+  # When template creation is enabled, clones default to the selected primary release.
+  nonprod_template_name = var.create_ubuntu_template ? "${var.ubuntu_template_name_prefix}-${var.ubuntu_template_primary_release}" : var.template_name
 
   # Readable aliases for optional overrides.
   template_storage      = trimspace(var.ubuntu_template_storage) != "" ? var.ubuntu_template_storage : var.storage
   template_proxmox_host = trimspace(var.ubuntu_template_proxmox_ssh_host) != "" ? var.ubuntu_template_proxmox_ssh_host : var.proxmox_node
 
-  # Ubuntu cloud image metadata.
-  template_image_name = "${var.ubuntu_template_ubuntu_release}-server-cloudimg-amd64.img"
-  template_image_url  = "https://cloud-images.ubuntu.com/${var.ubuntu_template_ubuntu_release}/current/${local.template_image_name}"
-  template_image_path = "${var.ubuntu_template_work_dir}/${local.template_image_name}"
+  # Opinionated template model: release->vmid, with derived name/image values.
+  ubuntu_templates = {
+    for release, vmid in var.ubuntu_template_vmids : release => {
+      vmid       = vmid
+      name       = "${var.ubuntu_template_name_prefix}-${release}"
+      image_name = "${release}-server-cloudimg-amd64.img"
+      image_url  = "https://cloud-images.ubuntu.com/${release}/current/${release}-server-cloudimg-amd64.img"
+      image_path = "${var.ubuntu_template_work_dir}/${release}-server-cloudimg-amd64.img"
+    }
+  }
 }
 
 # Provider gap: ensure the cloud image file exists on the Proxmox host.
 resource "terraform_data" "ubuntu_template_image" {
-  count = var.create_ubuntu_template ? 1 : 0
+  for_each = var.create_ubuntu_template ? local.ubuntu_templates : {}
 
   triggers_replace = {
+    release          = each.key
+    vmid             = tostring(each.value.vmid)
     proxmox_ssh_host = local.template_proxmox_host
     proxmox_ssh_user = var.ubuntu_template_proxmox_ssh_user
     proxmox_ssh_port = tostring(var.ubuntu_template_proxmox_ssh_port)
 
     work_dir   = var.ubuntu_template_work_dir
-    image_name = local.template_image_name
-    image_url  = local.template_image_url
-    image_path = local.template_image_path
+    image_name = each.value.image_name
+    image_url  = each.value.image_url
+    image_path = each.value.image_path
   }
 
   provisioner "local-exec" {
@@ -46,17 +54,17 @@ resource "terraform_data" "ubuntu_template_image" {
       PROXMOX_SSH_PORT = tostring(var.ubuntu_template_proxmox_ssh_port)
 
       WORK_DIR   = var.ubuntu_template_work_dir
-      IMAGE_PATH = local.template_image_path
-      IMAGE_URL  = local.template_image_url
+      IMAGE_PATH = each.value.image_path
+      IMAGE_URL  = each.value.image_url
     }
   }
 }
 
 resource "proxmox_vm_qemu" "ubuntu_template" {
-  count = var.create_ubuntu_template ? 1 : 0
+  for_each = var.create_ubuntu_template ? local.ubuntu_templates : {}
 
-  vmid        = var.ubuntu_template_vmid
-  name        = var.ubuntu_template_name
+  vmid        = each.value.vmid
+  name        = each.value.name
   target_node = var.proxmox_node
 
   cores  = var.ubuntu_template_cores
@@ -78,7 +86,7 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
     slot        = "scsi0"
     type        = "disk"
     passthrough = true
-    disk_file   = local.template_image_path
+    disk_file   = each.value.image_path
   }
 
   # Add a cloud-init drive to the template.
@@ -105,8 +113,11 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
 
   # Recreate when core template-shaping inputs change.
   force_recreate_on_change_of = sha256(jsonencode({
-    image_path     = local.template_image_path
-    image_url      = local.template_image_url
+    release        = each.key
+    vmid           = tostring(each.value.vmid)
+    template_name  = each.value.name
+    image_path     = each.value.image_path
+    image_url      = each.value.image_url
     disk_resize    = var.ubuntu_template_disk_resize
     bridge         = var.ubuntu_template_bridge
     ipconfig0      = var.ubuntu_template_ipconfig0
@@ -139,7 +150,7 @@ resource "proxmox_vm_qemu" "ubuntu_template" {
       PROXMOX_SSH_USER = var.ubuntu_template_proxmox_ssh_user
       PROXMOX_SSH_PORT = tostring(var.ubuntu_template_proxmox_ssh_port)
 
-      UBUNTU_TEMPLATE_VMID        = tostring(var.ubuntu_template_vmid)
+      UBUNTU_TEMPLATE_VMID        = tostring(each.value.vmid)
       UBUNTU_TEMPLATE_DISK_RESIZE = var.ubuntu_template_disk_resize
     }
   }
