@@ -10,8 +10,7 @@ How the `terraform/` directory is structured and how the pieces fit together.
 terraform/
 ├── provider.tf              # Proxmox provider config (API URL, token)
 ├── versions.tf              # Terraform + provider version constraints
-├── variables.tf             # Root variables (API, template build, VM fleet)
-├── ubuntu-template.tf       # Ubuntu template build (provider + minimal SSH helpers)
+├── variables.tf             # Root variables (API, VM fleet, template name)
 ├── main.tf                  # VM definitions (non-prod fleet via module)
 ├── outputs.tf               # Outputs (VM IDs, names, IPs)
 ├── terraform.tfvars.example # Example tfvars - copy to terraform.tfvars
@@ -36,8 +35,7 @@ terraform/
 
 - **variables.tf** - Declares all root inputs:
   - **Proxmox**: `proxmox_api_url`, `proxmox_api_token_id`, `proxmox_api_token_secret`, `proxmox_node`
-  - **Template build**: `create_ubuntu_template`, `ubuntu_template_name_prefix`, `ubuntu_template_primary_release`, `ubuntu_template_vmids`, plus template build settings
-  - **Template/VM storage and clone source**: `template_name`, `storage`, `storage_ssd`, `bridge`
+  - **Template/VM storage and clone source**: `template_name` (template created by playbooks/proxmox/create-ubuntu-template.yml), `storage`, `storage_ssd`, `bridge`
   - **Worker SSD data disk controls**: `enable_nonprod_worker_ssd_data_disk`, `nonprod_worker_ssd_data_disk_size`
   - **SSH**: `ssh_public_key_path`
   - **Fleet**: `nonprod_vms` - map of VM name -> VMID
@@ -47,10 +45,8 @@ terraform/
 
 - **main.tf** - Defines VMs using `module "nonprod_vm"` with `for_each = var.nonprod_vms`, so one module instance is created per map entry.
   - Non-prod worker VMs (name contains `-worker-`) are configured to attach an additional SSD-backed data disk when `enable_nonprod_worker_ssd_data_disk = true`.
+  - The Ubuntu cloud-init template is **not** managed by Terraform; it must be created first via `playbooks/proxmox/create-ubuntu-template.yml`.
 - **outputs.tf** - Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and `nonprod_vm_ip_addresses` as maps keyed by VM name.
-- **ubuntu-template.tf** - Defines two resources used when `create_ubuntu_template = true`:
-  - `terraform_data.ubuntu_template_image` ensures each cloud image exists on the Proxmox host.
-  - `proxmox_vm_qemu.ubuntu_template` creates template VMs using `for_each` over `ubuntu_template_vmids` (release -> vmid), then runs small `local-exec` steps for `qm importdisk`, `qm set --scsi0`, optional `qm resize`, and `qm template`.
 
 ---
 
@@ -98,18 +94,19 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 
 ## Templates
 
-Ubuntu templates (900-range VMIDs by convention) are managed through:
+The Ubuntu cloud-init template (900-range VMID by convention) is **not** managed by Terraform. Create or refresh it with the Ansible playbook before running Terraform:
 
-- **`terraform_data.ubuntu_template_image`** — Ensures each Ubuntu cloud image is present on the Proxmox host (download/copy into the work dir); runs first so the template VMs can import the disk.
-- **`proxmox_vm_qemu.ubuntu_template`** — Creates the actual template VMs (one per release in `ubuntu_template_vmids`), runs `qm importdisk` / `qm set` / `qm template`, and is the clone source used by the VM module.
+```bash
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml
+```
 
-Set `create_ubuntu_template = true` to enable template creation and configure template map variables in `terraform.tfvars`. For details, see [create-ubuntu-template.md](create-ubuntu-template.md).
+Set `template_name` in `terraform.tfvars` to match the template name from that playbook (e.g. `tf-template-ubuntu-noble`).
 
 ---
 
 ## How it fits together
 
-1. **Template (optional)** - Build one or many Ubuntu cloud-init templates from `ubuntu_template_vmids`.
+1. **Template (prerequisite)** - Create the Ubuntu cloud-init template on Proxmox using `playbooks/proxmox/create-ubuntu-template.yml`.
 2. **Root variables** - Values from `terraform.tfvars` feed `variables.tf`; provider config in `provider.tf` uses API variables.
 3. **Fleet definition** - `var.nonprod_vms` maps VM name -> VMID. `main.tf` loops this map with `for_each`.
 4. **Module** - Each module instance creates one cloned VM with shared settings (node, storage, bridge, SSH key) plus per-VM `name` and `vmid`. Worker nodes can also receive an additional SSD-backed data disk via module inputs.

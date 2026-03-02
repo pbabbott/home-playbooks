@@ -10,7 +10,6 @@ For a smoother first run, skim these docs in order:
 
 1. [terraform-overview.md](terraform-overview.md) - code layout and variable flow
 2. [preferences-and-conventions.md](preferences-and-conventions.md) - VM ID, naming, and storage conventions
-3. [create-ubuntu-template.md](create-ubuntu-template.md) - template-specific variables and behavior
 
 ---
 
@@ -39,21 +38,15 @@ For a smoother first run, skim these docs in order:
 
 ---
 
-## Create or refresh the Ubuntu template
+## Ubuntu template (prerequisite)
 
-Template creation is managed in `ubuntu-template.tf`. After setting template values in `terraform.tfvars` (especially `create_ubuntu_template = true`), run:
-
-```bash
-terraform apply -target='proxmox_vm_qemu.ubuntu_template'
-```
-
-If you only want one release instance from the `ubuntu_template_vmids` map, you can target by key (example):
+The cloud-init template must exist on Proxmox before Terraform can create VMs. Create or refresh it with the Ansible playbook (run from repo root):
 
 ```bash
-terraform apply -target='proxmox_vm_qemu.ubuntu_template["noble"]'
+ansible-playbook -i inventory.yml playbooks/proxmox/create-ubuntu-template.yml
 ```
 
-For full variable details and behavior, see [create-ubuntu-template.md](create-ubuntu-template.md).
+Set `template_name` in `terraform.tfvars` to match the template name produced by that playbook (e.g. `tf-template-ubuntu-noble`).
 
 ---
 
@@ -63,7 +56,7 @@ For full variable details and behavior, see [create-ubuntu-template.md](create-u
 |--------|---------|
 | `terraform init` | Download providers and prepare the working directory. Run after clone or when changing provider/backend settings. |
 | `terraform plan` | Show what would change (no changes applied). Run before apply. |
-| `terraform apply` | Create or update template/VM resources to match config. Use `-auto-approve` to skip confirmation. |
+| `terraform apply` | Create or update VM resources to match config. Use `-auto-approve` to skip confirmation. |
 | `terraform apply -destroy` | Destroy all resources managed by this config. |
 | `terraform destroy` | Same as `terraform apply -destroy`. |
 | `terraform output` | List output values (VM IDs, names, IPs). |

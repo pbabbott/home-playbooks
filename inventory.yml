@@ -1,10 +1,6 @@
 
 all:
   children:
-    # Proxmox node(s); used by Terraform template/VM provisioning (e.g. chimaera).
-    proxmox_hosts:
-      hosts:
-        chimaera: {}
     remote:
       children:
         kubernetes_external_workers:

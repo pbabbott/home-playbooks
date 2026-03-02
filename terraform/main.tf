@@ -1,3 +1,9 @@
+# SSH public key for cloud-init (cloned VMs). Template is created by playbooks/proxmox/create-ubuntu-template.yml before Terraform runs.
+locals {
+  cloud_init_public_key_path = pathexpand(var.ssh_public_key_path)
+  cloud_init_public_key      = fileexists(local.cloud_init_public_key_path) ? trimspace(file(local.cloud_init_public_key_path)) : ""
+}
+
 # Non-prod fleet (300 range): 4 VMs created from var.nonprod_vms
 module "nonprod_vm" {
   for_each = var.nonprod_vms
@@ -7,7 +13,7 @@ module "nonprod_vm" {
   vmid                  = each.value
   name                  = each.key
   target_node           = var.proxmox_node
-  template_name         = local.nonprod_template_name
+  template_name         = var.template_name
   cores                 = 2
   memory                = 2048
   disk_size             = "20G"
@@ -18,8 +24,6 @@ module "nonprod_vm" {
   bridge                = var.bridge
   ssh_public_key        = local.cloud_init_public_key
   ip_config             = "ip=dhcp"
-
-  depends_on = [proxmox_vm_qemu.ubuntu_template]
 }
 
 # Optional: VM on onboard SSD — uncomment and add to nonprod_vms or create a separate module
