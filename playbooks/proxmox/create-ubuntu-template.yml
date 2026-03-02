@@ -7,7 +7,7 @@
   vars:
     template_id: 901
     template_name: "ans-template-ubuntu-noble"
-    ci_user: "admin"
+    ci_user: "firebolt"
     ci_password: "{{ inventoryPasswords.kubernetes_node }}"
   tasks:
     - name: Copy local SSH public key to remote /root/
@@ -38,3 +38,4 @@
       ansible.builtin.debug:
         var: script_result.stdout_lines
       when: script_result.stdout_lines is defined and script_result.stdout_lines | length > 0
+

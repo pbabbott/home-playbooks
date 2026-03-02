@@ -18,6 +18,7 @@ TEMPLATE_NAME="${TEMPLATE_NAME:-tf-template-ubuntu-noble}"
 STORAGE="local-lvm"
 BRIDGE="vmbr0"
 MEMORY=6144
+BALLOON=512
 CORES=4
 DISK_SIZE="32G"
 
@@ -56,6 +57,10 @@ qm create "$TEMPLATE_ID" \
   --scsihw virtio-scsi-pci \
   --ostype l26
 
+### SET BALLOON ###
+echo "Setting balloon to $BALLOON..."
+qm set "$TEMPLATE_ID" --balloon "$BALLOON"
+
 ### IMPORT DISK ###
 echo "Importing disk..."
 qm importdisk "$TEMPLATE_ID" "$IMAGE_FILE" "$STORAGE"
@@ -75,22 +80,21 @@ qm resize "$TEMPLATE_ID" scsi0 "$DISK_SIZE"
 echo "Adding cloud-init drive..."
 qm set "$TEMPLATE_ID" --ide2 "$STORAGE:cloudinit"
 
-### ENABLE QEMU AGENT ###
-
-echo "Enabling QEMU agent..."
-qm set "$TEMPLATE_ID" --agent enabled=1
+### DISABLE QEMU AGENT ###
+echo "Disabling QEMU agent..."
+qm set "$TEMPLATE_ID" --agent enabled=0
 
 ### SERIAL CONSOLE ###
 echo "Setting serial console..."
 qm set "$TEMPLATE_ID" --serial0 socket --vga serial0
 
-### DO NOT AUTO-START ###
-echo "Preventing auto-start..."
-qm set "$TEMPLATE_ID" --onboot 0
+### ENABLE AUTO-START ###
+echo "Enabling auto-start..."
+qm set "$TEMPLATE_ID" --onboot 1
 
 ## Setting user and password
 echo "Setting user and password..."
-qm set "$TEMPLATE_ID" --ciuser "admin" --cipassword "change-me"
+qm set "$TEMPLATE_ID" --ciuser "${CIUSER}" --cipassword "${CIPASSWORD}"
 
 ### Setting SSH public key
 echo "Setting SSH public key..."
@@ -104,10 +108,5 @@ qm set "$TEMPLATE_ID" --ipconfig0 "ip=dhcp"
 echo "Setting DNS..."
 qm set "$TEMPLATE_ID" --nameserver "${PRIMARY_DNS},${FALLBACK_DNS}" --searchdomain "local.abbottland.io"
 
-### CONVERT TO TEMPLATE ###
-echo "Converting VM to template..."
-qm template "$TEMPLATE_ID"
-
 echo ""
 echo "Template $TEMPLATE_NAME (VMID $TEMPLATE_ID) created successfully."
-echo "Terraform can now clone from this template."

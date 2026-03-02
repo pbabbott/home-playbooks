@@ -1,0 +1,25 @@
+---
+- name: Start VM template on Proxmox
+  hosts: chimaera
+  vars:
+    template_id: 901
+  tasks:
+    - name: Copy start-vm script to Proxmox host
+      ansible.builtin.copy:
+        src: start-vm.sh
+        dest: /root/start-vm.sh
+        mode: "0755"
+
+    - name: Run start-vm script
+      ansible.builtin.shell: /root/start-vm.sh
+      args:
+        executable: /bin/bash
+      environment:
+        TEMPLATE_ID: "{{ template_id }}"
+      register: script_result
+      changed_when: script_result.rc == 0
+
+    - name: Show script output
+      ansible.builtin.debug:
+        var: script_result.stdout_lines
+      when: script_result.stdout_lines is defined and script_result.stdout_lines | length > 0
