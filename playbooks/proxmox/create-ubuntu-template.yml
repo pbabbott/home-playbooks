@@ -6,7 +6,7 @@
   hosts: chimaera
   vars:
     template_id: 901
-    template_name: "ans-template-ubuntu-noble"
+    template_name: "ansible-template-ubuntu-noble"
     ci_user: "firebolt"
     ci_password: "{{ inventoryPasswords.kubernetes_node }}"
   tasks:

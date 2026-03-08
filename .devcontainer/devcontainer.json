@@ -1,6 +1,6 @@
 {
   "build": {
-    "dockerfile": "./Dockerfile.dev"
+    "dockerfile": "./Dockerfile"
   },
   "features": {
     "ghcr.io/devcontainers/features/terraform:1": {},
@@ -10,9 +10,14 @@
       "installOhMyZsh": true,
       "upgradePackages": true
     },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "helm": "none",
+      "minikube": "none"
+    },
+    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {}
   },
   "mounts": [
-    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/coder/.ssh,readonly"
+    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh"
   ],
   "customizations": {
     "vscode": {
@@ -28,6 +33,6 @@
       ]
     }
   },
+  "containerUser": "vscode",
   "postStartCommand": "/workspaces/home-playbooks/.devcontainer/init-script.sh"
-  
 }

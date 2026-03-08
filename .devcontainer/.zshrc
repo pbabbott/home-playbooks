@@ -41,3 +41,6 @@ alias encrypt="ansible-vault encrypt ./vault.yml"
 alias decrypt="ansible-vault decrypt ./vault.yml"
 
 alias chimaera="ssh root@192.168.4.192"
+
+
+export PATH="/home/vscode/.local/bin:$PATH"

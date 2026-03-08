@@ -14,7 +14,7 @@ set -euo pipefail
 # Other settings are fixed for this playbook.
 
 TEMPLATE_ID="${TEMPLATE_ID:-901}"
-TEMPLATE_NAME="${TEMPLATE_NAME:-tf-template-ubuntu-noble}"
+TEMPLATE_NAME="${TEMPLATE_NAME:-ansible-template-ubuntu-noble}"
 STORAGE="local-lvm"
 BRIDGE="vmbr0"
 MEMORY=6144
@@ -108,5 +108,10 @@ qm set "$TEMPLATE_ID" --ipconfig0 "ip=dhcp"
 echo "Setting DNS..."
 qm set "$TEMPLATE_ID" --nameserver "${PRIMARY_DNS},${FALLBACK_DNS}" --searchdomain "local.abbottland.io"
 
+### Attaching SSD data disk
+echo "Attaching SSD data disk..."
+qm set "$TEMPLATE_ID" --scsi1 longhorn-ssd:256
+
 echo ""
 echo "Template $TEMPLATE_NAME (VMID $TEMPLATE_ID) created successfully."
+echo "Note: template is not yet finalized."
