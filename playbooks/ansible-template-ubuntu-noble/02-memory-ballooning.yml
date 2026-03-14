@@ -1,0 +1,12 @@
+---
+# Verify memory ballooning / virtio_balloon (play 2 of configure-vm).
+
+- name: Verify memory ballooning (virtio_balloon)
+  hosts: ansible-template-ubuntu-noble
+  tasks:
+    - name: Check memory ballooning (virtio_balloon present)
+      ansible.builtin.find:
+        path: /sys/bus/virtio/drivers/virtio_balloon
+        hidden: true
+      register: virtio_balloon_contents
+      failed_when: virtio_balloon_contents.matched == 0

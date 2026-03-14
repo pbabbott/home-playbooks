@@ -1,94 +1,28 @@
 ---
 # Configure the VM (template) as per playbooks/proxmox/README.md "Configure the VM".
-# Targets the running template VM to install guest agent, verify ballooning,
-# format/mount the data SSD, then clean and power off (ready for finalize).
-# Run after the template VM is started and reachable (e.g. at 192.168.6.91).
+# Targets the running template VM. Run after the template VM is started and
+# reachable (e.g. at 192.168.6.91). 
 
-- name: Configure VM for template finalization
-  hosts: ansible-template-ubuntu-noble
-  vars:
-    longhorn_data_device: "/dev/sdb"
-    longhorn_mount_point: "/mnt/longhorn-ssd"
-    longhorn_fs_label: "data"
-  tasks:
-    - name: Install qemu-guest-agent
-      ansible.builtin.apt:
-        name: qemu-guest-agent
-        state: present
-        update_cache: true
-      become: true
+- name: Include QEMU guest agent play
+  ansible.builtin.import_playbook: 01-qemu-guest-agent.yml
 
-    - name: Check memory ballooning (virtio_balloon present)
-      ansible.builtin.find:
-        path: /sys/bus/virtio/drivers/virtio_balloon
-        hidden: true
-      register: virtio_balloon_contents
-      failed_when: virtio_balloon_contents.matched == 0
+- name: Include memory ballooning play
+  ansible.builtin.import_playbook: 02-memory-ballooning.yml
 
-    - name: Ensure data device exists
-      ansible.builtin.stat:
-        path: "{{ longhorn_data_device }}"
-      register: data_device_stat
-      failed_when: not data_device_stat.stat.exists
+- name: Include Longhorn data disk play
+  ansible.builtin.import_playbook: 03-longhorn-data-disk.yml
 
-    - name: Check if data device already has a filesystem
-      ansible.builtin.command: blkid -o value -s TYPE "{{ longhorn_data_device }}"
-      register: data_device_fstype
-      changed_when: false
-      failed_when: false
+- name: Include DNS play
+  ansible.builtin.import_playbook: 04-dns.yml
 
-    - name: Format data disk (ext4, label {{ longhorn_fs_label }})
-      ansible.builtin.command:
-        cmd: "mkfs.ext4 -L {{ longhorn_fs_label }} {{ longhorn_data_device }}"
-      become: true
-      when: data_device_fstype.rc != 0 or data_device_fstype.stdout | trim == ""
+- name: Include timezone play
+  ansible.builtin.import_playbook: 05-timezone.yml
 
-    - name: Wait for udev to see block device state
-      ansible.builtin.command: udevadm settle
-      become: true
+- name: Include iptables legacy and IPv6 disable play
+  ansible.builtin.import_playbook: 06-iptables-ipv6.yml
 
-    - name: Get UUID of data device
-      ansible.builtin.command: blkid -p -s UUID -o value "{{ longhorn_data_device }}"
-      register: data_device_uuid
-      become: true
-      changed_when: false
+- name: Include storage packages play (NFS, iSCSI)
+  ansible.builtin.import_playbook: 07-storage-packages.yml
 
-    - name: Fail if data device UUID is empty
-      ansible.builtin.assert:
-        that: (data_device_uuid.stdout | trim) | length > 0
-        fail_msg: "Could not read UUID from {{ longhorn_data_device }}. Is the device formatted?"
-
-    - name: Create longhorn mount point
-      ansible.builtin.file:
-        path: "{{ longhorn_mount_point }}"
-        state: directory
-        mode: "0755"
-      become: true
-
-    - name: Mount data disk and add to fstab
-      ansible.builtin.mount:
-        path: "{{ longhorn_mount_point }}"
-        src: "UUID={{ data_device_uuid.stdout | trim }}"
-        fstype: ext4
-        state: mounted
-        opts: "defaults,noatime"
-      become: true
-
-    - name: Clean cloud-init
-      ansible.builtin.command: cloud-init clean
-      become: true
-      changed_when: true
-
-    - name: Reset machine-id for template cloning
-      ansible.builtin.copy:
-        content: ""
-        dest: /etc/machine-id
-        force: true
-      become: true
-
-    - name: Power off VM (host will disconnect)
-      ansible.builtin.command: shutdown -h now
-      become: true
-      async: 10
-      poll: 0
-      ignore_errors: true
+- name: Include clean shutdown and power off play
+  ansible.builtin.import_playbook: 08-clean-shutdown.yml

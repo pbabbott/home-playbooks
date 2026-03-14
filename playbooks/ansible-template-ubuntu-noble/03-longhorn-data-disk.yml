@@ -1,0 +1,62 @@
+---
+# Prepare and mount data disk for Longhorn (play 3 of configure-vm).
+
+- name: Prepare and mount data disk for Longhorn
+  hosts: ansible-template-ubuntu-noble
+  vars:
+    longhorn_data_device: "/dev/sdb"
+    longhorn_mount_point: "/mnt/longhorn-ssd"
+    longhorn_fs_label: "data"
+  tasks:
+    - name: Ensure data device exists
+      ansible.builtin.stat:
+        path: "{{ longhorn_data_device }}"
+      register: data_device_stat
+      failed_when: not data_device_stat.stat.exists
+
+    - name: Check if data device already has a filesystem
+      ansible.builtin.command: blkid -p -o value -s TYPE "{{ longhorn_data_device }}"
+      register: data_device_fstype
+      changed_when: false
+      failed_when: false
+      become: true
+
+    - name: Format data disk (ext4, label {{ longhorn_fs_label }})
+      ansible.builtin.command:
+        cmd: "mkfs.ext4 -L {{ longhorn_fs_label }} {{ longhorn_data_device }}"
+      become: true
+      when: data_device_fstype.rc != 0 or data_device_fstype.stdout | trim == ""
+      register: format_result
+
+    - name: Wait for udev to see block device state
+      ansible.builtin.command: udevadm settle
+      become: true
+      changed_when: false
+      when: format_result is changed
+
+    - name: Get UUID of data device
+      ansible.builtin.command: blkid -p -s UUID -o value "{{ longhorn_data_device }}"
+      register: data_device_uuid
+      become: true
+      changed_when: false
+
+    - name: Fail if data device UUID is empty
+      ansible.builtin.assert:
+        that: (data_device_uuid.stdout | trim) | length > 0
+        fail_msg: "Could not read UUID from {{ longhorn_data_device }}. Is the device formatted?"
+
+    - name: Create longhorn mount point
+      ansible.builtin.file:
+        path: "{{ longhorn_mount_point }}"
+        state: directory
+        mode: "0755"
+      become: true
+
+    - name: Mount data disk and add to fstab
+      ansible.builtin.mount:
+        path: "{{ longhorn_mount_point }}"
+        src: "UUID={{ data_device_uuid.stdout | trim }}"
+        fstype: ext4
+        state: mounted
+        opts: "defaults,noatime"
+      become: true

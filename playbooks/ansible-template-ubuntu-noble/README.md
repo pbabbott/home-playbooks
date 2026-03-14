@@ -1,55 +1,53 @@
 # Steps to create a template
 
-## Delete the existing template
+## 1 - Delete the existing template if it exist already
 
 Go into proxmox and delete template 901
 
-## Create and connect to the VM
+or simply run the cursor command: `/template-delete`
 
-### 1 - Create the template in proxmox
+## 2 - Initialize template
+
+2A, 2B & 2C can be executed with cursor command: `/template-create`
+
+### 2 a - Create template
+
 ```sh
-ansible-playbook -e @./vault.yml ./playbooks/proxmox/create-ubuntu-template.yml
+ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/create-ubuntu-template.yml
 ```
 
-### 2 - Start the template vm
+### 2 b - Start template
 
 ```sh
-ansible-playbook -e @./vault.yml ./playbooks/proxmox/start-vm-template.yml
+ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/start-vm-template.yml
 ```
 
-### 3 - Determine the ip address of the vm
+### 2 c - Reset fingerprints
 
-This is going to be `192.168.6.91` as its static.
-
-### 4 - ssh into the vm
-
-If you're re-creating, be sure to run this before:
+Remove old fingerprint
 ```sh
 ssh-keygen -f "/home/vscode/.ssh/known_hosts" -R "192.168.6.91"
 ```
 
+Get new fingerprint
 ```sh
-ssh firebolt@192.168.6.91
+ssh-keyscan -H 192.168.6.91 >> "/home/vscode/.ssh/known_hosts" 2>/dev/null;
 ```
 
-type `yes` to continue.
+## 3 - Configure the VM
 
-Then logout. This is so we can more easily connect in the next step
-
-## Configure the VM
-
-You can run the playbook (ensure the template VM is started and reachable, e.g. at 192.168.6.91):
+Cursor command: `/template-configure`
 
 ```sh
-ansible-playbook -e @./vault.yml ./playbooks/proxmox/configure-vm.yml
+ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/configure-vm.yml
 ```
 
-## Finalize
-
-### 1 - Finalize the template
+## 4 - Finalize
 
 This basically just enables the guest-agent in proxmox and turns it into a template.
 
+Cursor command: `/template-finalize`
+
 ```sh
-ansible-playbook -e @./vault.yml ./playbooks/proxmox/finalize-template.yml
+ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/finalize-template.yml
 ```
