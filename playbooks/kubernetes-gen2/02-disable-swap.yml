@@ -1,0 +1,35 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/02-disable-swap.yml
+
+- name: Disable Swap
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Check if kubelet is setup
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubelet_enabled
+      listen: Restart kubelet
+
+    - name: Restart Kubelet Service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: restarted
+      when: kubelet_enabled.stat.exists
+      listen: Restart kubelet
+  tasks:
+    - name: Check if swap is enabled
+      ansible.builtin.command: /sbin/swapon --show=NAME --noheadings
+      register: swap_enabled
+      failed_when: false
+
+    - name: Disable swap
+      ansible.builtin.command: "{{ item }}"
+      notify:
+        - Restart kubelet
+      with_items:
+        - /sbin/swapoff -a
+        - sed -ri '/\s*swap\s*\//s/^/#/' /etc/fstab
+      when: swap_enabled.stdout != ""

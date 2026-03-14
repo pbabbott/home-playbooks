@@ -1,0 +1,18 @@
+---
+- name: Include containerd play
+  ansible.builtin.import_playbook: 01-containerd.yml
+
+- name: Disable swap
+  ansible.builtin.import_playbook: 02-disable-swap.yml
+
+- name: Load IPv4 networking modules
+  ansible.builtin.import_playbook: 03-ipv4-packets.yml
+
+- name: Install kube tools
+  ansible.builtin.import_playbook: 04-kube-tools.yml
+
+- name: Install Helm
+  ansible.builtin.import_playbook: 05-helm.yml
+
+- name: Configure kubelet
+  ansible.builtin.import_playbook: 06-kubelet.yml

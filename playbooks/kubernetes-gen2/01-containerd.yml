@@ -1,0 +1,81 @@
+
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/01-containerd.yml
+
+- name: Install containerd.io
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  vars:
+    apt_install_packages:
+      # Required for ansible
+      - python3-pip
+
+      # Required for containerd
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+  roles:
+    - role: abbottland.core.apt
+  
+  tasks:
+    - name: Add docker apt repository key.
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/debian/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+        force: true
+
+    - name: Get DEB architecture
+      ansible.builtin.command: dpkg --print-architecture
+      register: deb_architecture
+
+    - name: Add Docker APT repository (debug)
+      debug:
+        msg: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+    - name: Install containerd.io
+      apt:
+        name: containerd.io
+        update_cache: yes
+
+    - name: Make sure containerd service is running
+      ansible.builtin.systemd:
+        state: started
+        name: containerd
+
+- name: Setup permissions
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  roles:
+    - role: abbottland.docker.docker_permissions
+  tasks:
+    - name: Change group ownership of /etc/containerd.sock
+      ansible.builtin.file:
+        path: /run/containerd/containerd.sock
+        group: docker
+
+- name: Configure containerd
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Restart containerd
+      ansible.builtin.systemd:
+        name: containerd
+        state: restarted
+  tasks:
+    - name: Copy config.toml to remote
+      ansible.builtin.copy:
+        src: ./files/config.toml
+        dest: /etc/containerd/config.toml
+      notify: Restart containerd

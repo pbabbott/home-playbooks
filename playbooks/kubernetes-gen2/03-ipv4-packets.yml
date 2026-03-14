@@ -1,0 +1,20 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/03-ipv4-packets.yml
+- name: Enable IPv4 Packet forwarding
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Apply sysctl changes
+      ansible.builtin.command: sysctl --system
+  tasks:
+    - name: Enable IPv4 packet forwarding
+      notify: Apply sysctl changes
+      ansible.builtin.copy:
+        content: |
+          net.ipv4.ip_forward = 1
+        dest: /etc/sysctl.d/k8s.conf
+        owner: root
+        group: root
+        mode: 0644

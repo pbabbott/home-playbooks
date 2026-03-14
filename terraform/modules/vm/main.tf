@@ -63,7 +63,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
     ip_config {
       ipv4 {
         address = var.ip_config == "ip=dhcp" ? "dhcp" : trimspace(split(",", replace(var.ip_config, "ip=", ""))[0])
-        gateway = var.ip_config != "ip=dhcp" ? try(regex("gw=([^, ]+)", var.ip_config)[1], null) : null
+        gateway = var.ip_config != "ip=dhcp" ? var.gateway : null
       }
     }
     user_account {

@@ -1,6 +1,6 @@
 
 # Example commands
-# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes/ping.yml
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/ping.yml
 
 - name: Ping kubernetes hosts
   hosts:

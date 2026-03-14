@@ -1,0 +1,129 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/06-kubelet.yml
+- name: Make Kubeconfig dir for user
+  hosts:
+    - kubernetes_servers
+  tasks:
+    - name: Ensure ~/.kube/ dir exists
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/.kube"
+        state: directory
+        mode: "0755"
+
+- name: Setup controller
+  hosts:
+    - kubernetes_servers
+  become: true
+  tasks:
+    - name: Check if Kubernetes is already initialized
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubernetes_initialized
+
+    - name: Create init token
+      register: init_token
+      ansible.builtin.command: kubeadm token generate
+
+    - name: Show init_token
+      when: not kubernetes_initialized.stat.exists
+      debug:
+        msg: "Token on host is {{ init_token }}"
+
+    - name: Initialize controller
+      when: not kubernetes_initialized.stat.exists
+      block:
+        - name: Copy kubeadm-config.yml
+          vars:
+            bootstrap_token: "{{ init_token.stdout }}"
+          template:
+            src: ./files/kubeadm-config.yml.j2
+            dest: /tmp/kubeadm-config.yml
+
+        - name: kubeadm init
+          ansible.builtin.command: "kubeadm init --config /tmp/kubeadm-config.yml"
+
+    - name: Get certificate hash
+      register: cert_hash
+      ansible.builtin.shell: "openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'"
+
+    - name: Setup Kubeconfig
+      block:
+        - name: Copy admin.conf to user's home directory
+          copy:
+            src: /etc/kubernetes/admin.conf
+            dest: "/home/{{ ansible_user }}/.kube/config"
+            remote_src: true
+            force: true
+
+        - name: Set ownership of .kube/config
+          file:
+            path: "/home/{{ ansible_user }}/.kube/config"
+            owner: "{{ ansible_user }}"
+            group: "{{ ansible_user }}"
+            mode: 0600
+
+
+- name: Install pod overlay
+  hosts:
+    - kubernetes_servers
+  tasks:
+    - name: Download helm chart
+      kubernetes.core.helm_repository:
+        name: projectcalico
+        repo_url: "https://docs.tigera.io/calico/charts"
+
+    - name: Gather information of calico chart inside tigera-operator namespace
+      kubernetes.core.helm_info:
+        name: calico
+        release_namespace: tigera-operator
+      register: helm_info
+
+    - name: install calico
+      when: (helm_info.status.status | default('')) != 'deployed'
+      block:
+        - name: Copy values.yml
+          ansible.builtin.copy:
+            src: ./files/values.yml
+            dest: /tmp/values.yml
+        - name: Deploy calico chart using values files on target
+          kubernetes.core.helm:
+            name: calico
+            chart_version: v3.27.3
+            release_namespace: tigera-operator
+            create_namespace: true
+            chart_ref: projectcalico/tigera-operator
+            values_files:
+              - /tmp/values.yml
+
+- name: Join worker to cluster
+  hosts:
+    - kubernetes_workers
+  become: true
+  vars:
+    controller_ip: "{{ hostvars[groups['kubernetes_servers'][0]]['ansible_host'] }}"
+    cert_hash: "{{ hostvars[groups['kubernetes_servers'][0]]['cert_hash'].stdout }}"
+  tasks:
+    - name: Check if worker node has joined the cluster
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: worker_joined
+
+    - name: Create join_token
+      register: join_token
+      when: not worker_joined.stat.exists
+      delegate_to: "{{ groups['kubernetes_servers'][0] }}"
+      ansible.builtin.command: kubeadm token create --description "{{ ansible_hostname }}"
+
+    - name: Show command for debugging purposes
+      when: not worker_joined.stat.exists
+      debug:
+        msg: "kubeadm join {{ controller_ip }}:6443 --token {{ join_token.stdout }} --discovery-token-ca-cert-hash sha256:{{ cert_hash }}"
+    - name: Join worker to cluster
+      ansible.builtin.command: "kubeadm join {{ controller_ip }}:6443 --token {{ join_token.stdout }} --discovery-token-ca-cert-hash sha256:{{ cert_hash }}"
+      when: not worker_joined.stat.exists
+
+    - name: Restart containerd
+      when: not worker_joined.stat.exists
+      ansible.builtin.systemd_service:
+        name: containerd
+        state: restarted

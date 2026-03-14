@@ -21,7 +21,7 @@ locals {
   template_id = data.proxmox_virtual_environment_vms.template.vms[0].vm_id
   nonprod_ip_configs = {
     for name in keys(var.nonprod_vms) :
-    name => "ip=${var.nonprod_static_ips[name]}/22,gw=${var.nonprod_gateway}"
+    name => "ip=${var.nonprod_static_ips[name]}/22"
   }
 }
 
@@ -48,4 +48,5 @@ module "nonprod_vm" {
   ssh_public_key        = local.cloud_init_public_key
   cloudinit_username    = "firebolt"
   ip_config             = local.nonprod_ip_configs[each.key]
+  gateway               = var.nonprod_gateway
 }

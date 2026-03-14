@@ -100,9 +100,15 @@ variable "cloudinit_username" {
 }
 
 variable "ip_config" {
-  description = "Cloud-init ipconfig string (e.g. ip=dhcp or ip=192.168.1.10/24,gw=192.168.1.1)"
+  description = "Cloud-init address string: ip=dhcp or ip=192.168.1.10/24 (use gateway variable for default gateway)"
   type        = string
   default     = "ip=dhcp"
+}
+
+variable "gateway" {
+  description = "Default gateway for static IP (ignored when ip_config is ip=dhcp)"
+  type        = string
+  default     = null
 }
 
 variable "cloudinit_cdrom_storage" {
