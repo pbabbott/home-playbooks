@@ -25,9 +25,8 @@ DISK_SIZE="32G"
 CIUSER="${CIUSER:-admin}"
 CIPASSWORD="${CIPASSWORD:-change-me}"
 
-# DNS: match k8s worker (systemd-resolved primary + fallback)
-PRIMARY_DNS="${PRIMARY_DNS:-192.168.4.144}"
-FALLBACK_DNS="${FALLBACK_DNS:-1.1.1.1}"
+# DNS: not set here; VM uses host/network defaults (no explicit --nameserver avoids
+# Proxmox comma-separated nameserver → malformed netplan and broken default route).
 
 UBUNTU_IMAGE_URL="https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
 IMAGE_FILE="noble-server-cloudimg-amd64.img"
@@ -68,7 +67,7 @@ qm importdisk "$TEMPLATE_ID" "$IMAGE_FILE" "$STORAGE"
 ### ATTACH DISK ###
 echo "Attaching disk..."
 qm set "$TEMPLATE_ID" \
-  --scsi0 "$STORAGE:vm-${TEMPLATE_ID}-disk-0" \
+  --scsi0 "$STORAGE:vm-${TEMPLATE_ID}-disk-0,iothread=1,ssd=1" \
   --boot order=scsi0 \
   --bootdisk scsi0
 
@@ -100,17 +99,17 @@ qm set "$TEMPLATE_ID" --ciuser "${CIUSER}" --cipassword "${CIPASSWORD}"
 echo "Setting SSH public key..."
 qm set "$TEMPLATE_ID" --sshkey "/root/id_ed25519.pub"
 
-### Setting ip config
-echo "Setting IP config..."
-qm set "$TEMPLATE_ID" --ipconfig0 "ip=dhcp"
+### Setting static ip config
+echo "Setting static IP config..."
+qm set "$TEMPLATE_ID" --ipconfig0 "ip=192.168.6.91/22,gw=192.168.4.1"
 
 ### Setting DNS
-echo "Setting DNS..."
-qm set "$TEMPLATE_ID" --nameserver "${PRIMARY_DNS},${FALLBACK_DNS}" --searchdomain "local.abbottland.io"
+# echo "Setting DNS..."
+# qm set "$TEMPLATE_ID" --nameserver "${PRIMARY_DNS} ${FALLBACK_DNS}" --searchdomain "local.abbottland.io"
 
 ### Attaching SSD data disk
 echo "Attaching SSD data disk..."
-qm set "$TEMPLATE_ID" --scsi1 longhorn-ssd:256
+qm set "$TEMPLATE_ID" --scsi1 longhorn-ssd:256,iothread=1,ssd=1
 
 echo ""
 echo "Template $TEMPLATE_NAME (VMID $TEMPLATE_ID) created successfully."
