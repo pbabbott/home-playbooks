@@ -104,4 +104,4 @@ terraform validate
 
 ## State
 
-State is local by default (no remote backend configured here). Back up `terraform.tfstate` if needed, and do not commit state files if they may contain sensitive values.
+State is local by default (no remote backend configured here). Back up `terraform.tfstate` if needed, and do not commit state files if they may contain sensitive values. If apply crashed but VMs exist in Proxmox, see [terraform-overview.md](terraform-overview.md#recovery-vms-exist-in-proxmox-but-terraform-state-is-empty) for import steps.

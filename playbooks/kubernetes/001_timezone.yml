@@ -1,3 +1,4 @@
+## candidate to move into configure-vm playbook
 - name: Set timezone and configure timesyncd
   hosts:
     - kubernetes_servers

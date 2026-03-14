@@ -1,4 +1,4 @@
-
+## candidate to move into configure-vm playbook
 - name: Install NFS common utils
   hosts:
     - kubernetes_servers

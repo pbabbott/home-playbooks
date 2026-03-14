@@ -14,9 +14,9 @@ variable "target_node" {
   type        = string
 }
 
-variable "template_name" {
-  description = "Name of the cloud-init template to clone from"
-  type        = string
+variable "template_id" {
+  description = "Proxmox VM ID of the cloud-init template to clone from (resolved from template name in root module)"
+  type        = number
 }
 
 variable "cores" {
@@ -25,16 +25,28 @@ variable "cores" {
   default     = 2
 }
 
+variable "cpu_type" {
+  description = "CPU model type for Proxmox (for example kvm64, x86-64-v2-AES, host)"
+  type        = string
+  default     = "kvm64"
+}
+
 variable "memory" {
-  description = "Memory in MB"
+  description = "Dedicated (maximum) memory in MB"
   type        = number
   default     = 2048
 }
 
+variable "memory_floating" {
+  description = "Floating (minimum) memory in MB."
+  type        = number
+  default     = null
+}
+
 variable "disk_size" {
-  description = "Boot disk size (e.g. 20G)"
+  description = "Boot disk size (e.g. 32G)"
   type        = string
-  default     = "20G"
+  default     = "32G"
 }
 
 variable "storage" {
@@ -79,6 +91,12 @@ variable "bridge" {
 variable "ssh_public_key" {
   description = "SSH public key content for cloud-init"
   type        = string
+}
+
+variable "cloudinit_username" {
+  description = "Username for cloud-init user account (must exist in the template, e.g. ubuntu for create-ubuntu-template)"
+  type        = string
+  default     = "ubuntu"
 }
 
 variable "ip_config" {

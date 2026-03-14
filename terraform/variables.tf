@@ -79,3 +79,21 @@ variable "nonprod_vms" {
   }
 }
 
+# Non-prod static IPs (192.168.6.0/22). One entry per non-prod VM; keys must match nonprod_vms.
+variable "nonprod_static_ips" {
+  description = "Static IP address per non-prod VM (keys must match nonprod_vms). Used with /22 and nonprod_gateway."
+  type        = map(string)
+  default = {
+    "tf-nonprod-k8s-controller-1" = "192.168.6.31"
+    "tf-nonprod-k8s-worker-1"     = "192.168.6.32"
+    "tf-nonprod-k8s-worker-2"     = "192.168.6.33"
+    "tf-nonprod-k8s-worker-3"     = "192.168.6.34"
+  }
+}
+
+variable "nonprod_gateway" {
+  description = "Default gateway for non-prod VMs"
+  type        = string
+  default     = "192.168.4.1"
+}
+

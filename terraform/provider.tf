@@ -1,7 +1,8 @@
+# BPG Proxmox provider: https://github.com/bpg/terraform-provider-proxmox
 # If you see "501 no such file '/json/access/users'" on plan, see docs/proxmox-api-token.md.
+# Endpoint must be base URL (e.g. https://pve.example.com:8006/); /api2/json is stripped if present.
 provider "proxmox" {
-  pm_api_url          = var.proxmox_api_url
-  pm_api_token_id     = var.proxmox_api_token_id
-  pm_api_token_secret = var.proxmox_api_token_secret
-  pm_tls_insecure     = true
+  endpoint = "${trim(replace(var.proxmox_api_url, "/api2/json", ""), "/")}/"
+  api_token = "${var.proxmox_api_token_id}=${var.proxmox_api_token_secret}"
+  insecure = true
 }

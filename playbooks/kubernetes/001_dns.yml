@@ -1,3 +1,4 @@
+## Candidate to move into configure-vm playbook
 ---
 - name: Update DNS on Ubuntu 24 VMs
   hosts:
