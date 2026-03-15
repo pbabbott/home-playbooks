@@ -1,17 +1,38 @@
 {
-    "build": { "dockerfile": "./Dockerfile.dev" },
-
-    "customizations": {
-      "vscode": {
-        "extensions": [
-            "streetsidesoftware.code-spell-checker",
-            "redhat.ansible",
-            "oderwat.indent-rainbow",
-            "tamasfe.even-better-toml",
-            "redhat.vscode-yaml",
-            "Gruntfuggly.todo-tree",
-            "yzhang.markdown-all-in-one"
-        ]
-      }
+  "build": {
+    "dockerfile": "./Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "helm": "none",
+      "minikube": "none"
+    },
+    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {}
+  },
+  "mounts": [
+    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "hashicorp.terraform",
+        "streetsidesoftware.code-spell-checker",
+        "redhat.ansible",
+        "oderwat.indent-rainbow",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "Gruntfuggly.todo-tree",
+        "yzhang.markdown-all-in-one"
+      ]
     }
+  },
+  "containerUser": "vscode",
+  "postStartCommand": "/workspaces/home-playbooks/.devcontainer/init-script.sh"
 }

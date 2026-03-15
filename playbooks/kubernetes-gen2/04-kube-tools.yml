@@ -1,0 +1,59 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/04-kube-tools.yml
+
+- name: Install Kubernetes Tools
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  vars:
+    apt_install_packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+  roles:
+    - role: abbottland.core.apt
+  tasks:
+    - name: Ensure keyrings directory exists
+      ansible.builtin.file:
+        path: "/etc/apt/keyrings"
+        state: directory
+        mode: '0755'
+    - name: Add kubernetes apt repository key.
+      ansible.builtin.get_url:
+        url: https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key
+        dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+        mode: '0644'
+        force: true
+
+    - name: Add the Kubernetes apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /"
+        state: present
+        filename: kubernetes
+        update_cache: yes
+
+    - name: Install kubernetes tools
+      ansible.builtin.apt:
+        name:
+          - kubectl
+          - kubeadm
+          - kubelet
+        state: present
+        update_cache: yes
+
+    - name: Hold packages
+      loop:
+        - kubectl
+        - kubeadm
+        - kubelet
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+
+    - name: Enable and start the kubelet service
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: started
+        enabled: true
+

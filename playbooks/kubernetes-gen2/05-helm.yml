@@ -1,0 +1,42 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/05-helm.yml
+- name: Install Helm
+  hosts: 
+    - kubernetes_servers
+    - kubernetes_workers
+  become: true
+  vars:
+    apt_install_packages:
+      - apt-transport-https
+  roles:
+    - role: abbottland.core.apt
+  tasks:
+    - name: Ensure keyrings directory exists
+      ansible.builtin.file:
+        path: /usr/share/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Add helm apt repository key
+      ansible.builtin.get_url:
+        url: https://packages.buildkite.com/helm-linux/helm-debian/gpgkey
+        dest: /tmp/helm-gpgkey.asc
+        mode: '0644'
+        force: true
+
+    - name: Add helm apt repository key (dearmor)
+      ansible.builtin.command: gpg --dearmor -o /usr/share/keyrings/helm.gpg /tmp/helm-gpgkey.asc
+
+    - name: Add the helm apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main"
+        state: present
+        filename: helm
+        update_cache: yes
+
+    - name: Install helm
+      ansible.builtin.apt:
+        name:
+          - helm
+        state: present
+        update_cache: yes

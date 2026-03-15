@@ -1,0 +1,24 @@
+---
+# Clean shutdown and power off (play 8 of configure-vm).
+
+- name: Clean shutdown 
+  hosts: ansible-template-ubuntu-noble
+  tasks:
+    - name: Clean cloud-init
+      ansible.builtin.command: cloud-init clean
+      become: true
+      changed_when: true
+
+    - name: Reset machine-id for template cloning
+      ansible.builtin.copy:
+        content: ""
+        dest: /etc/machine-id
+        force: true
+      become: true
+
+    - name: Power off VM (host will disconnect)
+      ansible.builtin.command: shutdown -h now
+      become: true
+      async: 10
+      poll: 0
+      ignore_errors: true

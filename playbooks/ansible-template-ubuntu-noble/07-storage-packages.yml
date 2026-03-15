@@ -1,0 +1,29 @@
+---
+# Install NFS and iSCSI packages for Kubernetes/Longhorn (part of configure-vm).
+# Template will be cloned for both control-plane and workers; install all storage
+# deps so cloned VMs are ready for NFS and Longhorn iSCSI.
+
+- name: Install NFS common utils
+  hosts: ansible-template-ubuntu-noble
+  become: true
+  tasks:
+    - name: Install nfs-common
+      ansible.builtin.apt:
+        name: nfs-common
+        state: present
+        update_cache: yes
+
+- name: Install open-iscsi
+  hosts: ansible-template-ubuntu-noble
+  become: true
+  tasks:
+    - name: Install open-iscsi
+      ansible.builtin.apt:
+        name: open-iscsi
+        state: present
+        update_cache: yes
+    - name: Enable iscsi in systemctl
+      ansible.builtin.systemd:
+        name: iscsi
+        enabled: yes
+        state: started

@@ -1,0 +1,11 @@
+
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/ping.yml
+
+- name: Ping kubernetes hosts
+  hosts:
+    - kubernetes_servers
+    - kubernetes_workers
+  tasks:
+    - name: Ping host
+      ansible.builtin.ping: {}

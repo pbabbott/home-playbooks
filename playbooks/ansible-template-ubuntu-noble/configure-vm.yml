@@ -1,0 +1,28 @@
+---
+# Configure the VM (template) as per playbooks/proxmox/README.md "Configure the VM".
+# Targets the running template VM. Run after the template VM is started and
+# reachable (e.g. at 192.168.6.91). 
+
+- name: Include QEMU guest agent play
+  ansible.builtin.import_playbook: 01-qemu-guest-agent.yml
+
+- name: Include memory ballooning play
+  ansible.builtin.import_playbook: 02-memory-ballooning.yml
+
+- name: Include Longhorn data disk play
+  ansible.builtin.import_playbook: 03-longhorn-data-disk.yml
+
+- name: Include DNS play
+  ansible.builtin.import_playbook: 04-dns.yml
+
+- name: Include timezone play
+  ansible.builtin.import_playbook: 05-timezone.yml
+
+- name: Include iptables legacy and IPv6 disable play
+  ansible.builtin.import_playbook: 06-iptables-ipv6.yml
+
+- name: Include storage packages play (NFS, iSCSI)
+  ansible.builtin.import_playbook: 07-storage-packages.yml
+
+- name: Include clean shutdown and power off play
+  ansible.builtin.import_playbook: 08-clean-shutdown.yml

@@ -1,0 +1,30 @@
+---
+- name: create bundle config directories for users
+  become: yes
+  become_user: '{{ user.username }}'
+  file:
+    path: '~/.antigen-etc/bundle.d'
+    state: directory
+    mode: 'u=rwx,go=rx'
+  when: user.antigen_bundles is defined
+  with_items: '{{ users }}'
+  loop_control:
+    loop_var: user
+    label: '{{ user.username }}'
+
+- name: write bundle config for users
+  become: yes
+  become_user: '{{ item.0.username }}'
+  template:
+    src: bundle.zsh.j2
+    dest: '~/.antigen-etc/bundle.d/{{ item.1.name }}.zsh'
+    backup: yes
+    mode: 'u=rw,go=r'
+  vars:
+    antigen_bundle: '{{ item.1 }}'
+  with_subelements:
+    - '{{ users }}'
+    - antigen_bundles
+    - skip_missing: yes
+  loop_control:
+    label: '{{ item.0.username }}: {{ item.1.name }}'
