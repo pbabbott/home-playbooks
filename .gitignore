@@ -3,4 +3,4 @@ htpasswd
 
 *.img
 
-.ansible/
+.ansible
