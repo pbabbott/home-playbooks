@@ -85,8 +85,8 @@ terraform apply
 ```bash
 terraform output
 terraform output nonprod_vm_names
-terraform output nonprod_vm_ip_addresses
 ```
+IPs are set in `nonprod_static_ips` / `prod_static_ips` (e.g. `terraform.tfvars`), not as Terraform outputs.
 
 **After editing tfvars or adding/removing VMs**
 ```bash

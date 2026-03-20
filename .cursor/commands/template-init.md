@@ -1,6 +1,8 @@
 
 # Steps to initialized a template
 
+Follow these instructions:
+
 ## 1. Create template in proxmox 
 Create a template in proxmox by running this command:
 

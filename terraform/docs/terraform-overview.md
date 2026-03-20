@@ -19,7 +19,7 @@ terraform/
     └── vm/                  # Reusable VM module (clone + cloud-init)
         ├── main.tf          # proxmox_virtual_environment_vm resource (BPG provider)
         ├── variables.tf     # Module inputs
-        └── outputs.tf       # vm_id, vm_name, ip_address
+        └── outputs.tf       # vm_id, vm_name
 ```
 
 ---
@@ -35,18 +35,17 @@ terraform/
 
 - **variables.tf** - Declares all root inputs:
   - **Proxmox**: `proxmox_api_url`, `proxmox_api_token_id`, `proxmox_api_token_secret`, `proxmox_node`
-  - **Template/VM storage and clone source**: `template_name` (template created by playbooks/proxmox/create-ubuntu-template.yml), `storage`, `storage_ssd`, `bridge`
-  - **Worker SSD data disk controls**: `enable_nonprod_worker_ssd_data_disk`, `nonprod_worker_ssd_data_disk_size`
+  - **Template and cloud-init**: `template_name` (template created by playbooks/proxmox/create-ubuntu-template.yml), `storage` (pool for cloud-init snippets on clones), `bridge`
   - **SSH**: `ssh_public_key_path`
   - **Fleet**: `nonprod_vms` - map of VM name -> VMID
 - **terraform.tfvars.example** - Example values. Copy to `terraform.tfvars` and fill in real local values; `terraform.tfvars` is gitignored.
 
 ### Resources and outputs
 
-- **main.tf** - Defines VMs using `module "nonprod_vm"` with `for_each = var.nonprod_vms`, so one module instance is created per map entry. A data source resolves `template_name` to a template VM ID for the BPG provider clone.
-  - Non-prod worker VMs (name contains `-worker-`) are configured to attach an additional SSD-backed data disk when `enable_nonprod_worker_ssd_data_disk = true`.
+- **main.tf** - Defines VMs using `module "nonprod_vm"` (and optionally `module "prod_vm"`) with `for_each`, so one module instance is created per map entry. A data source resolves `template_name` to a template VM ID for the BPG provider clone.
+  - **Disks** are not declared in Terraform: full clones inherit the template’s disk layout. The module uses `lifecycle.ignore_changes` for `disk` so applies do not fight Proxmox over disks.
   - The Ubuntu cloud-init template is **not** managed by Terraform; it must be created first via `playbooks/proxmox/create-ubuntu-template.yml`.
-- **outputs.tf** - Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and `nonprod_vm_ip_addresses` as maps keyed by VM name.
+- **outputs.tf** - Exposes `nonprod_vm_ids`, `nonprod_vm_names`, and the analogous prod outputs as maps keyed by VM name. Static IPs are inputs (`nonprod_static_ips`, `prod_static_ips`), not outputs.
 
 ---
 
@@ -59,8 +58,7 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 ### What it does
 
 - Clones the given template via BPG `clone` block (`full = true`).
-- Sets CPU, memory, and one SCSI disk (size and storage configurable).
-- Optionally attaches a second SCSI disk (`scsi1`) for SSD-backed data storage.
+- Sets CPU and memory; **does not** declare VM disks (they come from the template; `lifecycle.ignore_changes` includes `disk`).
 - Adds one virtio NIC on the selected bridge.
 - Configures cloud-init (initialization block: SSH keys, ip_config, optional `cloudinit_cdrom_storage`).
 - Enables QEMU guest agent and serial device (for Debian 12/Ubuntu compatibility).
@@ -73,14 +71,12 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 | `vmid` | no (default 0) | Proxmox VM ID; 0 = auto-assign. Prefer explicit IDs (200/300/500 ranges). |
 | `target_node` | yes | Proxmox node name. |
 | `template_id` | yes | Proxmox VM ID of the template to clone (resolved from `template_name` in root). |
-| `cores`, `memory`, `disk_size` | no | CPU, RAM (MB), disk (for example `20G`). |
-| `storage` | yes | Storage for the main disk. |
-| `enable_ssd_data_disk` | no | If `true`, adds a second data disk at `scsi1`. |
-| `ssd_data_disk_storage`, `ssd_data_disk_size` | no | Storage target and size for the optional SSD data disk. |
+| `cores`, `memory` | no | CPU and RAM (MB). |
+| `storage` | yes | Proxmox pool for the cloud-init snippet drive (not for template VM disks). |
 | `bridge` | no | Network bridge (default `vmbr0`). |
 | `ssh_public_key` | yes | SSH public key content for cloud-init. |
 | `ip_config` | no | Cloud-init network (default `ip=dhcp`). |
-| `cloudinit_cdrom_storage` | no | Override storage for cloud-init CDROM. |
+| `cloudinit_cdrom_storage` | no | Override storage pool for cloud-init CDROM (default: `storage`). |
 
 ### Outputs (modules/vm/outputs.tf)
 
@@ -88,7 +84,6 @@ Reusable module that creates one Proxmox VM by cloning a cloud-init template.
 |--------|-------------|
 | `vm_id` | Proxmox VM ID. |
 | `vm_name` | VM name. |
-| `ip_address` | Primary IPv4 from qemu-guest-agent, or `null` if unavailable. |
 
 ---
 
@@ -109,8 +104,8 @@ Set `template_name` in `terraform.tfvars` to match the template name from that p
 1. **Template (prerequisite)** - Create the Ubuntu cloud-init template on Proxmox using `playbooks/proxmox/create-ubuntu-template.yml`.
 2. **Root variables** - Values from `terraform.tfvars` feed `variables.tf`; provider config in `provider.tf` uses API variables.
 3. **Fleet definition** - `var.nonprod_vms` maps VM name -> VMID. `main.tf` loops this map with `for_each`.
-4. **Module** - Each module instance creates one cloned VM with shared settings (node, storage, bridge, SSH key) plus per-VM `name` and `vmid`. Worker nodes can also receive an additional SSD-backed data disk via module inputs.
-5. **Outputs** - Root outputs aggregate module outputs into maps keyed by VM name for automation use.
+4. **Module** - Each module instance creates one cloned VM with shared settings (node, cloud-init `storage`, bridge, SSH key) plus per-VM `name` and `vmid`.
+5. **Outputs** - Root outputs expose VM IDs and names keyed by VM name. Use `nonprod_static_ips` / `prod_static_ips` for Ansible `ansible_host` values.
 
 To add or remove non-prod VMs, change entries in `nonprod_vms` (in code or tfvars). To manage another fleet, add another module block and matching variable/output pattern.
 

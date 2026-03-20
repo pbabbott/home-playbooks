@@ -25,12 +25,6 @@ Examples: `tf-nonprod-k8s-controller-1`, `tf-nonprod-k8s-worker-1`. Production (
 
 ### Storage
 
-- **Default disk** — Use the `storage` variable (e.g. `local-lvm`) for most VMs. Pass it as the module's `storage` argument.
-- **Onboard SSD (primary disk)** — Use the `storage_ssd` variable (e.g. `longhorn-ssd`) for VMs that should place their main disk on fast storage. Set `storage_ssd` in `terraform.tfvars`, then pass `storage = var.storage_ssd` for those module calls.
-- **Onboard SSD (additional data disk)** — The VM module supports an optional extra SSD data disk on `scsi1`:
-  - Module toggle: `enable_ssd_data_disk` (default `false`)
-  - Module storage/size: `ssd_data_disk_storage`, `ssd_data_disk_size`
-  - Root defaults: `enable_nonprod_worker_ssd_data_disk = true` and `nonprod_worker_ssd_data_disk_size = "256G"`
-  - Current `main.tf` behavior: non-prod worker VMs (name contains `-worker-`) get this extra SSD disk automatically when the root toggle is enabled.
-
-You can mix strategies: some VMs with only a main disk on `var.storage`, some with main disk on `var.storage_ssd`, and workers with a second SSD data disk.
+- **VM disks** — Defined on the **template** (Ansible / Proxmox), not in Terraform. Clones inherit that layout.
+- **Terraform `storage`** — Proxmox pool for the **cloud-init** drive on cloned VMs (e.g. `local-lvm`). Pass it as the module `storage` argument from root `var.storage`.
+- **Per-VM override** — Optional module input `cloudinit_cdrom_storage` if a clone should store cloud-init on a different pool than `storage`.

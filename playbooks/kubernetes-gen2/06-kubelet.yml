@@ -2,7 +2,7 @@
 # ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/06-kubelet.yml
 - name: Make Kubeconfig dir for user
   hosts:
-    - kubernetes_servers
+    - kubernetes_controllers
   tasks:
     - name: Ensure ~/.kube/ dir exists
       ansible.builtin.file:
@@ -12,7 +12,7 @@
 
 - name: Setup controller
   hosts:
-    - kubernetes_servers
+    - kubernetes_controllers
   become: true
   tasks:
     - name: Check if Kubernetes is already initialized
@@ -65,7 +65,7 @@
 
 - name: Install pod overlay
   hosts:
-    - kubernetes_servers
+    - kubernetes_controllers
   tasks:
     - name: Download helm chart
       kubernetes.core.helm_repository:
@@ -100,8 +100,8 @@
     - kubernetes_workers
   become: true
   vars:
-    controller_ip: "{{ hostvars[groups['kubernetes_servers'][0]]['ansible_host'] }}"
-    cert_hash: "{{ hostvars[groups['kubernetes_servers'][0]]['cert_hash'].stdout }}"
+    controller_ip: "{{ hostvars[groups['kubernetes_controllers'][0]]['ansible_host'] }}"
+    cert_hash: "{{ hostvars[groups['kubernetes_controllers'][0]]['cert_hash'].stdout }}"
   tasks:
     - name: Check if worker node has joined the cluster
       stat:
@@ -111,7 +111,7 @@
     - name: Create join_token
       register: join_token
       when: not worker_joined.stat.exists
-      delegate_to: "{{ groups['kubernetes_servers'][0] }}"
+      delegate_to: "{{ groups['kubernetes_controllers'][0] }}"
       ansible.builtin.command: kubeadm token create --description "{{ ansible_hostname }}"
 
     - name: Show command for debugging purposes

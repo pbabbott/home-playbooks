@@ -1,3 +1,5 @@
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/main.yml
+# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/main.yml
 ---
 - name: Include containerd play
   ansible.builtin.import_playbook: 01-containerd.yml

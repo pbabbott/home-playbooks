@@ -44,7 +44,7 @@ qm create "$TEMPLATE_ID" \
   --memory "$MEMORY" \
   --cores "$CORES" \
   --net0 virtio,bridge="$BRIDGE" \
-  --scsihw virtio-scsi-pci \
+  --scsihw virtio-scsi-single \
   --ostype l26
 
 echo "Setting balloon to $BALLOON..."
@@ -85,6 +85,9 @@ qm set "$TEMPLATE_ID" --ipconfig0 "ip=192.168.6.91/22,gw=192.168.4.1"
 
 echo "Attaching SSD data disk..."
 qm set "$TEMPLATE_ID" --scsi1 longhorn-ssd:256,iothread=1,ssd=1
+
+echo "Setting DNS"
+qm set "$TEMPLATE_ID" --nameserver "192.168.4.144 1.1.1.1"
 
 echo ""
 echo "Template $TEMPLATE_NAME (VMID $TEMPLATE_ID) created successfully."
