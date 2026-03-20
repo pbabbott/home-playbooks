@@ -1,8 +1,9 @@
 # Example commands
 # ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/05-helm.yml
+# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/05-helm.yml
 - name: Install Helm
   hosts: 
-    - kubernetes_servers
+    - kubernetes_controllers
     - kubernetes_workers
   become: true
   vars:
@@ -25,7 +26,10 @@
         force: true
 
     - name: Add helm apt repository key (dearmor)
-      ansible.builtin.command: gpg --dearmor -o /usr/share/keyrings/helm.gpg /tmp/helm-gpgkey.asc
+      ansible.builtin.command: "gpg --batch --yes --no-tty --dearmor -o /usr/share/keyrings/helm.gpg /tmp/helm-gpgkey.asc"
+      args:
+        creates: /usr/share/keyrings/helm.gpg
+      changed_when: false
 
     - name: Add the helm apt repository
       ansible.builtin.apt_repository:

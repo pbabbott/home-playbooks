@@ -8,7 +8,12 @@ output "nonprod_vm_names" {
   value       = { for k, m in module.nonprod_vm : k => m.vm_name }
 }
 
-output "nonprod_vm_ip_addresses" {
-  description = "IP addresses of non-prod VMs (if reported by qemu-guest-agent)"
-  value       = { for k, m in module.nonprod_vm : k => m.ip_address }
-}
+# output "prod_vm_ids" {
+#   description = "Proxmox VM IDs for prod fleet (200 range)"
+#   value       = { for k, m in module.prod_vm : k => m.vm_id }
+# }
+
+# output "prod_vm_names" {
+#   description = "Names of prod VMs"
+#   value       = { for k, m in module.prod_vm : k => m.vm_name }
+# }

@@ -48,25 +48,23 @@ sudo mkfs.ext4 -L data /dev/sdb
 #### 3. C - Create a mount point
 
 ```sh
-sudo mkdir -p /mnt/longhorn-ssd
+sudo mkdir -p /mnt/ssd
 ```
 
-- Creates the directory where the disk will be attached.
-- `-p` ensures the directory (and any missing parents) are created safely.
+- Use a generic mount (e.g. `/mnt/ssd`); Longhorn, etcd, etc. can use bind mounts or subdirs under this path on a per-VM basis later.
 
 #### 3. D - Mount the disk
 
 ```sh
-sudo mount /dev/sdb /mnt/longhorn-ssd
+sudo mount /dev/sdb /mnt/ssd
 ```
 
-- Attaches the filesystem on /dev/sdb to the directory /mnt/longhorn-ssd.
-- After this, anything written to that directory is stored on the disk.
+- Attaches the filesystem on /dev/sdb to `/mnt/ssd`.
 
 #### 3. E - Make the mount persistent
 
 ```sh
-sudo bash -c 'echo "UUID=$(blkid -s UUID -o value /dev/sdb) /mnt/longhorn-ssd ext4 defaults,noatime 0 2" >> /etc/fstab'
+sudo bash -c 'echo "UUID=$(blkid -s UUID -o value /dev/sdb) /mnt/ssd ext4 defaults,noatime 0 2" >> /etc/fstab'
 ```
 - This adds an entry to /etc/fstab, which tells Linux what disks to mount during boot.
 

@@ -36,11 +36,4 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
-alias apv="ansible-playbook -e @./vault.yml"
-alias encrypt="ansible-vault encrypt ./vault.yml"
-alias decrypt="ansible-vault decrypt ./vault.yml"
-
-alias chimaera="ssh root@192.168.4.192"
-
-
 export PATH="/home/vscode/.local/bin:$PATH"

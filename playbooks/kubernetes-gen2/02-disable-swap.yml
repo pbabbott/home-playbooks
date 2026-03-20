@@ -3,7 +3,7 @@
 
 - name: Disable Swap
   hosts:
-    - kubernetes_servers
+    - kubernetes_controllers
     - kubernetes_workers
   become: true
   handlers:

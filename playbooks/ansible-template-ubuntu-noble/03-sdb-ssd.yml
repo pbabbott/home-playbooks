@@ -1,29 +1,32 @@
 ---
-# Prepare and mount data disk for Longhorn (play 3 of configure-vm).
+# Format optional secondary disk (default /dev/sdb, ext4) and mount it at a generic path.
+# This play is storage-only: it does not bind-mount /var/lib/longhorn, etcd, etc.
+# Later, point workloads at this mount (e.g. bind mounts, hostPath, or subdirs like
+# /mnt/ssd/longhorn) depending on the cluster role.
 
-- name: Prepare and mount data disk for Longhorn
+- name: Prepare and mount secondary SSD (generic data mount)
   hosts: ansible-template-ubuntu-noble
   vars:
-    longhorn_data_device: "/dev/sdb"
-    longhorn_mount_point: "/mnt/longhorn-ssd"
-    longhorn_fs_label: "data"
+    secondary_disk_device: "/dev/sdb"
+    secondary_disk_mount: "/mnt/ssd"
+    secondary_disk_fs_label: "data"
   tasks:
     - name: Ensure data device exists
       ansible.builtin.stat:
-        path: "{{ longhorn_data_device }}"
+        path: "{{ secondary_disk_device }}"
       register: data_device_stat
       failed_when: not data_device_stat.stat.exists
 
     - name: Check if data device already has a filesystem
-      ansible.builtin.command: blkid -p -o value -s TYPE "{{ longhorn_data_device }}"
+      ansible.builtin.command: blkid -p -o value -s TYPE "{{ secondary_disk_device }}"
       register: data_device_fstype
       changed_when: false
       failed_when: false
       become: true
 
-    - name: Format data disk (ext4, label {{ longhorn_fs_label }})
+    - name: Format data disk (ext4, label {{ secondary_disk_fs_label }})
       ansible.builtin.command:
-        cmd: "mkfs.ext4 -L {{ longhorn_fs_label }} {{ longhorn_data_device }}"
+        cmd: "mkfs.ext4 -L {{ secondary_disk_fs_label }} {{ secondary_disk_device }}"
       become: true
       when: data_device_fstype.rc != 0 or data_device_fstype.stdout | trim == ""
       register: format_result
@@ -35,7 +38,7 @@
       when: format_result is changed
 
     - name: Get UUID of data device
-      ansible.builtin.command: blkid -p -s UUID -o value "{{ longhorn_data_device }}"
+      ansible.builtin.command: blkid -p -s UUID -o value "{{ secondary_disk_device }}"
       register: data_device_uuid
       become: true
       changed_when: false
@@ -43,18 +46,18 @@
     - name: Fail if data device UUID is empty
       ansible.builtin.assert:
         that: (data_device_uuid.stdout | trim) | length > 0
-        fail_msg: "Could not read UUID from {{ longhorn_data_device }}. Is the device formatted?"
+        fail_msg: "Could not read UUID from {{ secondary_disk_device }}. Is the device formatted?"
 
-    - name: Create longhorn mount point
+    - name: Create secondary disk mount point
       ansible.builtin.file:
-        path: "{{ longhorn_mount_point }}"
+        path: "{{ secondary_disk_mount }}"
         state: directory
         mode: "0755"
       become: true
 
-    - name: Mount data disk and add to fstab
+    - name: Mount secondary disk and add to fstab
       ansible.builtin.mount:
-        path: "{{ longhorn_mount_point }}"
+        path: "{{ secondary_disk_mount }}"
         src: "UUID={{ data_device_uuid.stdout | trim }}"
         fstype: ext4
         state: mounted

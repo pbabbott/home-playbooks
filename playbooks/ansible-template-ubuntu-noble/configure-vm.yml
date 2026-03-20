@@ -9,20 +9,17 @@
 - name: Include memory ballooning play
   ansible.builtin.import_playbook: 02-memory-ballooning.yml
 
-- name: Include Longhorn data disk play
-  ansible.builtin.import_playbook: 03-longhorn-data-disk.yml
-
-- name: Include DNS play
-  ansible.builtin.import_playbook: 04-dns.yml
+- name: Include secondary SSD (/dev/sdb) play
+  ansible.builtin.import_playbook: 03-sdb-ssd.yml
 
 - name: Include timezone play
-  ansible.builtin.import_playbook: 05-timezone.yml
+  ansible.builtin.import_playbook: 04-timezone.yml
 
 - name: Include iptables legacy and IPv6 disable play
-  ansible.builtin.import_playbook: 06-iptables-ipv6.yml
+  ansible.builtin.import_playbook: 05-iptables-ipv6.yml
 
 - name: Include storage packages play (NFS, iSCSI)
-  ansible.builtin.import_playbook: 07-storage-packages.yml
+  ansible.builtin.import_playbook: 06-storage-packages.yml
 
 - name: Include clean shutdown and power off play
-  ansible.builtin.import_playbook: 08-clean-shutdown.yml
+  ansible.builtin.import_playbook: 07-clean-shutdown.yml

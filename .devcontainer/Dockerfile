@@ -6,6 +6,7 @@ RUN apt-get update \
 	curl \
 	git \
 	golang \
+	ripgrep \
 	sudo \
 	vim \
 	wget \

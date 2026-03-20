@@ -13,12 +13,8 @@ For broader context, see:
 
 | Variable | Defined in | What it controls |
 |---|---|---|
-| `storage` | root `variables.tf` | Default VM disk storage for module-managed VMs (`main.tf` currently passes `var.storage`). |
-| `storage_ssd` | root `variables.tf` | Optional fast storage target; used when a module call passes it as `storage`. |
-| `enable_nonprod_worker_ssd_data_disk` | root `variables.tf` | Toggle that enables an additional SSD data disk for non-prod worker VMs. |
-| `nonprod_worker_ssd_data_disk_size` | root `variables.tf` | Size of that worker SSD data disk (default `256G`). |
-| `cloudinit_cdrom_storage` | `modules/vm/variables.tf` | Optional per-VM override for cloud-init CDROM storage; if unset, module falls back to VM disk `storage`. |
-| `enable_ssd_data_disk` / `ssd_data_disk_storage` / `ssd_data_disk_size` | `modules/vm/variables.tf` | Module-level controls for an optional second disk attached at `scsi1`. |
+| `storage` | root `variables.tf` | Proxmox pool where **cloud-init snippets** for cloned VMs are stored (e.g. `local-lvm`). VM data disks are **not** managed by Terraform; they come from the template. |
+| `cloudinit_cdrom_storage` | `modules/vm/variables.tf` | Optional per-VM override for cloud-init CDROM storage; if unset, the module uses `storage`. |
 
 ---
 
@@ -42,40 +38,32 @@ LVM-thin storage usually used for:
 - CT volumes
 - Cloud-init drives
 
-Good default for general-purpose VM workloads.
+Good default for cloud-init snippet storage (`storage` in Terraform) and for disks defined on the **template** in Ansible.
 
-### `longhorn-ssd` (custom)
+### Custom SSD pools (e.g. `longhorn-ssd`)
 
-Example of a custom, SSD-backed storage target used for higher-performance or larger-disk workloads.
-In this repo it is represented by `storage_ssd`.
-
-The name suggests use with [Longhorn](https://longhorn.io/) workloads, but the Terraform code treats it as a normal Proxmox storage value.
+If the template or playbooks place disks on a fast pool, that is configured **outside** this Terraform stack (template playbook / Proxmox). Terraform only needs a pool that accepts cloud-init/snippet content for clones.
 
 ---
 
-## How current code places disks
+## How disks relate to this repo
 
-1. **Template** — Created by `playbooks/proxmox/create-ubuntu-template.yml`; storage is configured in that playbook, not in Terraform.
+1. **Template** — Created by `playbooks/proxmox/create-ubuntu-template.yml` (or equivalent). All boot and data disks for clones are defined there (or on the template VM in Proxmox), not in `modules/vm/main.tf`.
 
-2. **Non-prod VM module calls (`main.tf`)** — Current active module uses `storage = var.storage`. Worker nodes (name contains `-worker-`) get an additional SSD data disk when `enable_nonprod_worker_ssd_data_disk = true`. Worker data disk storage uses `storage_ssd` when set, otherwise falls back to `storage`.
+2. **Cloned VMs (`modules/vm/main.tf`)** — Full clone from the template. No `disk` blocks in Terraform; `lifecycle.ignore_changes` includes `disk` so Terraform does not try to strip or resize cloned disks.
 
-3. **VM module internals (`modules/vm/main.tf`)**
-   - Main disk uses `var.storage`.
-   - Optional worker data disk uses `scsi1` with `ssd_data_disk_storage` and `ssd_data_disk_size`.
-   - Cloud-init CDROM uses `coalesce(var.cloudinit_cdrom_storage, var.storage)`.
+3. **Cloud-init** — `initialization.datastore_id` uses `storage` (or `cloudinit_cdrom_storage`) so Proxmox knows where to put the cloud-init drive for the clone.
 
 ---
 
 ## Practical selection guidance
 
-- Use `storage` for the baseline pool most VMs should use.
-- Keep `storage_ssd` as an opt-in target for workloads that need faster or larger storage.
+- Set `storage` in `terraform.tfvars` to a pool that allows **snippet** / cloud-init content (often the same pool you use for VM images, e.g. `local-lvm`).
 
-Example `terraform.tfvars` pattern:
+Example:
 
 ```hcl
-storage     = "local-lvm"
-storage_ssd = "longhorn-ssd"
+storage = "local-lvm"
 ```
 
 ---
@@ -85,6 +73,5 @@ storage_ssd = "longhorn-ssd"
 When storage-related applies fail, verify:
 
 1. The storage name matches exactly what Proxmox reports.
-2. The storage allows the required content type (`images` for VM disks).
+2. The storage allows the required content types for cloud-init (and that your template’s disks use pools the node can access).
 3. The target node can access that storage.
-4. VM settings (`storage`/`storage_ssd`) are aligned with intended placement.

@@ -2,7 +2,7 @@
 # ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/03-ipv4-packets.yml
 - name: Enable IPv4 Packet forwarding
   hosts:
-    - kubernetes_servers
+    - kubernetes_controllers
     - kubernetes_workers
   become: true
   handlers:
