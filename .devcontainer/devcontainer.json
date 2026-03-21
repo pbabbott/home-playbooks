@@ -22,7 +22,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "hashicorp.terraform",
+        "HashiCorp.terraform",
         "streetsidesoftware.code-spell-checker",
         "redhat.ansible",
         "oderwat.indent-rainbow",
