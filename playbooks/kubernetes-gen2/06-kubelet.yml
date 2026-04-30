@@ -63,6 +63,20 @@
             mode: 0600
 
 
+- name: Patch CoreDNS to resolve internal infrastructure hostnames
+  hosts:
+    - kubernetes_controllers
+  tasks:
+    - name: Template CoreDNS patch file
+      ansible.builtin.template:
+        src: ./files/coredns-corefile.j2
+        dest: /tmp/coredns-patch.yml
+        mode: "0644"
+
+    - name: Apply CoreDNS ConfigMap patch
+      ansible.builtin.command: >
+        kubectl patch configmap coredns -n kube-system --patch-file /tmp/coredns-patch.yml
+
 - name: Install pod overlay
   hosts:
     - kubernetes_controllers
