@@ -21,3 +21,12 @@ if [ -f "${ALIAS_FILE}" ]; then
   source "${ALIAS_FILE}"
 fi
 EOF
+
+echo "Configuring Claude"
+CLAUDE_JSON="$HOME/.claude.json"
+if [ -f "$CLAUDE_JSON" ]; then
+  tmp=$(mktemp)
+  jq '.hasCompletedOnboarding = true' "$CLAUDE_JSON" > "$tmp" && mv "$tmp" "$CLAUDE_JSON"
+else
+  printf '{"hasCompletedOnboarding":true}\n' > "$CLAUDE_JSON"
+fi

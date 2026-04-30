@@ -14,11 +14,15 @@
       "helm": "none",
       "minikube": "none"
     },
-    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {}
+    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+
   },
   "mounts": [
-    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh"
+    "type=bind,source=/home/${localEnv:USER}/.ssh,target=/home/vscode/.ssh",
+    "type=bind,source=/home/${localEnv:USER}/.claude,target=/home/vscode/.claude"
   ],
+  "runArgs": ["--env-file",".devcontainer/.env"],
   "customizations": {
     "vscode": {
       "extensions": [

@@ -6,3 +6,5 @@ htpasswd
 .ansible
 
 temp
+
+.env
