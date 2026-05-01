@@ -37,15 +37,8 @@ variable "cpu_type" {
 }
 
 variable "memory" {
-  description = "Dedicated (maximum) memory in MB"
+  description = "Memory in MB"
   type        = number
-  default     = 6144
-}
-
-variable "memory_floating" {
-  description = "Floating (minimum) memory in MB."
-  type        = number
-  default     = 512
 }
 
 variable "gateway" {

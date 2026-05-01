@@ -29,7 +29,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   memory {
     dedicated = var.memory
-    floating  = var.memory_floating
   }
 
   network_device {
