@@ -44,17 +44,17 @@ variable "nonprod_vms" {
     "tf-nonprod-k8s-worker-1" = {
       vmid   = 302
       ip     = "192.168.6.32"
-      memory = 3584
+      memory = 4096
     }
     "tf-nonprod-k8s-worker-2" = {
       vmid   = 303
       ip     = "192.168.6.33"
-      memory = 3584
+      memory = 4096
     }
     "tf-nonprod-k8s-worker-3" = {
       vmid   = 304
       ip     = "192.168.6.34"
-      memory = 3584
+      memory = 4096
     }
   }
 }
@@ -69,22 +69,22 @@ variable "prod_vms" {
     "tf-prod-k8s-controller-1" = {
       vmid   = 204
       ip     = "192.168.6.24"
-      memory = 2560
+      memory = 6144
     }
     "tf-prod-k8s-worker-1" = {
       vmid   = 205
       ip     = "192.168.6.25"
-      memory = 4096
+      memory = 6144
     }
     "tf-prod-k8s-worker-2" = {
       vmid   = 206
       ip     = "192.168.6.26"
-      memory = 4096
+      memory = 6144
     }
     "tf-prod-k8s-worker-3" = {
       vmid   = 207
       ip     = "192.168.6.27"
-      memory = 4096
+      memory = 6144
     }
   }
 }

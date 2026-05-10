@@ -1,8 +1,11 @@
+# ansible-playbook -e @./vault.yml playbooks/shutdown/main.yaml -i inventories/prod/hosts.yml
+# ansible-playbook -e @./vault.yml playbooks/shutdown/main.yaml -i inventories/nonprod/hosts.yml
 
 - name: Shutdown physical hosts
   become: true
   hosts:
-    - remote
+    - kubernetes_workers
+    - kubernetes_controllers
   tasks:
     - name: Shutdown virtual hosts
       when: host_type == "virtual" and shutdown_exempt is not defined
@@ -10,3 +13,6 @@
     - name: Shutdown physical hosts
       when: host_type == "physical" and shutdown_exempt is not defined
       community.general.shutdown: {}
+
+
+

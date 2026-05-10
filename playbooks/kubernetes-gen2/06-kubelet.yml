@@ -1,5 +1,6 @@
 # Example commands
 # ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/06-kubelet.yml
+# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/06-kubelet.yml
 - name: Make Kubeconfig dir for user
   hosts:
     - kubernetes_controllers
@@ -141,3 +142,51 @@
       ansible.builtin.systemd_service:
         name: containerd
         state: restarted
+
+- name: Ensure etcd auto-compaction is configured on existing controllers
+  hosts:
+    - kubernetes_controllers
+  become: true
+  tasks:
+    - name: Check if etcd manifest exists
+      stat:
+        path: /etc/kubernetes/manifests/etcd.yaml
+      register: etcd_manifest
+
+    - name: Patch etcd manifest with auto-compaction flags
+      when: etcd_manifest.stat.exists
+      ansible.builtin.lineinfile:
+        path: /etc/kubernetes/manifests/etcd.yaml
+        regexp: "^(\\s*)- --{{ item.flag }}(=.*)?$"
+        line: "    - --{{ item.flag }}={{ item.value }}"
+        insertafter: "^    - etcd$"
+      loop:
+        - flag: auto-compaction-mode
+          value: periodic
+        - flag: auto-compaction-retention
+          value: 1h
+
+- name: Configure kubelet reserved resources on workers
+  hosts:
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Restart kubelet
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: restarted
+  tasks:
+    - name: Patch kubelet config with reserved resources
+      ansible.builtin.blockinfile:
+        path: /var/lib/kubelet/config.yaml
+        marker: "# {mark} ANSIBLE MANAGED BLOCK - reserved resources"
+        block: |
+          kubeReserved:
+            cpu: "250m"
+            memory: "256Mi"
+          systemReserved:
+            cpu: "100m"
+            memory: "100Mi"
+          evictionHard:
+            memory.available: "200Mi"
+      notify: Restart kubelet

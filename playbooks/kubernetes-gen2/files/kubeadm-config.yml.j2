@@ -10,9 +10,22 @@ etcd:
   local:
     # Keep etcd off the rotational OS disk.
     dataDir: /mnt/ssd/etcd
+    extraArgs:
+      - name: auto-compaction-mode
+        value: periodic
+      - name: auto-compaction-retention
+        value: 1h
 networking:
   podSubnet: 10.244.0.0/16
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 serverTLSBootstrap: false
+kubeReserved:
+  cpu: "250m"
+  memory: "256Mi"
+systemReserved:
+  cpu: "100m"
+  memory: "100Mi"
+evictionHard:
+  memory.available: "200Mi"
