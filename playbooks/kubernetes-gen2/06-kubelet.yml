@@ -110,6 +110,17 @@
             values_files:
               - /tmp/values.yml
 
+- name: Configure Calico MTU for VXLAN
+  hosts:
+    - kubernetes_controllers
+  tasks:
+    - name: Patch FelixConfiguration with explicit VXLAN MTU
+      ansible.builtin.command: >
+        kubectl patch felixconfiguration default --type=merge
+        -p '{"spec":{"vxlanMTU":1450}}'
+      register: patch_result
+      changed_when: "'patched' in patch_result.stdout"
+
 - name: Join worker to cluster
   hosts:
     - kubernetes_workers
