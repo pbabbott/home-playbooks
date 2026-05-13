@@ -21,7 +21,7 @@ data:
           fallthrough
           }
        prometheus :9153
-       forward . /etc/resolv.conf {
+       forward . 192.168.4.144 {
           max_concurrent 1000
        }
 
