@@ -74,17 +74,17 @@ variable "prod_vms" {
     "tf-prod-k8s-worker-1" = {
       vmid   = 205
       ip     = "192.168.6.25"
-      memory = 6144
+      memory = 12288
     }
     "tf-prod-k8s-worker-2" = {
       vmid   = 206
       ip     = "192.168.6.26"
-      memory = 6144
+      memory = 12288
     }
     "tf-prod-k8s-worker-3" = {
       vmid   = 207
       ip     = "192.168.6.27"
-      memory = 6144
+      memory = 12288
     }
   }
 }
