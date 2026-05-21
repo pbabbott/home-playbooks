@@ -4,11 +4,11 @@
 
 Go into proxmox and delete template 901
 
-or simply run the cursor command: `/template-delete`
+or simply run the claude command: `/template-delete`
 
 ## 2 - Initialize template
 
-2A, 2B & 2C can be executed with cursor command: `/template-create`
+2A, 2B & 2C can be executed with claude command: `/template-init`
 
 ### 2 a - Create template
 
@@ -36,7 +36,7 @@ ssh-keyscan -H 192.168.6.91 >> "/home/vscode/.ssh/known_hosts" 2>/dev/null;
 
 ## 3 - Configure the VM
 
-Cursor command: `/template-configure`
+claude command: `/template-configure`
 
 ```sh
 ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/configure-vm.yml
@@ -46,7 +46,7 @@ ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/confi
 
 This basically just enables the guest-agent in proxmox and turns it into a template.
 
-Cursor command: `/template-finalize`
+claude command: `/template-finalize`
 
 ```sh
 ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/finalize-template.yml

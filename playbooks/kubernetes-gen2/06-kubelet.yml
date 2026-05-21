@@ -41,7 +41,7 @@
             dest: /tmp/kubeadm-config.yml
 
         - name: kubeadm init
-          ansible.builtin.command: "kubeadm init --config /tmp/kubeadm-config.yml"
+          ansible.builtin.command: "kubeadm init --config /tmp/kubeadm-config.yml --ignore-preflight-errors=DirAvailable--mnt-etcd"
 
     - name: Get certificate hash
       register: cert_hash

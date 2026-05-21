@@ -17,6 +17,9 @@ MEMORY=6144
 BALLOON=512
 CORES=4
 DISK_SIZE="32G"
+ETCD_DISK_SIZE="20"
+LONGHORN_MBPS_WR="200"   # burst write cap for the Longhorn disk — tune to SSD specs
+LONGHORN_IOPS_WR="500"   # burst iops cap for the Longhorn disk
 
 CIUSER="${CIUSER:-admin}"
 CIPASSWORD="${CIPASSWORD:-change-me}"
@@ -83,8 +86,11 @@ qm set "$TEMPLATE_ID" --sshkey "/root/id_ed25519.pub"
 echo "Setting static IP config..."
 qm set "$TEMPLATE_ID" --ipconfig0 "ip=192.168.6.91/22,gw=192.168.4.1"
 
-echo "Attaching SSD data disk..."
-qm set "$TEMPLATE_ID" --scsi1 longhorn-ssd:256,iothread=1,ssd=1
+echo "Attaching Longhorn (general-purpose SSD) disk with write throttle..."
+qm set "$TEMPLATE_ID" --scsi1 fast-ssd:256,iothread=1,ssd=1,mbps_wr=${LONGHORN_MBPS_WR},iops_wr=${LONGHORN_IOPS_WR}
+
+echo "Attaching etcd SSD disk (dedicated, no throttle)..."
+qm set "$TEMPLATE_ID" --scsi2 etcd-ssd:${ETCD_DISK_SIZE},iothread=1,ssd=1
 
 echo "Setting DNS"
 qm set "$TEMPLATE_ID" --nameserver "192.168.4.144 1.1.1.1"

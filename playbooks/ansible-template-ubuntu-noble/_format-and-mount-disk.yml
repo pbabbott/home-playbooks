@@ -1,0 +1,71 @@
+---
+# Tasks file: format and mount one secondary disk.
+# Called from 03-ssd-disks.yml via include_tasks with loop_var: item.
+# Expected item fields: device, mount, label, min_bytes, max_bytes.
+
+- name: Ensure device {{ item.device }} exists
+  ansible.builtin.stat:
+    path: "{{ item.device }}"
+  register: disk_stat
+  failed_when: not disk_stat.stat.exists
+
+- name: Assert {{ item.label }} disk size is in expected range
+  ansible.builtin.shell:
+    cmd: |
+      SIZE=$(lsblk --bytes --noheadings -o SIZE {{ item.device }} | tr -d ' ')
+      if ! { [ "$SIZE" -gt {{ item.min_bytes }} ] && [ "$SIZE" -lt {{ item.max_bytes }} ]; }; then
+        echo "ERROR: {{ item.device }} size=$SIZE not in [{{ item.min_bytes }}, {{ item.max_bytes }}]. Check disk order." >&2
+        exit 1
+      fi
+  changed_when: false
+  become: true
+
+- name: Check if {{ item.label }} device already has a filesystem
+  ansible.builtin.command:
+    cmd: blkid -p -o value -s TYPE {{ item.device }}
+  register: disk_fstype
+  changed_when: false
+  failed_when: false
+  become: true
+
+- name: Format {{ item.label }} disk (ext4, label {{ item.label }})
+  ansible.builtin.command:
+    cmd: mkfs.ext4 -L {{ item.label }} {{ item.device }}
+  become: true
+  when: disk_fstype.rc != 0 or disk_fstype.stdout | trim == ""
+  register: format_result
+
+- name: Wait for udev to settle after format
+  ansible.builtin.command:
+    cmd: udevadm settle
+  become: true
+  changed_when: false
+  when: format_result is changed
+
+- name: Get UUID of {{ item.label }} device
+  ansible.builtin.command:
+    cmd: blkid -p -s UUID -o value {{ item.device }}
+  register: disk_uuid
+  become: true
+  changed_when: false
+
+- name: Assert UUID is non-empty for {{ item.label }} device
+  ansible.builtin.assert:
+    that: (disk_uuid.stdout | trim) | length > 0
+    fail_msg: "Could not read UUID from {{ item.device }}. Is the device formatted?"
+
+- name: Create mount point {{ item.mount }}
+  ansible.builtin.file:
+    path: "{{ item.mount }}"
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Mount {{ item.label }} disk and persist in fstab
+  ansible.builtin.mount:
+    path: "{{ item.mount }}"
+    src: "UUID={{ disk_uuid.stdout | trim }}"
+    fstype: ext4
+    state: mounted
+    opts: "defaults,noatime"
+  become: true

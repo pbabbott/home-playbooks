@@ -16,57 +16,55 @@ Check that there is content in the directory. If there is, then the memory ballo
 ls /sys/bus/virtio/drivers/virtio_balloon
 ```
 
-### 3 - Mount the SSD
+### 3 - Mount the two secondary SSD disks
 
-#### 3. A - Find the right device
+The template VM now has two SSD disks:
+- `scsi1` → `/dev/sdb` (256G, fast-ssd) — Longhorn / general-purpose → `/mnt/ssd`
+- `scsi2` → `/dev/sdc` (20G, etcd-ssd) — etcd data dir → `/mnt/etcd`
+
+#### 3. A - Identify devices
 
 ```sh
 lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT
 ```
-Identify the device that:
-- Is 256G
-- Has no FSTYPE
-- Has no MOUNTPOINT
-- Is NOT your root disk (your root disk will usually show / mounted)
 
-It will very likely be the following:
-```sh
-sdb   256G
+Expected output (before formatting):
+```
+sdb  256G
+sdc   20G
 ```
 
-#### 3. B - Format the disk
+#### 3. B - Format the Longhorn disk
 
 ```sh
-sudo mkfs.ext4 -L data /dev/sdb
+sudo mkfs.ext4 -L longhorn /dev/sdb
 ```
 
-- Creates a filesystem on the device /dev/sdb.
-- ext4 is the Linux filesystem being used.
-- ⚠️ This erases everything currently on the disk.
-- `-L data` is just a label
-
-#### 3. C - Create a mount point
+#### 3. C - Format the etcd disk
 
 ```sh
-sudo mkdir -p /mnt/ssd
+sudo mkfs.ext4 -L etcd /dev/sdc
 ```
 
-- Use a generic mount (e.g. `/mnt/ssd`); Longhorn, etcd, etc. can use bind mounts or subdirs under this path on a per-VM basis later.
+#### 3. D - Create mount points
 
-#### 3. D - Mount the disk
+```sh
+sudo mkdir -p /mnt/ssd /mnt/etcd
+```
+
+#### 3. E - Mount the disks
 
 ```sh
 sudo mount /dev/sdb /mnt/ssd
+sudo mount /dev/sdc /mnt/etcd
 ```
 
-- Attaches the filesystem on /dev/sdb to `/mnt/ssd`.
-
-#### 3. E - Make the mount persistent
+#### 3. F - Make mounts persistent
 
 ```sh
-sudo bash -c 'echo "UUID=$(blkid -s UUID -o value /dev/sdb) /mnt/ssd ext4 defaults,noatime 0 2" >> /etc/fstab'
+sudo bash -c 'echo "UUID=$(blkid -s UUID -o value /dev/sdb) /mnt/ssd  ext4 defaults,noatime 0 2" >> /etc/fstab'
+sudo bash -c 'echo "UUID=$(blkid -s UUID -o value /dev/sdc) /mnt/etcd ext4 defaults,noatime 0 2" >> /etc/fstab'
 ```
-- This adds an entry to /etc/fstab, which tells Linux what disks to mount during boot.
 
 ### 4 - Clean shutdown
 

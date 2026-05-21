@@ -13,3 +13,7 @@ Be brief.
 
 - `./playbooks/kubernetes-gen2/` - This is where my current gen2 prod and non-prod clusters are bootstrapped.
 - `./playbooks/dns` - These playbooks manage pihole, my preferred dns server.
+
+### Infra
+
+Proxmox host can be accessed in this way: `ssh root@192.168.4.192`

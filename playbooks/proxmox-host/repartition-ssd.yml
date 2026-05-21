@@ -1,0 +1,167 @@
+---
+# WARNING: Destructive. Wipes all data on /dev/sda (the longhorn-ssd SSD).
+# Stop all VMs that use longhorn-ssd storage before running.
+# Required extra-var: -e confirm=yes
+#
+# After completion:
+#   /dev/sda1 ({{ etcd_partition_size }}) -> VG vg_etcd -> thinpool data -> Proxmox storage "etcd-ssd"
+#   /dev/sda2 (remainder)                 -> VG vg_fast  -> thinpool data -> Proxmox storage "fast-ssd"
+
+- name: Repartition SSD — replace longhorn-ssd with etcd-ssd + fast-ssd
+  hosts: chimaera
+  become: true
+  vars:
+    etcd_partition_size: "256GiB"
+    old_storage_name: longhorn-ssd
+    old_vg_name: vg_ssd
+    etcd_storage_name: etcd-ssd
+    etcd_vg_name: vg_etcd
+    fast_storage_name: fast-ssd
+    fast_vg_name: vg_fast
+    ssd_device: /dev/sda
+    etcd_partition: /dev/sda1
+    fast_partition: /dev/sda2
+
+  tasks:
+    - name: Require explicit confirmation
+      ansible.builtin.fail:
+        msg: "This playbook is destructive and cannot be undone. Re-run with: -e confirm=yes"
+      when: confirm | default('') != 'yes'
+
+    # --- Pre-flight checks ---
+
+    - name: Check if {{ old_vg_name }} VG exists
+      ansible.builtin.command:
+        cmd: vgs --noheadings -o vg_name {{ old_vg_name }}
+      register: vg_exists
+      failed_when: false
+      changed_when: false
+
+    - name: Gather LV open-status attributes in {{ old_vg_name }}
+      ansible.builtin.command:
+        cmd: lvs --noheadings -o lv_attr {{ old_vg_name }}
+      register: lv_attrs
+      failed_when: false
+      changed_when: false
+      when: vg_exists.rc == 0
+
+    - name: Fail if any LV in {{ old_vg_name }} is open (VM still running)
+      ansible.builtin.fail:
+        msg: "Open LVs found in {{ old_vg_name }}. Stop all VMs using {{ old_storage_name }} before proceeding."
+      when:
+        - vg_exists.rc == 0
+        - (lv_attrs.stdout_lines | map('trim') | reject('match', '^t') | select('match', '^.{5}o') | list | length) > 0
+
+    # --- Remove old Proxmox storage ---
+
+    - name: Check if {{ old_storage_name }} storage is registered in Proxmox
+      ansible.builtin.command:
+        cmd: pvesm status --storage {{ old_storage_name }}
+      register: pvesm_check
+      failed_when: false
+      changed_when: false
+
+    - name: Disable {{ old_storage_name }} in Proxmox
+      ansible.builtin.command:
+        cmd: pvesm set {{ old_storage_name }} --disable 1
+      when: pvesm_check.rc == 0
+      changed_when: true
+
+    - name: Remove {{ old_storage_name }} from Proxmox storage config
+      ansible.builtin.command:
+        cmd: pvesm remove {{ old_storage_name }}
+      when: pvesm_check.rc == 0
+      changed_when: true
+
+    # --- Wipe old VG and disk ---
+
+    - name: Remove VG {{ old_vg_name }} and all its LVs
+      ansible.builtin.command:
+        cmd: vgremove -f {{ old_vg_name }}
+      when: vg_exists.rc == 0
+      changed_when: true
+
+    - name: Wipe all signatures from {{ ssd_device }}
+      ansible.builtin.command:
+        cmd: wipefs -a {{ ssd_device }}
+      changed_when: true
+
+    # --- Create new partition layout ---
+
+    - name: Create GPT with etcd + fast partitions on {{ ssd_device }}
+      ansible.builtin.command:
+        cmd: >
+          sgdisk --clear
+          -n 1:2048:+{{ etcd_partition_size }}
+          -c 1:etcd
+          -n 2:0:0
+          -c 2:fast
+          {{ ssd_device }}
+      changed_when: true
+
+    - name: Notify kernel of new partition table
+      ansible.builtin.command:
+        cmd: blockdev --rereadpt {{ ssd_device }}
+      changed_when: false
+
+    - name: Wait for partition device nodes
+      ansible.builtin.command:
+        cmd: udevadm settle
+      changed_when: false
+
+    # --- Create VGs and LVM thin pools ---
+
+    - name: Initialize PVs on new partitions
+      ansible.builtin.command:
+        cmd: pvcreate {{ etcd_partition }} {{ fast_partition }}
+      changed_when: true
+
+    - name: Create VG {{ etcd_vg_name }} on {{ etcd_partition }}
+      ansible.builtin.command:
+        cmd: vgcreate {{ etcd_vg_name }} {{ etcd_partition }}
+      changed_when: true
+
+    - name: Create VG {{ fast_vg_name }} on {{ fast_partition }}
+      ansible.builtin.command:
+        cmd: vgcreate {{ fast_vg_name }} {{ fast_partition }}
+      changed_when: true
+
+    - name: Create thin pool "data" in {{ etcd_vg_name }} (95% of VG)
+      ansible.builtin.command:
+        cmd: lvcreate --type thin-pool -l 95%VG -n data {{ etcd_vg_name }}
+      changed_when: true
+
+    - name: Create thin pool "data" in {{ fast_vg_name }} (95% of VG)
+      ansible.builtin.command:
+        cmd: lvcreate --type thin-pool -l 95%VG -n data {{ fast_vg_name }}
+      changed_when: true
+
+    # --- Register storages in Proxmox ---
+
+    - name: Register {{ etcd_storage_name }} (vg_etcd) in Proxmox
+      ansible.builtin.command:
+        cmd: >
+          pvesm add lvmthin {{ etcd_storage_name }}
+          --vgname {{ etcd_vg_name }}
+          --thinpool data
+          --content images
+      changed_when: true
+
+    - name: Register {{ fast_storage_name }} (vg_fast) in Proxmox
+      ansible.builtin.command:
+        cmd: >
+          pvesm add lvmthin {{ fast_storage_name }}
+          --vgname {{ fast_vg_name }}
+          --thinpool data
+          --content images
+      changed_when: true
+
+    - name: Show final pvesm status
+      ansible.builtin.command:
+        cmd: pvesm status
+      register: pvesm_final
+      changed_when: false
+
+    - name: Show pvesm status output
+      ansible.builtin.debug:
+        var: pvesm_final.stdout_lines

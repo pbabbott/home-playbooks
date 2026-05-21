@@ -8,8 +8,8 @@ apiVersion: kubeadm.k8s.io/v1beta4
 kind: ClusterConfiguration
 etcd:
   local:
-    # Keep etcd off the rotational OS disk.
-    dataDir: /mnt/ssd/etcd
+    # Dedicated SSD disk, isolated from Longhorn storage.
+    dataDir: /mnt/etcd
     extraArgs:
       - name: auto-compaction-mode
         value: periodic

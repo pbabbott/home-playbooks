@@ -1,0 +1,29 @@
+---
+# Format and mount both secondary SSD disks.
+# scsi1 (/dev/sdb) -> fast-ssd storage -> /mnt/ssd  (label: longhorn) — Longhorn/general use
+# scsi2 (/dev/sdc) -> etcd-ssd storage -> /mnt/etcd (label: etcd)     — dedicated etcd data dir
+#
+# Size-sanity checks guard against mis-ordered device nodes.
+# Device order (sdb=scsi1, sdc=scsi2) is deterministic with virtio-scsi-single.
+
+- name: Prepare and mount secondary SSD disks (longhorn + etcd)
+  hosts: ansible-template-ubuntu-noble
+  vars:
+    secondary_disks:
+      - device: /dev/sdb
+        mount: /mnt/ssd
+        label: longhorn
+        min_bytes: 214748364800    # 200 GiB — longhorn disk is 256 GiB
+        max_bytes: 322122547200    # 300 GiB
+      - device: /dev/sdc
+        mount: /mnt/etcd
+        label: etcd
+        min_bytes: 5368709120     # 5 GiB — etcd disk is 20 GiB
+        max_bytes: 53687091200    # 50 GiB
+  tasks:
+    - name: Prepare disk {{ item.label }} ({{ item.device }} -> {{ item.mount }})
+      ansible.builtin.include_tasks: _format-and-mount-disk.yml
+      loop: "{{ secondary_disks }}"
+      loop_control:
+        loop_var: item
+        label: "{{ item.label }} ({{ item.device }} -> {{ item.mount }})"

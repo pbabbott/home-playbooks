@@ -40,7 +40,7 @@ LVM-thin storage usually used for:
 
 Good default for cloud-init snippet storage (`storage` in Terraform) and for disks defined on the **template** in Ansible.
 
-### Custom SSD pools (e.g. `longhorn-ssd`)
+### Custom SSD pools (e.g. `fast-ssd`, `etcd-ssd`)
 
 If the template or playbooks place disks on a fast pool, that is configured **outside** this Terraform stack (template playbook / Proxmox). Terraform only needs a pool that accepts cloud-init/snippet content for clones.
 

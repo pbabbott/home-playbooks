@@ -1,0 +1,46 @@
+---
+# Disable SATA ALPM (link power management) on the Proxmox host.
+# Prevents the SSD controller from idling mid-write, which causes latency spikes
+# that can make etcd fsyncs time out.
+# The udev rule persists across reboots.
+
+- name: Disable SSD link power management on Proxmox host
+  hosts: chimaera
+  become: true
+  tasks:
+    - name: Install udev rule for max_performance ALPM policy
+      ansible.builtin.copy:
+        dest: /etc/udev/rules.d/60-ssd-power-mgmt.rules
+        content: |
+          ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="max_performance"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Reload udev rules
+      ansible.builtin.command:
+        cmd: udevadm control --reload-rules
+      changed_when: false
+
+    - name: Trigger udev for scsi_host subsystem
+      ansible.builtin.command:
+        cmd: udevadm trigger --subsystem-match=scsi_host
+      changed_when: false
+
+    - name: Apply max_performance to all current scsi_host devices
+      ansible.builtin.shell:
+        cmd: |
+          for host in /sys/class/scsi_host/host*; do
+            echo max_performance > "$host/link_power_management_policy" 2>/dev/null || true
+          done
+      changed_when: false
+
+    - name: Verify link_power_management_policy is max_performance
+      ansible.builtin.shell:
+        cmd: cat /sys/class/scsi_host/host*/link_power_management_policy
+      register: pm_policy
+      changed_when: false
+
+    - name: Show power management policy
+      ansible.builtin.debug:
+        var: pm_policy.stdout_lines

@@ -9,8 +9,8 @@
 - name: Include memory ballooning play
   ansible.builtin.import_playbook: 02-memory-ballooning.yml
 
-- name: Include secondary SSD (/dev/sdb) play
-  ansible.builtin.import_playbook: 03-sdb-ssd.yml
+- name: Include secondary SSD disks play (longhorn /dev/sdb + etcd /dev/sdc)
+  ansible.builtin.import_playbook: 03-ssd-disks.yml
 
 - name: Include timezone play
   ansible.builtin.import_playbook: 04-timezone.yml
