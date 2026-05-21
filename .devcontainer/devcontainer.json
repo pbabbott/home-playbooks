@@ -3,7 +3,10 @@
     "dockerfile": "./Dockerfile"
   },
   "features": {
-    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "tflint": "none",
+      "terragrunt": "none"
+    },
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "configureZshAsDefaultShell": true,
@@ -14,7 +17,7 @@
       "helm": "none",
       "minikube": "none"
     },
-    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {},
+    "ghcr.io/devcontainers-extra/features/kubectx-kubens:1": {},
     "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
 
   },

@@ -1,35 +1,33 @@
+Initialize a proxmox Ubuntu Noble template from scratch.
 
-# Steps to initialized a template
+## Steps
 
-Follow these instructions:
-
-## 1. Create template in proxmox 
-Create a template in proxmox by running this command:
+### 1. Create template in proxmox
 
 ```sh
 ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/create-ubuntu-template.yml
 ```
 
-## 2. Start the template
-Start the template by running this command
+### 2. Start the template
 
 ```sh
 ansible-playbook -e @./vault.yml ./playbooks/ansible-template-ubuntu-noble/start-vm-template.yml
 ```
 
-### 3 - Setup SSH fingerprints
+### 3. Refresh SSH fingerprint for 192.168.6.91
 
-Since the VM was recreated, the SSH host key changed.
-
-Remove the old fingerprint:
+Remove old fingerprint:
 
 ```sh
 ssh-keygen -f "/home/vscode/.ssh/known_hosts" -R "192.168.6.91"
 ```
 
-Add the new fingerprint:
+Add new fingerprint (retry until VM is up):
+
 ```sh
 until ssh-keyscan -H 192.168.6.91 >> "/home/vscode/.ssh/known_hosts" 2>/dev/null; do
   sleep 2
 done
 ```
+
+Run all three steps in order. Report result of each step before continuing.

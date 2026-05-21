@@ -5,7 +5,7 @@
       "resolved": "ghcr.io/anthropics/devcontainer-features/claude-code@sha256:cfc2e7d3e9fd3b9b01f8d5cb158508a884c8c0ede2e23ed10f32dea5d4ffe69a",
       "integrity": "sha256:cfc2e7d3e9fd3b9b01f8d5cb158508a884c8c0ede2e23ed10f32dea5d4ffe69a"
     },
-    "ghcr.io/devcontainers-contrib/features/kubectx-kubens:1": {
+    "ghcr.io/devcontainers-extra/features/kubectx-kubens:1": {
       "version": "1.0.6",
       "resolved": "ghcr.io/devcontainers-extra/features/kubectx-kubens@sha256:889b14870298ba1b711f807077f14709fa6c9817f8cd9071691e1e4c86ac856e",
       "integrity": "sha256:889b14870298ba1b711f807077f14709fa6c9817f8cd9071691e1e4c86ac856e"
