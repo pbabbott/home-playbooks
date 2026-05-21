@@ -11,7 +11,7 @@
   hosts: chimaera
   become: true
   vars:
-    etcd_partition_size: "256GiB"
+    etcd_partition_size: "256G"
     old_storage_name: longhorn-ssd
     old_vg_name: vg_ssd
     etcd_storage_name: etcd-ssd

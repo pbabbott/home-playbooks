@@ -1,0 +1,113 @@
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/07-flux-operator.yml
+# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/07-flux-operator.yml
+- name: Bootstrap Flux Operator
+  hosts:
+    - kubernetes_controllers
+  vars:
+    flux_operator_version: "0.45.0"
+    cluster_path: "{{ 'clusters/non-prod-gen2' if 'nonprod' in inventory_hostname else 'clusters/prod-gen2' }}"
+    flux_instance_dest: /tmp/flux-instance.yaml
+
+  tasks:
+    - name: Create flux-system namespace
+      ansible.builtin.command: kubectl create namespace flux-system
+      register: ns_result
+      failed_when: ns_result.rc != 0 and 'already exists' not in ns_result.stderr
+      changed_when: ns_result.rc == 0
+
+    - name: Check if flux-operator is already installed
+      kubernetes.core.helm_info:
+        name: flux-operator
+        release_namespace: flux-system
+      register: flux_helm_info
+      failed_when: false
+
+    - name: Install Flux Operator via Helm (OCI)
+      when: (flux_helm_info.status.status | default('')) != 'deployed'
+      kubernetes.core.helm:
+        name: flux-operator
+        chart_ref: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
+        chart_version: "{{ flux_operator_version }}"
+        release_namespace: flux-system
+        create_namespace: false
+        values:
+          installCRDs: true
+        wait: true
+
+    - name: Check if flux-system SSH secret exists
+      ansible.builtin.command: kubectl get secret flux-system -n flux-system
+      register: flux_secret_check
+      failed_when: false
+      changed_when: false
+
+    - name: Copy key, create secret, then destroy key
+      when: flux_secret_check.rc != 0
+      block:
+        - name: Copy SSH private key to controller
+          ansible.builtin.copy:
+            src: "~/.ssh/id_ed25519"
+            dest: /tmp/flux-deploy
+            mode: "0600"
+
+        - name: Copy SSH public key to controller
+          ansible.builtin.copy:
+            src: "~/.ssh/id_ed25519.pub"
+            dest: /tmp/flux-deploy.pub
+            mode: "0644"
+
+        - name: Capture GitHub host key
+          ansible.builtin.command: ssh-keyscan github.com
+          register: github_hostkey
+          changed_when: false
+
+        - name: Write known_hosts file
+          ansible.builtin.copy:
+            content: "{{ github_hostkey.stdout }}"
+            dest: /tmp/known_hosts
+            mode: "0644"
+
+        - name: Create flux-system SSH secret
+          ansible.builtin.command: >
+            kubectl create secret generic flux-system
+            --namespace flux-system
+            --from-file=identity=/tmp/flux-deploy
+            --from-file=identity.pub=/tmp/flux-deploy.pub
+            --from-file=known_hosts=/tmp/known_hosts
+
+        - name: Read public key content
+          ansible.builtin.slurp:
+            src: /tmp/flux-deploy.pub
+          register: flux_pubkey
+
+      always:
+        - name: Remove SSH key files from controller
+          ansible.builtin.file:
+            path: "{{ item }}"
+            state: absent
+          loop:
+            - /tmp/flux-deploy
+            - /tmp/flux-deploy.pub
+
+    - name: Pause — verify deploy key is added to GitHub
+      when: flux_secret_check.rc != 0
+      ansible.builtin.pause:
+        prompt: |
+          Verify this deploy key exists at GitHub before continuing.
+          URL: https://github.com/pbabbott/home-kubernetes/settings/keys
+          Read-only access is sufficient.
+
+          Public key:
+          {{ flux_pubkey.content | b64decode }}
+          Press Enter once confirmed.
+
+    - name: Template FluxInstance manifest
+      ansible.builtin.template:
+        src: ./files/flux-instance.yaml.j2
+        dest: "{{ flux_instance_dest }}"
+        mode: "0644"
+
+    - name: Apply FluxInstance
+      ansible.builtin.command: kubectl apply -f {{ flux_instance_dest }}
+      register: flux_instance_result
+      changed_when: "'configured' in flux_instance_result.stdout or 'created' in flux_instance_result.stdout"
