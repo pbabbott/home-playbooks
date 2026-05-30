@@ -1,0 +1,35 @@
+
+# Example commands
+# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/00-dns.yml
+# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/00-dns.yml
+
+- name: Configure systemd-resolved for local.abbottland.io
+  hosts:
+    - kubernetes_controllers
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Restart systemd-resolved
+      ansible.builtin.systemd:
+        name: systemd-resolved
+        state: restarted
+  tasks:
+    - name: Create resolved.conf.d directory
+      ansible.builtin.file:
+        path: /etc/systemd/resolved.conf.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Configure Pihole as DNS for local.abbottland.io
+      ansible.builtin.copy:
+        dest: /etc/systemd/resolved.conf.d/pihole.conf
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          [Resolve]
+          DNS=192.168.4.144
+          Domains=~local.abbottland.io
+      notify: Restart systemd-resolved
