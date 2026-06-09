@@ -1,0 +1,10 @@
+# ansible-playbook -e @./vault.yml playbooks/tailscale/main.yml
+
+- name: Configure Tailscale
+  hosts:
+    - marauders_map
+  become: true
+  roles:
+    - role: artis3n.tailscale
+      vars:
+        tailscale_authkey: "{{ tailscale.authkey }}"
