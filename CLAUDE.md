@@ -17,3 +17,7 @@ Be brief.
 ### Infra
 
 Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
+
+### Cloudflare / Terraform
+
+DNS is managed by `external-dns` — do NOT manage DNS records in Terraform Cloudflare resources. Terraform Cloudflare is for everything else (WAF, page rules, zone settings, etc).

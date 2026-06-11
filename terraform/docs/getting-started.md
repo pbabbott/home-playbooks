@@ -15,7 +15,10 @@ For a smoother first run, skim these docs in order:
 
 ## First-time setup
 
-1. **Create a Proxmox API token**  
+1. **Create a Cloudflare API token** (if managing Cloudflare resources)  
+   See [cloudflare-api-token.md](cloudflare-api-token.md). No built-in template fits — create a custom token with Zone:Read + Firewall Services:Edit scoped to abbottland.io.
+
+2. **Create a Proxmox API token**  
    In Proxmox: Datacenter → Permissions → Users → Add API Token. Grant VM create/delete/clone rights on the target node and storage.  
    If `terraform plan` later fails with **501 no such file '/json/access/users'**, see [proxmox-api-token.md](proxmox-api-token.md) (disable Privilege Separation or grant Sys.Audit).
 
