@@ -39,7 +39,7 @@ variable "nonprod_vms" {
     "tf-nonprod-k8s-controller-1" = {
       vmid   = 301
       ip     = "192.168.6.31"
-      memory = 2560
+      memory = 3072
     }
     "tf-nonprod-k8s-worker-1" = {
       vmid   = 302
