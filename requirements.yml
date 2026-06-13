@@ -1,5 +1,6 @@
 roles:
   - name: artis3n.tailscale
+    version: v4.6.0  # v5+ requires ansible-core 2.18; pin until we upgrade
 
 collections:
   - prometheus.prometheus

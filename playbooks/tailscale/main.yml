@@ -3,7 +3,17 @@
 - name: Configure Tailscale
   hosts:
     - marauders_map
+    - bananapi
   become: true
+  pre_tasks:
+    - name: Remove dead bullseye-backports apt source
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list
+        regexp: '^\s*deb\s+http://deb\.debian\.org/debian\s+bullseye-backports'
+        state: absent
+      when:
+        - ansible_distribution == "Debian"
+        - ansible_distribution_release == "bullseye"
   roles:
     - role: artis3n.tailscale
       vars:
