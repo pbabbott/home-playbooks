@@ -10,6 +10,7 @@ module "nonprod_vm" {
   ip_address  = each.value.ip
   template_id = 901
   memory      = each.value.memory
+  started     = false
 }
 
 # Prod fleet (200 range): inventories/prod/hosts.yml

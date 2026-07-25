@@ -46,3 +46,9 @@ variable "gateway" {
   type        = string
   default     = "192.168.4.1"
 }
+
+variable "started" {
+  description = "Whether the VM should be running"
+  type        = bool
+  default     = true
+}
