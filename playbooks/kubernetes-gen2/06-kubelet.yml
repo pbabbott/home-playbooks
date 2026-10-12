@@ -177,6 +177,24 @@
         - flag: auto-compaction-retention
           value: 1h
 
+- name: Ensure etcd quota-backend-bytes is configured on existing controllers
+  hosts:
+    - kubernetes_controllers
+  become: true
+  tasks:
+    - name: Check if etcd manifest exists
+      stat:
+        path: /etc/kubernetes/manifests/etcd.yaml
+      register: etcd_manifest_quota
+
+    - name: Patch etcd manifest with quota-backend-bytes
+      when: etcd_manifest_quota.stat.exists
+      ansible.builtin.lineinfile:
+        path: /etc/kubernetes/manifests/etcd.yaml
+        regexp: "^(\\s*)- --quota-backend-bytes(=.*)?$"
+        line: "    - --quota-backend-bytes=2147483648"
+        insertafter: "^    - etcd$"
+
 - name: Ensure leader-election timeouts are configured on existing controllers
   hosts:
     - kubernetes_controllers
