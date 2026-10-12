@@ -15,6 +15,22 @@ etcd:
         value: periodic
       - name: auto-compaction-retention
         value: 1h
+controllerManager:
+  extraArgs:
+    - name: leader-elect-lease-duration
+      value: 60s
+    - name: leader-elect-renew-deadline
+      value: 40s
+    - name: leader-elect-retry-period
+      value: 10s
+scheduler:
+  extraArgs:
+    - name: leader-elect-lease-duration
+      value: 60s
+    - name: leader-elect-renew-deadline
+      value: 40s
+    - name: leader-elect-retry-period
+      value: 10s
 networking:
   podSubnet: 10.244.0.0/16
 ---

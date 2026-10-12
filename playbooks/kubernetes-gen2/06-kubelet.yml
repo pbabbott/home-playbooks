@@ -177,6 +177,51 @@
         - flag: auto-compaction-retention
           value: 1h
 
+- name: Ensure leader-election timeouts are configured on existing controllers
+  hosts:
+    - kubernetes_controllers
+  become: true
+  tasks:
+    - name: Check if kube-controller-manager manifest exists
+      stat:
+        path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+      register: kcm_manifest
+
+    - name: Patch kube-controller-manager manifest with leader-election flags
+      when: kcm_manifest.stat.exists
+      ansible.builtin.lineinfile:
+        path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+        regexp: "^(\\s*)- --{{ item.flag }}(=.*)?$"
+        line: "    - --{{ item.flag }}={{ item.value }}"
+        insertafter: "^    - kube-controller-manager$"
+      loop:
+        - flag: leader-elect-lease-duration
+          value: 60s
+        - flag: leader-elect-renew-deadline
+          value: 40s
+        - flag: leader-elect-retry-period
+          value: 10s
+
+    - name: Check if kube-scheduler manifest exists
+      stat:
+        path: /etc/kubernetes/manifests/kube-scheduler.yaml
+      register: ks_manifest
+
+    - name: Patch kube-scheduler manifest with leader-election flags
+      when: ks_manifest.stat.exists
+      ansible.builtin.lineinfile:
+        path: /etc/kubernetes/manifests/kube-scheduler.yaml
+        regexp: "^(\\s*)- --{{ item.flag }}(=.*)?$"
+        line: "    - --{{ item.flag }}={{ item.value }}"
+        insertafter: "^    - kube-scheduler$"
+      loop:
+        - flag: leader-elect-lease-duration
+          value: 60s
+        - flag: leader-elect-renew-deadline
+          value: 40s
+        - flag: leader-elect-retry-period
+          value: 10s
+
 - name: Configure kubelet reserved resources on workers
   hosts:
     - kubernetes_workers
