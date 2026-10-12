@@ -195,6 +195,13 @@
         line: "    - --quota-backend-bytes=2147483648"
         insertafter: "^    - etcd$"
 
+    - name: Patch etcd manifest memory request
+      when: etcd_manifest_quota.stat.exists
+      ansible.builtin.lineinfile:
+        path: /etc/kubernetes/manifests/etcd.yaml
+        regexp: "^(\\s+)memory: \\d+(Mi|Gi)$"
+        line: "        memory: 300Mi"
+
 - name: Ensure leader-election timeouts are configured on existing controllers
   hosts:
     - kubernetes_controllers
