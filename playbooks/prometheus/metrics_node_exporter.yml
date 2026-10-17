@@ -25,5 +25,6 @@
   hosts:
     - bananapi
     - chimaera
+    - marauders_map
   roles:
     - role: prometheus.prometheus.node_exporter
