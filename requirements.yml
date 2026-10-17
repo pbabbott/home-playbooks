@@ -5,6 +5,9 @@ roles:
 collections:
   - prometheus.prometheus
   - community.general
+  - community.windows
+  - ansible.windows
+  - chocolatey.chocolatey
   # - community.crypto
   # - geerlingguy.mac
   # - ansible.posix

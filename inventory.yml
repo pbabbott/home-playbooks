@@ -68,8 +68,9 @@ all:
           ansible_sudo_pass: "{{ inventoryPasswords.phoenix }}"
           host_type: physical
         elder_wand:
-          # ansible_host: 192.168.4.90 # Ethernet
-          ansible_host: 192.168.4.134 # Wi-Fi
+          # ansible_host: 192.168.4.90 # Ethernet (old)
+          # ansible_host: 192.168.4.134 # Wi-Fi (old, unknown if still valid)
+          ansible_host: 192.168.5.142 # Ethernet (reserved)
           ansible_winrm_port: 5985
           ansible_connection: winrm
           ansible_winrm_scheme: http

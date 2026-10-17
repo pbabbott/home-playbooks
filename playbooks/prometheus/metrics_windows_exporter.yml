@@ -1,0 +1,26 @@
+# elder_wand is Windows (winrm) — node_exporter needs systemd, so use
+# windows_exporter instead. Exposes metrics on :9182.
+- name: Metrics - windows_exporter
+  hosts: elder_wand
+  tasks:
+    - name: Install windows_exporter
+      chocolatey.chocolatey.win_chocolatey:
+        name: prometheus-windows-exporter.install
+        state: present
+
+    - name: Allow windows_exporter through firewall
+      community.windows.win_firewall_rule:
+        name: Prometheus Metrics
+        localport: 9182
+        action: allow
+        direction: in
+        protocol: tcp
+        profiles: private
+        state: present
+        enabled: yes
+
+    - name: Ensure windows_exporter service is running
+      ansible.windows.win_service:
+        name: windows_exporter
+        state: started
+        start_mode: auto

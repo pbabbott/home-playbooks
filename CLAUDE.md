@@ -18,6 +18,8 @@ Be brief.
 
 Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
 
+Most `ansible-playbook`/`ansible` commands need vault vars: pass `-e @./vault.yml`. Without it, plays referencing `{{ inventoryPasswords.* }}` or other vaulted vars fail with "undefined variable".
+
 ### Cloudflare / Terraform
 
 DNS is managed by `external-dns` — do NOT manage DNS records in Terraform Cloudflare resources. Terraform Cloudflare is for everything else (WAF, page rules, zone settings, etc).
