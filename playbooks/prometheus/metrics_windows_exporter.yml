@@ -12,6 +12,7 @@
       community.windows.win_firewall_rule:
         name: Prometheus Metrics
         localport: 9182
+        remoteip: 192.168.4.0/22
         action: allow
         direction: in
         protocol: tcp
@@ -19,8 +20,22 @@
         state: present
         enabled: yes
 
+    - name: Enable thermalzone collector
+      ansible.windows.win_copy:
+        content: |
+          collectors:
+            enabled: "[defaults],thermalzone"
+        dest: "C:\\Program Files\\windows_exporter\\config.yaml"
+      register: exporter_config
+
     - name: Ensure windows_exporter service is running
       ansible.windows.win_service:
         name: windows_exporter
         state: started
         start_mode: auto
+
+    - name: Restart windows_exporter if config changed
+      ansible.windows.win_service:
+        name: windows_exporter
+        state: restarted
+      when: exporter_config.changed
