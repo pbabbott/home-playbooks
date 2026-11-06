@@ -1,4 +1,0 @@
-- name: Restart vector container
-  community.docker.docker_container:
-    name: vector
-    restart: true

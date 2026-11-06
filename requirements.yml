@@ -1,13 +1,17 @@
+---
+# Third-party dependencies. Install everything with: ./scripts/setup.sh
+# (roles -> .ansible/roles, collections -> .ansible/collections; both gitignored).
+# In-repo collections (abbottland.*) live in ./collections and are NOT listed here.
 roles:
   - name: artis3n.tailscale
     version: v4.6.0  # v5+ requires ansible-core 2.18; pin until we upgrade
 
 collections:
-  - prometheus.prometheus
-  - community.general
-  - community.windows
-  - ansible.windows
-  - chocolatey.chocolatey
-  # - community.crypto
-  # - geerlingguy.mac
-  # - ansible.posix
+  - { name: prometheus.prometheus, version: 0.30.2 }
+  - { name: community.general, version: 9.5.2 }
+  - { name: community.docker, version: 3.13.3 }
+  - { name: community.windows, version: 2.3.0 }
+  - { name: ansible.windows, version: 2.5.0 }
+  - { name: ansible.posix, version: 1.6.2 }
+  - { name: kubernetes.core, version: 3.2.0 }
+  - { name: chocolatey.chocolatey, version: 1.5.3 }
