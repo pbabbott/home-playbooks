@@ -1,6 +1,6 @@
 # playbooks/host_updates
 
-Apt upgrades for the Raspberry Pis, with Pushover notifications.
+Apt upgrades for `dumbledore` (Raspberry Pi) and `bananapi` (Banana Pi), with Pushover notifications.
 
 **Status: unfinished, do not trust.** Kept to record the goal: automatic updates across the VMs and physical infra, driven by Ansible on a schedule, with Pushover telling me when each run finishes. The playbook was never completed or fully working, and it is untouched since January 2024. Reviving it means dusting it off and testing it first.
 
@@ -8,7 +8,7 @@ Apt upgrades for the Raspberry Pis, with Pushover notifications.
 
 | File | Purpose |
 |---|---|
-| `pi.yml` | On `dumbledore` and `bananapi` (both Raspberry Pis, `inventories/physical`): `apt` upgrade with cache update, then check `/var/run/reboot-required`. Notifies via Pushover on completion, on reboot required, and on failure (priority 1). **Never reboots.** |
+| `pi.yml` | On `dumbledore` and `bananapi` (a Raspberry Pi and a Banana Pi, `inventories/physical`): `apt` upgrade with cache update, then check `/var/run/reboot-required`. Notifies via Pushover on completion, on reboot required, and on failure (priority 1). **Never reboots.** |
 
 Run from the repo root (default inventory is `physical`):
 

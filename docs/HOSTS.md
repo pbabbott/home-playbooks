@@ -6,21 +6,28 @@ Playbook dirs are in [`playbooks/README.md`](../playbooks/README.md). Keep this 
 
 Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`.
 
-## Physical hosts and standalone VMs (`inventories/physical`)
+## Physical hosts
 
-| Host | IP | Type | Role | Playbooks |
+| Host | IP | Hardware | Role | Playbooks |
 |---|---|---|---|---|
-| `chimaera` | 192.168.4.192 | Proxmox host | Runs the prod gen2 k8s cluster and the VM template. Maxed out on resources; single-SSD disk layout is documented only by `proxmox-chimaera/`. | `proxmox-chimaera/`, `ansible-template-ubuntu-noble/` |
-| `hogwarts` | TODO | Proxmox host | Second Proxmox host. Not in the Ansible inventory. | none (`proxmox-chimaera/` must NOT be run on it) |
-| `bananapi` | 192.168.4.144 | Raspberry Pi | Pi-hole DNS server and Tailscale subnet router (`192.168.4.0/22`). Kept separate from k8s so DNS stays up independently. | `dns/`, `tailscale/`, `prometheus/`, `host_updates/` |
-| `dumbledore` | 192.168.4.157 | Raspberry Pi 4 | Pironman case (LCD + LED); LED color driven by a k8s API. | `pironman/`, `prometheus/`, `host_updates/` |
-| `room_of_requirement` | 192.168.4.124 | NAS | Durable home for stateful services (shared Redis, Postgres) so clusters can be rebuilt without data loss. Also `nas.local.abbottland.io`. | `redis/`, `prometheus/` |
-| `marauders_map` | 192.168.5.91 | VM (hand-made, not Terraform) | Dev/workstation VM. Reach over SSH from LAN or via Tailscale. | `workstation/`, `tailscale/` |
-| `elder_wand` | 192.168.5.142 | Windows PC (WinRM) | TODO: role. Marked `shutdown_exempt`. | `prometheus/` (windows_exporter) |
-| `ansible-template-ubuntu-noble` | 192.168.6.91 | VM template (Proxmox ID 901) | Source image cloned into k8s node VMs. | `ansible-template-ubuntu-noble/` |
+| `chimaera` | 192.168.4.192 | Beelink SER5 mini PC: Ryzen 5 5500U (6C/12T), 64GB DDR4, 1TB NVMe + 2TB SSD | Proxmox host running the prod gen2 k8s cluster and the VM template. **Maxed out:** the whole cluster sits on one of its two drives, so parallel docker builds cause IO contention (etcd and Longhorn get unhealthy), and VM CPU competes with the host OS. Disk layout is documented only by `proxmox-chimaera/`. | `proxmox-chimaera/`, `ansible-template-ubuntu-noble/` |
+| `hogwarts` | 192.168.4.196 | HP Z2 G1i SFF workstation: Intel Core Ultra 7 265 (20 cores), 64GB RAM, 1TB M.2 + 2x2TB M.2 | New primary Proxmox server that will power k8s gen3. Vault password key not yet added. | none yet. `proxmox-chimaera/` must NOT be run on it |
+| `room_of_requirement` | 192.168.4.124 | Synology NAS | Durable stateful storage: shared Redis and Postgres (clusters point here so they can be rebuilt without data loss), NFS for k8s, mass media (movies, TV), and backups of personal files (wedding photos, video projects). Also `nas.local.abbottland.io`. | `redis/`, `prometheus/` |
+| `bananapi` | 192.168.4.144 | Banana Pi BPI-M5 (Amlogic S905X3 SBC), GeeekPi kit with case and fan | Pi-hole DNS server and Tailscale subnet router (`192.168.4.0/22`). Kept separate from k8s so DNS stays up independently. | `dns/`, `tailscale/`, `prometheus/`, `host_updates/` |
+| `dumbledore` | 192.168.4.157 | Raspberry Pi 4 Model B, 8GB | **Currently offline.** Plan: join gen3 k8s as a third controller (with one on `chimaera` and one on `hogwarts`) for etcd quorum, and run light ARM workloads. Also has the Pironman case (LCD + LED), with LED color driven by a k8s API. | `pironman/`, `prometheus/`, `host_updates/` |
+| `elder_wand` | 192.168.5.142 | Windows gaming PC | Personal gaming machine, kept clean for games. Its GPU is occasionally used for AI workloads via LM Studio, but nothing else should be put on it. `shutdown_exempt`. Managed over WinRM. | `prometheus/` (windows_exporter) |
+| `eero` router | 192.168.4.1 | eero Pro 6E mesh wifi router | Network gateway. Holds the DHCP IP reservations and port-forwards 80/443 to HAProxy (192.168.6.28), which is the ingress for publicly facing workloads. Does not hand out Pi-hole DNS (opt-in per device). Not in Ansible. | none |
 
-## Kubernetes fleets (`inventories/prod`, `inventories/nonprod`)
+## Virtual hosts
 
-Terraform-created Proxmox VMs, groups `kubernetes_controllers` and `kubernetes_workers`. Configured by
-`playbooks/kubernetes-gen2/`; workloads are then deployed by Flux from `home-kubernetes`.
-Prod runs on `chimaera`. Non-prod is currently powered off (`chimaera` ran out of resources).
+| Host | IP | Runs on | Role | Managed by | Playbooks |
+|---|---|---|---|---|---|
+| `tf-prod-k8s-controller-1` | 192.168.6.24 | `chimaera` | Prod gen2 k8s control plane | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-prod-k8s-worker-1..3` | 192.168.6.25-27 | `chimaera` | Prod gen2 k8s workers | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-nonprod-k8s-controller-1` | 192.168.6.31 | `chimaera` | Non-prod control plane. **Powered off** (`chimaera` out of resources) | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-nonprod-k8s-worker-1..3` | 192.168.6.32-34 | `chimaera` | Non-prod workers. **Powered off** | Terraform + Ansible | `kubernetes-gen2/` |
+| `marauders_map` | 192.168.5.91 | `chimaera` | Dev/workstation VM (Ubuntu 24). Reach over SSH from the LAN or via Tailscale | hand-made | `workstation/`, `tailscale/` |
+| `ansible-template-ubuntu-noble` | 192.168.6.91 | `chimaera` | Proxmox VM template (ID 901, Ubuntu 24.04), cloned into k8s nodes | Ansible | `ansible-template-ubuntu-noble/` |
+| HAProxy LXC | 192.168.6.28 | `chimaera` | Load balancer (stats page at http://192.168.6.28:8404/). Defined in `terraform/modules/haproxy` | Terraform | none |
+
+Prod and non-prod k8s workloads are deployed by Flux from `home-kubernetes`.
