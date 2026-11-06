@@ -9,7 +9,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `dns/` | Pi-hole on bananapi (see its README) | physical |
 | `prometheus/` | node_exporter / windows_exporter | physical |
 | `redis/` | Shared Redis on the NAS; Harbor is the first consumer (see its README) | physical |
-| `tailscale/` | Tailscale on marauders_map, bananapi | physical |
+| `tailscale/` | Tailscale remote access; bananapi is the subnet router, plus marauders_map (see its README) | physical |
 | `proxmox-chimaera/` | Disk / power tuning on `chimaera` only; legacy, kept to document disk layout (see its README) | physical |
 | `ansible-template-ubuntu-noble/` | Build the Ubuntu VM template (see its README) | physical |
 
