@@ -17,7 +17,7 @@ ansible-playbook -e @./vault.yml playbooks/workstation/main.yml
 |---|---|---|
 | `main.yml` | | Imports `dns.yml` then `docker.yml`. |
 | `dns.yml` | `marauders_map` | Sets `DNS=192.168.4.144 1.1.1.1` in `/etc/systemd/resolved.conf` (restarts systemd-resolved on change) and ensures the service is enabled. |
-| `docker.yml` | `marauders_map` | Installs Docker and grants user access via the `abbottland.docker.docker` and `docker_permissions` roles (in-repo collection). |
+| `docker.yml` | `marauders_map` | Installs Docker and grants user access (inline tasks: Docker apt repo, `docker-ce`, `docker` group membership). |
 
 State: run once in 2025-03 and working. `main.yml` itself is new and has not been run end to end.
 
@@ -29,8 +29,6 @@ State: run once in 2025-03 and working. `main.yml` itself is new and has not bee
 ## Required variables
 
 None defined here. Connection details come from `inventories/physical/hosts.yml`; the password is vaulted (`inventoryPasswords.kubernetes_node`, via `-e @./vault.yml`).
-
-Roles: `abbottland.docker.docker` and `abbottland.docker.docker_permissions` (in `collections/`; also used by `kubernetes-gen2/01-containerd.yml`).
 
 ## TODO / open questions
 

@@ -4,13 +4,15 @@
   hosts:
     - dumbledore
   become: true
-  roles:
-    - role: abbottland.core.apt
-      apt_install_packages:
-        - git
-        - python3
-        - python3-pip
-        - python3-setuptools
+  tasks:
+    - name: Install tools
+      ansible.builtin.apt:
+        name:
+          - git
+          - python3
+          - python3-pip
+          - python3-setuptools
+        update_cache: true
 
 - name: Clone pironman codebase & run installer
   hosts:

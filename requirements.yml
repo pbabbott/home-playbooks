@@ -1,7 +1,6 @@
 ---
 # Third-party dependencies. Install everything with: ./scripts/setup.sh
 # (roles -> .ansible/roles, collections -> .ansible/collections; both gitignored).
-# In-repo collections (abbottland.*) live in ./collections and are NOT listed here.
 roles:
   - name: artis3n.tailscale
     version: v4.6.0  # v5+ requires ansible-core 2.18; pin until we upgrade

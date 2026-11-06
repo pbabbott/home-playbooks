@@ -1,2 +1,0 @@
-docker_daemon_skip_restart: false
-docker_daemon_directory: /etc/docker

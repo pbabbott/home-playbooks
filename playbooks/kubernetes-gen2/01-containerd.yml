@@ -8,20 +8,20 @@
     - kubernetes_controllers
     - kubernetes_workers
   become: true
-  vars:
-    apt_install_packages:
-      # Required for ansible
-      - python3-pip
-
-      # Required for containerd
-      - ca-certificates
-      - curl
-      - gnupg
-      - lsb-release
-  roles:
-    - role: abbottland.core.apt
-  
   tasks:
+    - name: Install prerequisite packages
+      ansible.builtin.apt:
+        name:
+          # Required for ansible
+          - python3-pip
+
+          # Required for containerd
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        update_cache: true
+
     - name: Add docker apt repository key.
       ansible.builtin.get_url:
         url: https://download.docker.com/linux/debian/gpg
@@ -56,9 +56,18 @@
     - kubernetes_controllers
     - kubernetes_workers
   become: true
-  roles:
-    - role: abbottland.docker.docker_permissions
   tasks:
+    - name: Ensure docker group exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Ensure user account has access to run docker commands
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: true
+
     - name: Change group ownership of /etc/containerd.sock
       ansible.builtin.file:
         path: /run/containerd/containerd.sock

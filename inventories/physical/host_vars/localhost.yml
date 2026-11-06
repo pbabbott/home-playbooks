@@ -1,7 +1,3 @@
-pip_install_packages:
-  - paramiko
-  - pywinrm
-
 shell_config_aliases:
   - alias: ll
     command: ls -lh
@@ -31,4 +27,3 @@ shell_config_ssh_targets:
     username: "{{ hostvars.dumbledore.ansible_user }}"
     hostname: "{{ hostvars.dumbledore.ansible_host }}"
 
-docker_daemon_registry_mirror: https://registry-mirror.nas.local.abbottland.io

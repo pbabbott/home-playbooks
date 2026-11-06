@@ -6,14 +6,15 @@
     - kubernetes_controllers
     - kubernetes_workers
   become: true
-  vars:
-    apt_install_packages:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-  roles:
-    - role: abbottland.core.apt
   tasks:
+    - name: Install prerequisite packages
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+        update_cache: true
+
     - name: Ensure keyrings directory exists
       ansible.builtin.file:
         path: "/etc/apt/keyrings"

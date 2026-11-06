@@ -15,7 +15,6 @@ Ansible playbooks (and Terraform) for home infra.
 | `inventories/prod`, `inventories/nonprod` | Terraform-managed gen2 k8s VMs (`kubernetes_controllers`, `kubernetes_workers`) |
 | `inventories/physical` | Physical hosts + standalone VMs (proxmox `chimaera`, `bananapi`, `dumbledore`, ...). Default inventory in `ansible.cfg`. Holds `group_vars/` and `host_vars/` |
 | `playbooks/` | Playbooks, one dir per concern — see [`playbooks/README.md`](playbooks/README.md) |
-| `collections/ansible_collections/abbottland/` | In-repo collections (`core`, `docker`) |
 | `requirements.yml` | Pinned third-party roles + collections |
 | `.ansible/` (gitignored) | Installed Galaxy roles/collections |
 | `terraform/` | Proxmox VMs + Cloudflare (see `terraform/README.md`) |

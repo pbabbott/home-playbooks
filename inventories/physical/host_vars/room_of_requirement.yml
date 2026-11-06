@@ -4,24 +4,8 @@ ansible_sudo_pass: "{{ inventoryPasswords.room_of_requirement }}"
 host_puid: "1000"
 host_pgid: "100"
 
-pip_install_packages:
-  - pyyaml==5.3.1
-  - docker==6.1.3
-  - docker-compose
-  - passlib
-  - requests==2.28.1
-
-
 redis_data_dir: /volume1/Docker/redis/data
 
-
-docker_registry_title: Homelab Private Docker Registry
-docker_registry_config_dir: /volume1/Docker/registry/config
-docker_registry_storage_dir: /volume1/Docker/registry/storage
-
-docker_registry_mirror_title: Homelab Pull-Through Cache
-docker_registry_mirror_config_dir: /volume1/Docker/registry_mirror/config
-docker_registry_mirror_storage_dir: /volume1/Docker/registry_mirror/storage
 
 handbrake_config_dir: /volume1/Docker/handbrake/config
 handbrake_storage_dir: /volume1/home/pabbott
@@ -45,7 +29,5 @@ vector_compose_networks:
 vector_compose_service_network:
   - loki
 
-docker_daemon_loki_log_sink: localhost:3100
-docker_daemon_directory: /volume1/Docker
 
 prometheus_config_dir: /volume1/Docker/prometheus/config

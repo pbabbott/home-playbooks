@@ -92,7 +92,6 @@ Liveness check for these hosts: `../ping/k8s_hosts.yml`.
 - Pinned versions are scattered across plays (k8s v1.35, Calico v3.27.3, Flux Operator 0.45.0).
 - Temp files are left in `/tmp` on the controller (`kubeadm-config.yml`, `coredns-patch.yml`, `values.yml`, `flux-instance.yaml`).
 - Mixed module style (FQCN vs short names).
-- `01-containerd.yml` uses the Docker apt repo for `containerd.io`; the `docker_permissions` role is the only reason `abbottland.docker` is used here.
 - Pi-hole IP (192.168.4.144) is hardcoded in `00-dns.yml` and the CoreDNS template; keep in sync with [`../dns`](../dns/README.md).
 
 ## TODO / open questions

@@ -1,4 +1,0 @@
-- name: Restart registry container
-  community.docker.docker_container:
-    name: registry
-    restart: true
