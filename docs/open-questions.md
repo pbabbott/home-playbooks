@@ -6,7 +6,7 @@ Idea: answer these while writing each playbook's README, then prune accordingly.
 ## Stale playbooks (nothing in the repo references them)
 
 - **`host_updates/`** (2024-01): `pi.yml` apt upgrade on dumbledore. Still how you patch, or replaced?
-- **`ping/`** (2024-07): linux/sudo/windows connectivity checks; `main.yml` is empty. Keep one generic ping, or delete (`kubernetes-gen2/ping.yml` covers k8s)?
+- **`ping/`** (2024-07): linux/sudo/windows connectivity checks; `main.yml` is empty. Keep one generic ping, or delete (`ping/k8s_hosts.yml` covers k8s; `main.yml` does not import it since k8s hosts are in the prod/nonprod inventories)?
 - **`redis/`** (2024-08): Redis on room_of_requirement. Runs in the cluster now?
 - **`vpn/`** (2024-03): WireGuard on bananapi. Replaced by `tailscale/`?
 - **`workstation/`** (2025-03): DNS + Docker on marauders_map. Still needed? (`docker.yml` is the only user of `abbottland.docker` besides `kubernetes-gen2/01-containerd.yml`.)
