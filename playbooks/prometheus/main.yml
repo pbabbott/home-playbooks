@@ -1,0 +1,7 @@
+# ansible-playbook -e @./vault.yml playbooks/prometheus/main.yml
+---
+- name: Linux and NAS node_exporter
+  ansible.builtin.import_playbook: metrics_node_exporter.yml
+
+- name: Windows exporter
+  ansible.builtin.import_playbook: metrics_windows_exporter.yml
