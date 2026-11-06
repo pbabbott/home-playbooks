@@ -14,11 +14,6 @@ pip_install_packages:
 
 redis_data_dir: /volume1/Docker/redis/data
 
-verdaccio_owner: "10001"
-verdaccio_group: "65533"
-verdaccio_config_dir: /volume1/Docker/verdaccio/config
-verdaccio_storage_dir: /volume1/Docker/verdaccio/storage
-verdaccio_plugins_dir: /volume1/Docker/verdaccio/plugins
 
 docker_registry_title: Homelab Private Docker Registry
 docker_registry_config_dir: /volume1/Docker/registry/config

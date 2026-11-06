@@ -20,5 +20,7 @@ Which of these no longer exist or should be dropped?
 
 ## Other
 
-- `inventories/physical/group_vars/all.yml` holds mostly legacy vars (docker registry, drone, verdaccio). Which are still used (`dns/pihole.yml` and `vpn/` reference some)? Prune the rest?
-- `shutdown/main.yaml` targets only the k8s groups; should it also cover physical hosts (it checks `host_type`/`shutdown_exempt`)?
+- `inventories/physical/group_vars/all.yml` still has `host_tz` and docker registry/mirror vars (Drone and Verdaccio vars were removed). `dns/pihole.yml` and `vpn/` reference some. Are the registry vars still used?
+- `host_vars/*` are full of vars for archived apps (semaphore, home assistant, dashy, mealie, handbrake, loki/grafana, uptime_kuma, diun, portainer, code-server...). Prune everything for apps that moved to k8s?
+- `host_vars/localhost.yml`: `GITHUB_TOKEN` reads `drone.github_pat` from `vault.yml` (a Drone-era key name), and `shell_config_ssh_targets` references a non-existent `rpi` host. Still used at all (it feeds the deleted `home.shell_config` role)?
+- `shutdown/` is documented as out of date (see its README). What should it become?
