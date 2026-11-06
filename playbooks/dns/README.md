@@ -48,3 +48,4 @@ ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
 - Name and locate all vault variables and confirm where each required var comes from.
 - **Backups are unfinished, state unknown:** the NFS mount to the NAS (`192.168.4.124:/volume1/Backups/pihole`) is commented out in `pihole.yml`; `pihole_backups.yml` is not in `main.yml`; `pihole_backup.sh` uses `docker exec -it`, which may fail under cron (no TTY). Verify before relying on it.
 - Write a restore procedure.
+- **Host-level fixes needed on bananapi** (Docker boot/restart failures, NFS backup mount, journald persistence): see [BPI-FIXES-NEEDED.md](BPI-FIXES-NEEDED.md). Not yet applied or put under Ansible.
