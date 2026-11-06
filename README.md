@@ -17,7 +17,7 @@ Ansible playbooks (and Terraform) for home infra.
 | `playbooks/` | Playbooks, one dir per concern — see [`playbooks/README.md`](playbooks/README.md) |
 | `requirements.yml` | Pinned third-party roles + collections |
 | `.ansible/` (gitignored) | Installed Galaxy roles/collections |
-| `terraform/` | Proxmox VMs + Cloudflare (see `terraform/README.md`) |
+| `terraform/` | Proxmox VMs (`chimaera/`, `hogwarts/`) + Cloudflare (`cloudflare/`) (see `terraform/README.md`) |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
 | `docs/` | Host roles (`HOSTS.md`), plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
 

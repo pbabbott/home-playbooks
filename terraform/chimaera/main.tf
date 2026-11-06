@@ -2,7 +2,7 @@
 module "nonprod_vm" {
   for_each = var.nonprod_vms
 
-  source = "./modules/vm"
+  source = "../modules/vm"
 
   vmid        = each.value.vmid
   name        = each.key
@@ -17,7 +17,7 @@ module "nonprod_vm" {
 module "prod_vm" {
   for_each = var.prod_vms
 
-  source = "./modules/vm"
+  source = "../modules/vm"
 
   vmid        = each.value.vmid
   name        = each.key
@@ -28,5 +28,5 @@ module "prod_vm" {
 }
 
 module "haproxy" {
-  source = "./modules/haproxy"
+  source = "../modules/haproxy"
 }

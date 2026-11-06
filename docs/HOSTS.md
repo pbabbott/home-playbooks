@@ -28,6 +28,6 @@ Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`.
 | `tf-nonprod-k8s-worker-1..3` | 192.168.6.32-34 | `chimaera` | Non-prod workers. **Powered off** | Terraform + Ansible | `kubernetes-gen2/` |
 | `marauders_map` | 192.168.5.91 | `chimaera` | Dev/workstation VM (Ubuntu 24). Reach over SSH from the LAN or via Tailscale | hand-made | `workstation/`, `tailscale/` |
 | `ansible-template-ubuntu-noble` | 192.168.6.91 | `chimaera` | Proxmox VM template (ID 901, Ubuntu 24.04), cloned into k8s nodes | Ansible | `ansible-template-ubuntu-noble/` |
-| HAProxy LXC | 192.168.6.28 | `chimaera` | Load balancer (stats page at http://192.168.6.28:8404/). Defined in `terraform/modules/haproxy` | Terraform | none |
+| HAProxy LXC | 192.168.6.28 | `chimaera` | Load balancer (stats page at http://192.168.6.28:8404/). Defined in `terraform/modules/haproxy`, applied from `terraform/chimaera` | Terraform | none |
 
 Prod and non-prod k8s workloads are deployed by Flux from `home-kubernetes`.

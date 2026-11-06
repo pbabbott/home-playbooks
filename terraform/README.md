@@ -1,6 +1,6 @@
 # Terraform — Proxmox VM provisioning
 
-This directory is the place to manage the home Proxmox server via Terraform scripts: template creation and VM lifecycle (create, update, destroy) are defined here. Configuration inside VMs is handled by Ansible; see the [root README](../README.md) for the overall architecture.
+This directory holds one Terraform root per Proxmox host (`chimaera/`, `hogwarts/`) plus `cloudflare/`, with shared `modules/`. Run terraform from inside a root, not from here. Each root manages its host via Terraform scripts: template creation and VM lifecycle (create, update, destroy) are defined here. Configuration inside VMs is handled by Ansible; see the [root README](../README.md) for the overall architecture.
 
 ## Documentation
 

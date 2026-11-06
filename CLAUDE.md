@@ -7,7 +7,7 @@ Be brief.
 - Legacy `archive/` (old per-app Ansible playbooks, pre-k8s) was deleted 2026-11-06. See `docs/ARCHIVE.md`; the code lives at git tag `archive-final`.
 - `./playbooks/` - Current ansible playbooks (index: `playbooks/README.md`)
 - `./inventories/{prod,nonprod,physical}` - k8s gen2 fleets and physical hosts (default inventory: physical; group/host vars live in `inventories/physical`)
-- `./terraform` - Terraform codebase manages gen2 prod and non-prod vms on a proxmox installation, as well as as an lxc for ha proxy.
+- `./terraform` - one Terraform root per host: `chimaera/` (gen2 prod/non-prod vms + ha proxy lxc), `hogwarts/` (gen3, scaffold only), `cloudflare/`; shared `modules/`.
 
 
 ### Important playbooks

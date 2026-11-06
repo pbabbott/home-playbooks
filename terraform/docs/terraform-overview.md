@@ -7,20 +7,23 @@ How the `terraform/` directory is structured and how the pieces fit together.
 ## Directory layout
 
 ```text
-terraform/
-├── provider.tf              # Proxmox provider config (API URL, token)
-├── versions.tf              # Terraform + provider version constraints
-├── variables.tf             # Root variables (API, VM fleet, template name)
-├── main.tf                  # VM definitions (non-prod fleet via module)
-├── outputs.tf               # Outputs (VM IDs, names, IPs)
-├── terraform.tfvars.example # Example tfvars - copy to terraform.tfvars
+terraform/                   # Not a root itself; each subdirectory below is an independent root with its own state
+├── chimaera/                # Proxmox host chimaera (gen2 prod/nonprod VMs + HAProxy LXC)
+│   ├── provider.tf          # Proxmox provider config (API URL, token)
+│   ├── versions.tf          # Terraform + provider version constraints
+│   ├── variables.tf         # Root variables (API, VM fleets)
+│   ├── main.tf              # VM definitions via ../modules
+│   ├── outputs.tf           # Outputs (VM IDs, names)
+│   └── terraform.tfvars.example
+├── hogwarts/                # Proxmox host hogwarts (gen3; no VMs defined yet)
+├── cloudflare/              # Cloudflare (global, not per-host)
 ├── .gitignore               # Ignores .terraform/, state, *.tfvars
-└── modules/
-    └── vm/                  # Reusable VM module (clone + cloud-init)
-        ├── main.tf          # proxmox_virtual_environment_vm resource (BPG provider)
-        ├── variables.tf     # Module inputs
-        └── outputs.tf       # vm_id, vm_name
+└── modules/                 # Shared by the host roots
+    ├── vm/                  # Reusable VM module (clone + cloud-init)
+    └── haproxy/             # HAProxy LXC
 ```
+
+Run terraform from inside the relevant root (`cd terraform/chimaera`). The sections below describe the chimaera root; hogwarts follows the same pattern.
 
 ---
 

@@ -1,6 +1,6 @@
 # Getting started with Terraform (Proxmox)
 
-Run all commands from the `terraform/` directory (`cd terraform` from repo root).
+Each host/service has its own root: `terraform/chimaera`, `terraform/hogwarts`, `terraform/cloudflare`. Run all commands from inside the relevant one (e.g. `cd terraform/chimaera`), each with its own `terraform.tfvars` and state.
 
 ---
 
