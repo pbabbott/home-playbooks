@@ -1,6 +1,6 @@
 # playbooks/tailscale
 
-Tailscale on the homelab, for remote access to home services while away. It replaces the WireGuard setup in `vpn/`.
+Tailscale on the homelab, for remote access to home services while away. It replaces the old WireGuard setup (the `vpn/` playbook, now deleted).
 
 - `bananapi` is a **subnet router**: it advertises `192.168.4.0/22` (192.168.4.0-192.168.7.255), so the whole LAN is reachable from the tailnet.
 - `bananapi` is also the Pi-hole DNS server (see `dns/`), so while connected you can resolve `<service>.local.abbottland.io` names.
@@ -44,4 +44,4 @@ Role: `artis3n.tailscale` (pinned in `requirements.yml`, installed by `scripts/s
 - Authkey: expiry and rotation are undocumented.
 - Is `marauders_map` needed on the tailnet? Its address is inside the advertised route, so SSH may work through bananapi alone (Linux clients need `--accept-routes`).
 - Verify the playbook end to end and test remote access to the LAN.
-- Decide whether to delete `vpn/` now that this replaces it.
+- Confirm the old WireGuard container on `bananapi` is stopped and UDP 51820 / `vpn.abbottland.io` is no longer forwarded (`vpn/` playbook was deleted 2026-11-06; code in git history).
