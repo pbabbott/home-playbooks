@@ -1,6 +1,13 @@
 # home-playbooks
 Ansible playbooks (and Terraform) for home infra.
 
+## Start here
+
+- **What playbooks exist and their status:** [`playbooks/README.md`](playbooks/README.md) (index with a summary per dir).
+- **What hosts exist and their roles:** [`docs/HOSTS.md`](docs/HOSTS.md).
+- **Connection details / vars:** `inventories/` (see Layout below).
+- **Past work:** `docs/` (plans, runbooks, incidents).
+
 ## Layout
 
 | Path | Purpose |
@@ -13,7 +20,7 @@ Ansible playbooks (and Terraform) for home infra.
 | `.ansible/` (gitignored) | Installed Galaxy roles/collections |
 | `terraform/` | Proxmox VMs + Cloudflare (see `terraform/README.md`) |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
-| `docs/` | Plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
+| `docs/` | Host roles (`HOSTS.md`), plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
 
 ## Setup
 
