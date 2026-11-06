@@ -1,93 +1,42 @@
 # home-playbooks
-Ansible playbooks for home infra
+Ansible playbooks (and Terraform) for home infra.
 
-# Prerequsites
+## Layout
 
-## Summary
-In order to run this playbook, the following must be installed:
+| Path | Purpose |
+|---|---|
+| `inventories/prod`, `inventories/nonprod` | Terraform-managed gen2 k8s VMs (`kubernetes_controllers`, `kubernetes_workers`) |
+| `inventories/physical` | Physical hosts + standalone VMs (proxmox `chimaera`, `bananapi`, `dumbledore`, ...). Default inventory in `ansible.cfg`. Holds `group_vars/` and `host_vars/` |
+| `playbooks/` | Playbooks, one dir per concern — see [`playbooks/README.md`](playbooks/README.md) |
+| `collections/ansible_collections/abbottland/` | In-repo collections (`core`, `docker`) |
+| `requirements.yml` | Pinned third-party roles + collections |
+| `.ansible/` (gitignored) | Installed Galaxy roles/collections |
+| `terraform/` | Proxmox VMs + Cloudflare (see `terraform/README.md`) |
+| `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
+| `docs/` | Plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
 
+## Setup
 
-### Prerequisites
-- python3
-- pip3
-- ansible
-- paramiko
-- pyopenssl
-- kubernetes
-
-### Linting
-- ansible-lint
-
-## Installation Commands
-
-https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#prerequisites
-
-
-PIP installation
-```sh
-$ curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-$ python get-pip.py --user
-```
-
-Ansible Installation
-```sh
-$ python -m pip install --user ansible==9
-```
-Packages Installation
+Requires python3, `ansible-core` (2.17 in the devcontainer), `paramiko`, `pywinrm`, `sshpass`.
 
 ```sh
-$ sudo apt install -y sshpass
+./scripts/setup.sh        # installs pinned roles + collections into .ansible/
 ```
 
-## Other Notes
+To update a dependency: bump its version in `requirements.yml`, re-run `scripts/setup.sh`.
 
-Don't forget to add `~/.local/bin` to your path!
+## Running
 
-# Playbooks
-
-## Requirements
-Install roles
+Most playbooks need vault vars (`alias apv="ansible-playbook -e @./vault.yml"`):
 
 ```sh
-$ ansible-galaxy install -r ./roles/requirements.yml
+# physical hosts (default inventory)
+ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
+# k8s fleets
+ansible-playbook -e @./vault.yml -i inventories/prod playbooks/kubernetes-gen2/main.yml
 ```
 
-```sh
-$ ansible-galaxy collection install kubernetes.core
-```
+Use `scripts/vault-protect.sh` / the `encrypt`/`decrypt` aliases for `vault.yml`.
 
-### Collections
-
-In some of the playbooks, collections are needed. If there exists a folder such as in `playbooks/[name]/collections`  then run the following command to install pre-requisite collections for this playbook.
-
-```sh
-ansible-galaxy install -r ./playbooks/[name]/collections/requirements.yml
-```
-
-## `main.yml`
-
-This is the main playbook for all hosts - it is largely idempotent and targets all home infra.
-
-```sh
-ansible-playbook -e @./vault.yml main.yml
-```
-
-# Windows Hosts
-```ps
-winrm quickconfig
-
-# Necessary if WSL is installed.
-Enable-PSRemoting -SkipNetworkProfileCheck -Force
-
-winrm set winrm/config/service/auth '@{Basic="true"}'
-winrm set winrm/config/service '@{AllowUnencrypted="true"}'
-```
-
-# Terraform + Proxmox Provisioning
-
-Terraform manages VM lifecycle on Proxmox; Ansible handles configuration inside those VMs. Terraform provisions the machines; Ansible configures them.
-
-- **Terraform** (`terraform/`): Creates Ubuntu cloud-init templates and manages Proxmox VMs (clone, CPU, memory, disk, network).
-- **Ansible**: Targets existing hosts (including Terraform-provisioned VMs). Inventory can reference hostnames or IPs from `terraform output`.
-
-For Terraform setup, conventions (VM ID ranges, storage), and day-to-day commands, see **[terraform/README.md](terraform/README.md)** and **[terraform/docs/getting-started.md](terraform/docs/getting-started.md)**.
+## Windows hosts
+`elder_wand` is managed over WinRM (see its vars in `inventories/physical/hosts.yml`).
