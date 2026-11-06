@@ -7,7 +7,6 @@ Idea: answer these while writing each playbook's README, then prune accordingly.
 
 - **`host_updates/`** (2024-01): `pi.yml` apt upgrade on dumbledore. Still how you patch, or replaced?
 - **`ping/`** (2024-07): linux/sudo/windows connectivity checks; `main.yml` is empty. Keep one generic ping, or delete (`ping/k8s_hosts.yml` covers k8s; `main.yml` does not import it since k8s hosts are in the prod/nonprod inventories)?
-- **`workstation/`** (2025-03): DNS + Docker on marauders_map. Still needed? (`docker.yml` is the only user of `abbottland.docker` besides `kubernetes-gen2/01-containerd.yml`.)
 - **`pironman/`** (2025-03): Pironman case on dumbledore (tools, LED color, monitor service). Still in use?
 
 ## Hosts in `inventories/physical`

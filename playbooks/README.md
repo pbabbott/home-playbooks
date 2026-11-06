@@ -10,10 +10,11 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `prometheus/` | node_exporter / windows_exporter | physical |
 | `redis/` | Shared Redis on the NAS; Harbor is the first consumer (see its README) | physical |
 | `tailscale/` | Tailscale remote access; bananapi is the subnet router, plus marauders_map (see its README) | physical |
+| `workstation/` | DNS + Docker on `marauders_map`, the dev VM (see its README) | physical |
 | `proxmox-chimaera/` | Disk / power tuning on `chimaera` only; legacy, kept to document disk layout (see its README) | physical |
 | `ansible-template-ubuntu-noble/` | Build the Ubuntu VM template (see its README) | physical |
 
-Pending review (candidates for removal, untouched since 2024–25): `host_updates/`, `ping/`, `workstation/`, `pironman/`.
+Pending review (candidates for removal, untouched since 2024–25): `host_updates/`, `ping/`, `pironman/`.
 
 ## Conventions
 

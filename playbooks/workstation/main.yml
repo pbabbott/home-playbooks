@@ -1,0 +1,7 @@
+# ansible-playbook -e @./vault.yml playbooks/workstation/main.yml
+---
+- name: DNS
+  ansible.builtin.import_playbook: dns.yml
+
+- name: Docker
+  ansible.builtin.import_playbook: docker.yml
