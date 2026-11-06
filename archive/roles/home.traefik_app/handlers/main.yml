@@ -1,4 +1,0 @@
-- name: Restart traefik container
-  community.docker.docker_container:
-    name: traefik
-    restart: true

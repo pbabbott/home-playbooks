@@ -1,9 +1,0 @@
-
-- name: Setup docker registries
-  ansible.builtin.import_playbook: './registries'
-
-- name: Configure pull-through docker cache
-  ansible.builtin.import_playbook: './pull_through_cache.yml'
-
-- name: Authorize servers to interact with artifact repository
-  ansible.builtin.import_playbook: './auth.yml'

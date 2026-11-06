@@ -4,7 +4,7 @@ Be brief.
 
 ## Reference
 
-- `./archive/` - Legacy playbooks, not in use. Simply here for reference purposes.
+- Legacy `archive/` (old per-app Ansible playbooks, pre-k8s) was deleted 2026-11-06. See `docs/ARCHIVE.md`; the code lives at git tag `archive-final`.
 - `./playbooks/` - Current ansible playbooks
 - `./terraform` - Terraform codebase manages gen2 prod and non-prod vms on a proxmox installation, as well as as an lxc for ha proxy.
 

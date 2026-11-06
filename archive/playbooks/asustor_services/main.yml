@@ -1,8 +1,0 @@
-- name: Traefik configuration for handbrake
-  hosts: bananapi
-  roles:
-    - role: home.traefik_app
-      traefik_app_file_name: 'plex.yml'
-
-    - role: home.traefik_app
-      traefik_app_file_name: 'portainer.nas.local.yml'

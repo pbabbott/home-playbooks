@@ -1,4 +1,0 @@
-- import_playbook: ./001_docker.yml
-- import_playbook: ./002_host_installs.yml
-- import_playbook: ../pihole_dns/main.yml
-- import_playbook: ../traefik/main.yml
