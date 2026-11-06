@@ -16,6 +16,10 @@ Be brief.
 - `./playbooks/kubernetes-gen2/` - This is where my current gen2 prod and non-prod clusters are bootstrapped.
 - `./playbooks/dns` - These playbooks manage pihole, my preferred dns server.
 
+### Preferences
+
+- IPv4 only. IPv6 doesn't work well on my network and causes problems; the homelab is small and I don't want the complication, so disable IPv6 everywhere (nodes, templates, services) and don't add IPv6 config.
+
 ### Infra
 
 Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
