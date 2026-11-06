@@ -5,7 +5,6 @@ Idea: answer these while writing each playbook's README, then prune accordingly.
 
 ## Stale playbooks (nothing in the repo references them)
 
-- **`debug/`** (2024-01): scratch plays (test `abbottland.core.debug`, print web_servers vars, test notification). Delete?
 - **`host_updates/`** (2024-01): `pi.yml` apt upgrade on dumbledore. Still how you patch, or replaced?
 - **`ping/`** (2024-07): linux/sudo/windows connectivity checks; `main.yml` is empty. Keep one generic ping, or delete (`kubernetes-gen2/ping.yml` covers k8s)?
 - **`redis/`** (2024-08): Redis on room_of_requirement. Runs in the cluster now?

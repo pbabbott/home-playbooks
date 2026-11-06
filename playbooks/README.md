@@ -12,4 +12,4 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `proxmox-host/` | Disk / power tuning on `chimaera` (see its README) | physical |
 | `ansible-template-ubuntu-noble/` | Build the Ubuntu VM template (see its README) | physical |
 
-Pending review (candidates for removal, untouched since 2024–25): `debug/`, `host_updates/`, `ping/`, `redis/`, `vpn/`, `workstation/`, `pironman/`.
+Pending review (candidates for removal, untouched since 2024–25): `host_updates/`, `ping/`, `redis/`, `vpn/`, `workstation/`, `pironman/`.
