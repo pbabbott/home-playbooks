@@ -5,7 +5,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | Dir | Purpose | Inventory |
 |---|---|---|
 | `kubernetes-gen2/` | Bootstrap gen2 k8s nodes. `main.yml` runs 00–07 in order | `-i inventories/prod` or `nonprod` |
-| `shutdown/` | Shut down VMs/hosts (respects `shutdown_exempt`) | prod/nonprod |
+| `shutdown/` | Power off the k8s nodes ahead of a power outage; unfinished (see its README) | prod/nonprod |
 | `dns/` | Pi-hole on bananapi (see its README) | physical |
 | `prometheus/` | node_exporter / windows_exporter | physical |
 | `redis/` | Shared Redis on the NAS; Harbor is the first consumer (see its README) | physical |
