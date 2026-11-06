@@ -9,7 +9,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `dns/` | Pi-hole on bananapi (see its README) | physical |
 | `prometheus/` | node_exporter / windows_exporter | physical |
 | `tailscale/` | Tailscale on marauders_map, bananapi | physical |
-| `proxmox-host/` | Disk / power tuning on `chimaera` (see its README) | physical |
+| `proxmox-chimaera/` | Disk / power tuning on `chimaera` only; legacy, kept to document disk layout (see its README) | physical |
 | `ansible-template-ubuntu-noble/` | Build the Ubuntu VM template (see its README) | physical |
 
 Pending review (candidates for removal, untouched since 2024–25): `host_updates/`, `ping/`, `redis/`, `vpn/`, `workstation/`, `pironman/`.
