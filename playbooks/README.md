@@ -4,7 +4,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 
 | Dir | Purpose | Inventory |
 |---|---|---|
-| `kubernetes-gen2/` | Bootstrap gen2 k8s nodes. `main.yml` runs 00–05; `06-kubelet` and `07-flux-operator` are not in `main.yml` (unconfirmed if intentional) | `-i inventories/prod` or `nonprod` |
+| `kubernetes-gen2/` | Bootstrap gen2 k8s nodes. `main.yml` runs 00–07 in order | `-i inventories/prod` or `nonprod` |
 | `shutdown/` | Shut down VMs/hosts (respects `shutdown_exempt`) | prod/nonprod |
 | `dns/` | Pi-hole on bananapi | physical |
 | `prometheus/` | node_exporter / windows_exporter | physical |

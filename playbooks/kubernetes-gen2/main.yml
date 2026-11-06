@@ -1,8 +1,6 @@
 # ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/main.yml
 # ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/main.yml
 ---
-# NOTE: 06-kubelet.yml and 07-flux-operator.yml are not imported here (TODO: confirm whether that is intended);
-# run them separately if needed.
 - name: Configure node DNS resolution
   ansible.builtin.import_playbook: 00-dns.yml
 

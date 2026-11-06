@@ -21,6 +21,7 @@ Requires python3, `ansible-core` (2.17 in the devcontainer), `paramiko`, `pywinr
 
 ```sh
 ./scripts/setup.sh        # installs pinned roles + collections into .ansible/
+./scripts/vault-pass.sh   # writes vault_pass.txt from 1Password (item ansible_vault_pass, Homelab vault)
 ```
 
 To update a dependency: bump its version in `requirements.yml`, re-run `scripts/setup.sh`.
