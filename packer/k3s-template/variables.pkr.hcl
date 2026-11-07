@@ -48,3 +48,8 @@ variable "ssh_private_key_file" {
   type    = string
   default = "~/.ssh/id_ed25519"
 }
+
+variable "ssh_timeout" {
+  type    = string
+  default = "10m"
+}

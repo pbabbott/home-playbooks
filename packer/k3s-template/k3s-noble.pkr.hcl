@@ -26,9 +26,14 @@ source "proxmox-clone" "k3s" {
   template_name        = var.template_name
   template_description = "k3s-ready Ubuntu 24.04 (built by packer/k3s-template)"
 
-  qemu_agent = true
-  cores      = 4
-  memory     = 4096
+  qemu_agent              = true
+  cloud_init              = true
+  cloud_init_storage_pool = "local-lvm"
+  scsi_controller         = "virtio-scsi-single"
+  cores                   = 4
+  cpu_type                = "host"
+  os                      = "l26"
+  memory                  = 4096
 
   network_adapters {
     bridge = "vmbr0"
@@ -45,7 +50,7 @@ source "proxmox-clone" "k3s" {
   ssh_host             = var.build_ip
   ssh_username         = "firebolt"
   ssh_private_key_file = var.ssh_private_key_file
-  ssh_timeout          = "10m"
+  ssh_timeout          = var.ssh_timeout
 }
 
 build {

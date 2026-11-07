@@ -7,10 +7,19 @@
   vars:
     host_tz: America/Chicago
   tasks:
-    - name: Install packages
+    - name: Wait for first-boot cloud-init
+      ansible.builtin.command: cloud-init status --wait
+      register: ci_wait
+      changed_when: false
+      failed_when: ci_wait.rc not in [0, 2] # 2 = done with recoverable warnings
+
+    - name: Upgrade packages
       ansible.builtin.apt:
         update_cache: true
         upgrade: dist
+
+    - name: Install packages
+      ansible.builtin.apt:
         name:
           - qemu-guest-agent
           - nfs-common

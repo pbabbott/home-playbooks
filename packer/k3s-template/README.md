@@ -20,3 +20,8 @@ packer build .
 
 ## Required variables
 `proxmox_api_url`, `proxmox_api_token_id`, `proxmox_api_token_secret` (from `PKR_VAR_*`, set by the script). Others have defaults in `variables.pkr.hcl`.
+
+## Gotchas (proxmox-clone plugin)
+- Always set `scsi_controller` (plugin defaults to `lsi`, which breaks boot of the clone) and `cloud_init = true` (otherwise the cloud-init drive is dropped and clones never get network/ssh keys).
+- `build_ip` is on the VM range (192.168.6.x) and must be unused.
+- The Proxmox token (PVEAdmin) lacks `Sys.Modify`, so the base image is downloaded to `/var/lib/vz/import/` manually (see `terraform/hogwarts/templates.tf`).
