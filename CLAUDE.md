@@ -23,6 +23,8 @@ Be brief.
 
 Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
 
+`hogwarts` (new primary Proxmox, `ssh root@192.168.4.196`): disk layout and storage pools (`vm-nvme-01`, `vm-nvme-02`) are in `docs/HOGWARTS-STORAGE.md`. Identify drives by serial, not `/dev/nvmeXn1`.
+
 Most `ansible-playbook`/`ansible` commands need vault vars: pass `-e @./vault.yml`. Without it, plays referencing `{{ inventoryPasswords.* }}` or other vaulted vars fail with "undefined variable".
 
 ### Cloudflare / Terraform

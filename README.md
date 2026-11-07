@@ -5,6 +5,7 @@ Ansible playbooks (and Terraform) for home infra.
 
 - **What playbooks exist and their status:** [`playbooks/README.md`](playbooks/README.md) (index with a summary per dir).
 - **What hosts exist and their roles:** [`docs/HOSTS.md`](docs/HOSTS.md).
+- **`hogwarts` disk layout and Proxmox storage pools:** [`docs/HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md).
 - **Connection details / vars:** `inventories/` (see Layout below).
 - **Past work:** `docs/` (plans, runbooks, incidents).
 
