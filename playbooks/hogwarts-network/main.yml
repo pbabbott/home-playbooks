@@ -1,0 +1,37 @@
+# ansible-playbook -i inventories/physical -e @./vault.yml playbooks/hogwarts-network/main.yml
+# Mitigation for the e1000e "Detected Hardware Unit Hang" on nic0 (2026-11-07, docs/incidents/2026-11-07-hogwarts-e1000e-tx-hang.md):
+# turn off TSO/GSO/GRO on the onboard NIC, now and persistently (post-up on the nic0 stanza in /etc/network/interfaces).
+- name: hogwarts NIC offload workaround
+  hosts: hogwarts
+  become: true
+  vars:
+    nic: nic0
+    ethtool_features: "tso off gso off gro off"
+  tasks:
+    - name: Install ethtool
+      ansible.builtin.apt:
+        name: ethtool
+        state: present
+
+    - name: Persist the offload setting on the NIC stanza
+      ansible.builtin.lineinfile:
+        path: /etc/network/interfaces
+        insertafter: '^iface {{ nic }} inet manual'
+        line: "\tpost-up ethtool -K {{ nic }} {{ ethtool_features }}"
+        regexp: '^\s*post-up ethtool -K {{ nic }} '
+
+    - name: Read current offload state
+      ansible.builtin.command: ethtool -k {{ nic }}
+      register: offloads
+      changed_when: false
+      check_mode: false
+
+    - name: Apply offloads off now (no link flap)
+      ansible.builtin.command: ethtool -K {{ nic }} {{ ethtool_features }}
+      when: offloads.stdout is regex('(tcp-segmentation|generic-segmentation|generic-receive)-offload:\s+on')
+
+    - name: Verify
+      ansible.builtin.shell: ethtool -k {{ nic }} | grep -E '^(tcp-segmentation|generic-segmentation|generic-receive)-offload'
+      register: verify
+      changed_when: false
+      failed_when: "' on' in verify.stdout"
