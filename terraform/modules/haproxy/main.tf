@@ -3,9 +3,10 @@
 # in Terraform unless your provider uses a root@pam token; enable CT Options → Features → Nesting in the UI
 # once, or: `pct set <vmid> -features nesting=1` on the node.
 locals {
-  haproxy_ipv4_cidr    = "192.168.6.28/22"
-  haproxy_ipv4_address = "192.168.6.28"
-  haproxy_gateway      = "192.168.4.1"
+  config_file          = coalesce(var.config_file, "${path.module}/haproxy.cfg")
+  haproxy_ipv4_cidr    = "${var.ip_address}/22"
+  haproxy_ipv4_address = var.ip_address
+  haproxy_gateway      = var.gateway
 
   # Shared SSH target for provisioners (LXC guest, not the Proxmox node).
   ssh_haproxy = {
@@ -19,7 +20,7 @@ locals {
 
 # 1. Download the Ubuntu 24.04 standard template
 resource "proxmox_virtual_environment_download_file" "ubuntu_noble_template" {
-  node_name    = "chimaera"
+  node_name    = var.node_name
   content_type = "vztmpl" # This tells Proxmox it's an LXC template
   datastore_id = "local"  # This is where it will be stored
 
@@ -34,13 +35,18 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_noble_template" {
 resource "proxmox_virtual_environment_container" "haproxy_lxc" {
   depends_on = [proxmox_virtual_environment_download_file.ubuntu_noble_template]
 
-  node_name = "chimaera"
-  vm_id     = 208
+  node_name = var.node_name
+  vm_id     = var.vmid
 
   unprivileged = false
 
+  # Nesting is enabled out of band (pct set <vmid> -features nesting=1); the API token cannot manage it.
+  lifecycle {
+    ignore_changes = [features]
+  }
+
   initialization {
-    hostname = "tf-haproxy-lb"
+    hostname = var.hostname
 
     ip_config {
       ipv4 {
@@ -84,7 +90,7 @@ resource "proxmox_virtual_environment_container" "haproxy_lxc" {
   }
 
   disk {
-    datastore_id = "local-lvm"
+    datastore_id = var.datastore_id
     size         = 8
   }
 }
@@ -95,7 +101,7 @@ resource "terraform_data" "haproxy_guest" {
 
   triggers_replace = [
     proxmox_virtual_environment_container.haproxy_lxc.id,
-    filemd5("${path.module}/haproxy.cfg"),
+    filemd5(local.config_file),
   ]
 
   # 1) Package, LXC-safe systemd drop-in for the stock unit, enable unit (config not valid until step 3).
@@ -121,7 +127,7 @@ resource "terraform_data" "haproxy_guest" {
 
   # 2) Upload repo config (same path as file() in triggers_replace).
   provisioner "file" {
-    source      = "${path.module}/haproxy.cfg"
+    source      = local.config_file
     destination = "/tmp/haproxy.cfg.tf"
     connection {
       type        = local.ssh_haproxy.type

@@ -29,5 +29,6 @@ Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. g
 | `marauders_map` | 192.168.5.91 | `chimaera` | Dev/workstation VM (Ubuntu 24). Reach over SSH from the LAN or via Tailscale | hand-made | `workstation/`, `tailscale/` |
 | `ansible-template-ubuntu-noble` | 192.168.6.91 | `chimaera` | Proxmox VM template (ID 901, Ubuntu 24.04), cloned into k8s nodes | Ansible | `ansible-template-ubuntu-noble/` |
 | HAProxy LXC | 192.168.6.28 | `chimaera` | Load balancer (stats page at http://192.168.6.28:8404/). Defined in `terraform/modules/haproxy`, applied from `terraform/chimaera` | Terraform | none |
+| HAProxy LXC (gen3) | 192.168.6.29 | `hogwarts` | Ingress for the gen3 k3s workers (NodePorts 30080/30443, PROXY v2); LXC 213, config `terraform/hogwarts/haproxy.cfg`, stats http://192.168.6.29:8404/. Replaces the chimaera one after the eero 80/443 forward is repointed | Terraform | none |
 
 Prod and non-prod k8s workloads are deployed by Flux from `home-kubernetes`.

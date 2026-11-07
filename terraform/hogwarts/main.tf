@@ -18,3 +18,15 @@ module "prod_vm" {
   dns_servers     = ["192.168.4.144", "1.1.1.1"]
   ssh_public_keys = [trimspace(file(pathexpand("~/.ssh/id_ed25519.pub")))]
 }
+
+# gen3 ingress LXC (replaces the gen2 HAProxy on chimaera, VM 208 / 192.168.6.28). Cutover = repoint the eero 80/443
+# port-forward to this IP, then retire the old one.
+module "haproxy" {
+  source = "../modules/haproxy"
+
+  node_name   = var.proxmox_node
+  vmid        = 213
+  hostname    = "tf-haproxy-gen3"
+  ip_address  = "192.168.6.29"
+  config_file = "${path.module}/haproxy.cfg"
+}
