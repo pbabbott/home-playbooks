@@ -1,7 +1,8 @@
 # kubernetes-gen3
 
 k3s on the hogwarts VMs (`terraform/hogwarts`, VMs 210–212 cloned from template 901), then Flux hands over to `home-kubernetes`.
-**Status: written and syntax-checked, not yet run.**
+**Status: plays 00–04 run 2026-11-07 (3 nodes Ready, Calico + CoreDNS custom verified). `05-flux-operator.yml` deliberately NOT run: Flux handover waits for the `home-kubernetes` gen3 scaffolding ([plan](../../docs/plans/2026-11-07-gen3-flux-handover.md)).**
+Run 00–04 only: `ansible-playbook -i inventories/gen3 $P/00-dns.yml $P/01-data-disk.yml $P/02-k3s-server.yml $P/03-cluster-addons.yml $P/04-k3s-agents.yml` (one invocation; 04 needs the token read in 02). `main.yml` includes 05, so don't use it until handover.
 
 ```
 ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/main.yml
@@ -25,7 +26,7 @@ Key auth as `firebolt`; no vault needed (the join token is read from the control
 - CoreDNS: gen2 patched the `coredns` ConfigMap; k3s rewrites it, so gen3 uses `coredns-custom` (`local.abbottland.io` → Pi-hole, `nas.local.abbottland.io` → 192.168.4.124). Other names use the default upstream (gen2 forwarded everything to Pi-hole).
 
 ## Before / when first running
-- Verify nodes go Ready after Calico: k3s keeps CNI bin/conf under `/var/lib/rancher/k3s/...`; the chart values may need CNI path overrides.
+- Calico's HelmChart needs `bootstrap: true` (install job must run on the NotReady node). CNI paths needed no override; nodes went Ready.
 - `clusters/prod-gen3` does not exist in `home-kubernetes` yet (needs cluster dir + `crds|infra|applications/prod-gen3` overlays, istio-cni k3s paths, prometheus control-plane scrape tweaks, re-sealed `op-credentials`). Flux will sit unreconciled until it does.
 - HAProxy LXC needs gen3 backends (workers .42/.43, NodePorts 30080/30443) before traffic can reach gen3.
 - Off-host etcd snapshot copy (NAS) not configured; only local snapshots every 6h.

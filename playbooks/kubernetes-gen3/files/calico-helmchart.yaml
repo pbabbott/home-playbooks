@@ -11,6 +11,7 @@ spec:
   repo: https://docs.tigera.io/calico/charts
   chart: tigera-operator
   version: v3.27.3
+  bootstrap: true # install job must tolerate the NotReady node (no CNI yet)
   targetNamespace: tigera-operator
   createNamespace: true
   valuesContent: |-

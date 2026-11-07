@@ -58,6 +58,14 @@
         src: /etc/rancher/k3s/k3s.yaml
       register: k3s_kubeconfig
 
+    - name: Ensure local ~/.kube exists
+      delegate_to: localhost
+      become: false
+      ansible.builtin.file:
+        path: ~/.kube
+        state: directory
+        mode: "0700"
+
     - name: Save kubeconfig locally with the controller IP
       delegate_to: localhost
       become: false

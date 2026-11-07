@@ -5,7 +5,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | Dir | Status | Summary | Inventory |
 |---|---|---|---|
 | `kubernetes-gen2/` | live | Installs kubeadm k8s on the Terraform-created VMs of the gen2 prod/non-prod clusters, then bootstraps Flux so `home-kubernetes` takes over. `main.yml` runs 00–07 in order. Non-prod is currently powered off. | `-i inventories/prod` or `nonprod` |
-| `kubernetes-gen3/` | written, not yet run | k3s on the hogwarts VMs (210–212): DNS, Longhorn disk, k3s server/agents, Calico, CoreDNS custom, Flux Operator. See its README. | `-i inventories/gen3` |
+| `kubernetes-gen3/` | 00–04 run (cluster up, Flux not bootstrapped) | k3s on the hogwarts VMs (210–212): DNS, Longhorn disk, k3s server/agents, Calico, CoreDNS custom, Flux Operator. See its README. | `-i inventories/gen3` |
 | `dns/` | live | Pi-hole (Docker) on `bananapi`, the homelab DNS. Opt-in per device; also serves `*.local.abbottland.io`. | physical |
 | `tailscale/` | live | Remote access. `bananapi` is a subnet router for `192.168.4.0/22`; `marauders_map` is a plain node. Replaced WireGuard. | physical |
 | `redis/` | live | Shared Redis (Docker) on the NAS `room_of_requirement`, no auth by design (LAN only). Harbor is the first consumer. | physical |
