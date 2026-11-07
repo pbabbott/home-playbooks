@@ -5,6 +5,7 @@ Ansible playbooks (and Terraform) for home infra.
 
 - **What playbooks exist and their status:** [`playbooks/README.md`](playbooks/README.md) (index with a summary per dir).
 - **What hosts exist and their roles:** [`docs/HOSTS.md`](docs/HOSTS.md).
+- **LAN, DHCP (guest) vs static IP ranges:** [`docs/NETWORK.md`](docs/NETWORK.md). Pick new static IPs from there.
 - **`hogwarts` disk layout and Proxmox storage pools:** [`docs/HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md).
 - **Connection details / vars:** `inventories/` (see Layout below).
 - **Past work:** `docs/` (plans, runbooks, incidents).
@@ -20,7 +21,7 @@ Ansible playbooks (and Terraform) for home infra.
 | `.ansible/` (gitignored) | Installed Galaxy roles/collections |
 | `terraform/` | Proxmox VMs (`chimaera/`, `hogwarts/`) + Cloudflare (`cloudflare/`) (see `terraform/README.md`) |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
-| `docs/` | Host roles (`HOSTS.md`), plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
+| `docs/` | Host roles (`HOSTS.md`), LAN/DHCP layout (`NETWORK.md`), plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
 
 ## Setup
 

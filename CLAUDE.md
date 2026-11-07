@@ -21,6 +21,8 @@ Be brief.
 
 ### Infra
 
+Network: LAN `192.168.4.0/22`. DHCP pool `192.168.4.20`–`192.168.5.254` is for guest wifi devices; everything else (e.g. `192.168.6.x`) is static space for infra. Details and allocations: `docs/NETWORK.md`. Pick new static IPs from the static space, never the pool.
+
 Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
 
 `hogwarts` (new primary Proxmox, `ssh root@192.168.4.196`): disk layout and storage pools (`vm-nvme-01`, `vm-nvme-02`) are in `docs/HOGWARTS-STORAGE.md`. Identify drives by serial, not `/dev/nvmeXn1`.

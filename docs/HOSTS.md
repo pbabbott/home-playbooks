@@ -4,7 +4,7 @@ The homelab's machines and what each does. Source of truth for connection detail
 `inventories/physical/hosts.yml` (physical + standalone VMs) and `inventories/{prod,nonprod}` (k8s VMs).
 Playbook dirs are in [`playbooks/README.md`](../playbooks/README.md). Keep this file updated when a host is added, removed or changes role.
 
-Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`.
+Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. guest DHCP vs static ranges and allocations: [`NETWORK.md`](NETWORK.md).
 
 ## Physical hosts
 
