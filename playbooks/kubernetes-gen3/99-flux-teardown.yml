@@ -1,0 +1,56 @@
+# Remove Flux completely so 05-flux-operator.yml can bootstrap from a clean slate (rebuild test / recovery).
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/99-flux-teardown.yml -e confirm_flux_teardown=true
+# Optional: -e '{"flux_teardown_namespaces": ["podinfo"]}' also deletes those app namespaces (and everything in them).
+# NOT part of main.yml. Workloads Flux deployed keep running unless their namespaces are listed above.
+- name: Tear down Flux Operator and Flux
+  hosts:
+    - kubernetes_controllers
+  become: true
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  vars:
+    flux_teardown_namespaces: []
+    manifest_path: /var/lib/rancher/k3s/server/manifests/flux-operator.yaml
+  pre_tasks:
+    - name: Require explicit confirmation
+      ansible.builtin.assert:
+        that: confirm_flux_teardown | default(false) | bool
+        fail_msg: "Destructive. Re-run with -e confirm_flux_teardown=true"
+      run_once: true
+
+  tasks:
+    # The k3s manifest file must go first on every controller, or k3s re-applies the HelmChart.
+    - name: Remove the operator manifest from every controller
+      ansible.builtin.file:
+        path: "{{ manifest_path }}"
+        state: absent
+
+    - name: Cluster-wide teardown (once, on one controller)
+      run_once: true
+      block:
+        - name: Delete the FluxInstance (operator removes the Flux controllers)
+          ansible.builtin.command: kubectl delete fluxinstance flux -n flux-system --ignore-not-found --timeout=180s
+          changed_when: true
+
+        - name: Delete the operator HelmChart (helm uninstalls the operator)
+          ansible.builtin.command: kubectl delete helmchart flux-operator -n kube-system --ignore-not-found --timeout=180s
+          changed_when: true
+
+        # k3s keeps an Addon record (with the file checksum) and will NOT re-apply an unchanged file while it exists.
+        - name: Delete the k3s Addon record
+          ansible.builtin.command: kubectl delete addon flux-operator -n kube-system --ignore-not-found
+          changed_when: true
+
+        - name: Delete flux-system and any requested app namespaces
+          ansible.builtin.command: kubectl delete namespace flux-system {{ flux_teardown_namespaces | join(' ') }} --ignore-not-found --timeout=180s
+          changed_when: true
+
+        - name: List Flux Operator CRDs
+          ansible.builtin.shell: kubectl get crd -o name | grep fluxcd.controlplane.io || true
+          register: flux_crds
+          changed_when: false
+
+        - name: Delete Flux Operator CRDs
+          ansible.builtin.command: kubectl delete {{ flux_crds.stdout_lines | join(' ') }} --timeout=120s
+          when: flux_crds.stdout_lines | length > 0
+          changed_when: true
