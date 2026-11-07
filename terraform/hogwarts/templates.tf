@@ -10,6 +10,7 @@ resource "proxmox_virtual_environment_vm" "tpl_ubuntu_noble_base" {
   vm_id         = 900
   template      = true
   started       = false
+  on_boot       = false # templates never start
   tags          = ["template", "ubuntu-noble"]
   scsi_hardware = "virtio-scsi-single"
   boot_order    = ["scsi0"]

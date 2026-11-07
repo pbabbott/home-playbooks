@@ -58,3 +58,15 @@ variable "bridge" {
   type        = string
   default     = "vmbr0"
 }
+
+variable "ssh_public_keys" {
+  description = "SSH public keys injected via cloud-init at create time. Required for the gen3 template (it has none baked in); leave empty for the gen2 template."
+  type        = list(string)
+  default     = []
+}
+
+variable "username" {
+  description = "Cloud-init user (only used when ssh_public_keys is set)"
+  type        = string
+  default     = "firebolt"
+}

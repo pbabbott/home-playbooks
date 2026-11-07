@@ -57,9 +57,12 @@ build {
   sources = ["source.proxmox-clone.k3s"]
 
   provisioner "ansible" {
-    playbook_file   = "${path.root}/../../playbooks/k3s-template/main.yml"
-    user            = "firebolt"
-    use_proxy       = false
-    extra_arguments = ["--ssh-extra-args", "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"]
+    playbook_file = "${path.root}/../../playbooks/k3s-template/main.yml"
+    user          = "firebolt"
+    use_proxy     = false
+    extra_arguments = [
+      "--ssh-extra-args", "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null",
+      "-e", "ansible_python_interpreter=/usr/bin/python3",
+    ]
   }
 }

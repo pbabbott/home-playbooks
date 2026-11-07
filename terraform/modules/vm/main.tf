@@ -38,6 +38,16 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   initialization {
+    # Identity is set per VM at create time (the gen3 template carries no keys). Skipped when no keys are given
+    # (gen2/chimaera template has them baked in).
+    dynamic "user_account" {
+      for_each = length(var.ssh_public_keys) > 0 ? [1] : []
+      content {
+        username = var.username
+        keys     = var.ssh_public_keys
+      }
+    }
+
     ip_config {
       ipv4 {
         address = "${var.ip_address}/22"
