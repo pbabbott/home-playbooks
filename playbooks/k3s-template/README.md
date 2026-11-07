@@ -8,8 +8,7 @@ sets k3s prerequisites (modules, sysctls, no swap); cleans cloud-init, machine-i
 
 Build: see [`packer/k3s-template/README.md`](../../packer/k3s-template/README.md).
 
-Only `hogwarts` has this template so far. Plan for also building it on `chimaera` (temporary doc, delete once done):
-[`docs/plans/2026-11-07-k3s-template-on-chimaera.md`](../../docs/plans/2026-11-07-k3s-template-on-chimaera.md).
+Built per Proxmox node: hogwarts (900/901) and chimaera (910/911, because 900/901 there are gen2). Per-node settings live in `scripts/node-env.sh`; run `scripts/build-k3s-template.sh <hogwarts|chimaera>`.
 
 ## Required variables
 None. `host_tz` defaults to `America/Chicago` (see `main.yml`). Packer supplies the SSH connection.

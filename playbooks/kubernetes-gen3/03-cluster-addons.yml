@@ -1,8 +1,7 @@
 # ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/03-cluster-addons.yml
 # Dropped into k3s's auto-deploy manifests dir (applied by the embedded helm/deploy controllers); no helm binary needed.
 - name: Calico and CoreDNS customisation
-  hosts:
-    - kubernetes_controllers
+  hosts: kubernetes_controllers[0] # manifests are stored in etcd; apply once, from the first controller
   become: true
   tasks:
     - name: Calico (tigera-operator) HelmChart

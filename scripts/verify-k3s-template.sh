@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Smoke-tests template 901 on hogwarts: full-clones it twice, injects identity via cloud-init (as Terraform does),
-# checks the node setup and clone uniqueness, then destroys the clones. Usage: ./scripts/verify-k3s-template.sh [TEMPLATE_ID]
+# Smoke-tests the k3s template on a node: full-clones it twice, injects identity via cloud-init (as Terraform does),
+# checks the node setup and clone uniqueness, then destroys the clones. Usage: ./scripts/verify-k3s-template.sh [hogwarts|chimaera] [TEMPLATE_ID]
+# On RAM-tight nodes (chimaera) clones run with reduced memory (TEMP_RAM in node-env.sh).
 set -uo pipefail
 
-PVE=root@192.168.4.196
-TPL=${1:-901}
+cd "$(dirname "$0")/.." && source ./scripts/node-env.sh && node_env "${1:-hogwarts}" || exit 1
+TPL=${2:-$TPL_ID}
 IDS=(9998 9999); IPS=(192.168.6.251 192.168.6.252)   # temp test IPs, static space (docs/NETWORK.md)
 PUB=${SSH_PUBKEY:-$HOME/.ssh/id_ed25519.pub}
 SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR)
@@ -17,6 +18,7 @@ cleanup
 scp -q "${SSH_OPTS[@]}" "$PUB" "$PVE:/tmp/verify.pub"
 for i in 0 1; do
   ssh "$PVE" "qm clone $TPL ${IDS[$i]} --name verify-${IDS[$i]} --full 1 >/dev/null &&
+    qm set ${IDS[$i]} --memory $TEMP_RAM >/dev/null &&
     qm set ${IDS[$i]} --ciuser firebolt --sshkeys /tmp/verify.pub --ipconfig0 ip=${IPS[$i]}/22,gw=192.168.4.1 >/dev/null &&
     qm start ${IDS[$i]}" || { echo "clone/start failed"; exit 1; }
 done

@@ -8,7 +8,7 @@ Ansible playbooks (and Terraform) for home infra.
 - **LAN, DHCP (guest) vs static IP ranges:** [`docs/NETWORK.md`](docs/NETWORK.md). Pick new static IPs from there.
 - **`hogwarts` disk layout and Proxmox storage pools:** [`docs/HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md).
 - **Terraform state (where it lives, how to log in, recovery):** [`docs/TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md). All Terraform state is in NAS Postgres: `source scripts/tfstate-env.sh` before terraform in any root.
-- **gen3 k3s VM templates on `hogwarts` (900/901):** [`packer/k3s-template/README.md`](packer/k3s-template/README.md), provisioning in [`playbooks/k3s-template/`](playbooks/k3s-template/README.md).
+- **gen3 k3s VM templates (hogwarts 900/901, chimaera 910/911):** [`packer/k3s-template/README.md`](packer/k3s-template/README.md), provisioning in [`playbooks/k3s-template/`](playbooks/k3s-template/README.md).
 - **Connection details / vars:** `inventories/` (see Layout below).
 - **Past work:** `docs/` (plans, runbooks, incidents).
 

@@ -29,7 +29,7 @@ source "proxmox-clone" "k3s" {
   tags                    = "template;ubuntu-noble;k3s"
   qemu_agent              = true
   cloud_init              = true
-  cloud_init_storage_pool = "local-lvm"
+  cloud_init_storage_pool = var.cloud_init_storage_pool
   scsi_controller         = "virtio-scsi-single"
   cores                   = 4
   cpu_type                = "host"
@@ -37,7 +37,7 @@ source "proxmox-clone" "k3s" {
   memory                  = 4096
 
   network_adapters {
-    bridge = "vmbr0"
+    bridge = var.bridge
     model  = "virtio"
   }
 

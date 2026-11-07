@@ -2,8 +2,10 @@
 cluster-init: true
 node-ip: {{ ansible_host }}
 tls-san:
-  - {{ ansible_host }}
-  - {{ inventory_hostname }}
+{% for h in groups['kubernetes_controllers'] %}
+  - {{ hostvars[h]['ansible_host'] }}
+  - {{ h }}
+{% endfor %}
 write-kubeconfig-mode: "0600"
 
 # Calico replaces flannel and its policy controller (gen2 parity: 10.244.0.0/16, VXLAN).

@@ -12,7 +12,7 @@ This directory holds one Terraform root per Proxmox host (`chimaera/`, `hogwarts
 | [../docs/TERRAFORM-STATE.md](../docs/TERRAFORM-STATE.md) | Where state is stored (hogwarts: NAS Postgres), how to log in, gotchas, recovery |
 | [docs/proxmox-storage.md](docs/proxmox-storage.md) | How storage pools map to Terraform variables and VM placement |
 
-Templates: **gen2 (`chimaera`, VMID 901)** is created by `playbooks/ansible-template-ubuntu-noble/` (legacy). **gen3 (`hogwarts`)**: base template 900 is defined in `hogwarts/templates.tf`, and the k3s-ready template 901 is built by `../packer/k3s-template/` (run `../scripts/build-k3s-template.sh`).
+Templates: **gen2 (`chimaera`, VMID 901)** is created by `playbooks/ansible-template-ubuntu-noble/` (legacy). **gen3**: base templates come from `modules/ubuntu-template` (hogwarts 900, chimaera 910; `hogwarts/templates.tf`, `chimaera/k3s.tf`), and the k3s-ready templates (hogwarts 901, chimaera 911) are built by `../packer/k3s-template/` (run `../scripts/build-k3s-template.sh`).
 
 **State:** all roots keep their state in Postgres on the NAS; run `source ../../scripts/tfstate-env.sh` before terraform in any root. See [TERRAFORM-STATE.md](../docs/TERRAFORM-STATE.md).
 

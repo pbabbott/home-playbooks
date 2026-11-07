@@ -88,3 +88,18 @@ variable "prod_vms" {
     }
   }
 }
+
+variable "k3s_vms" {
+  description = "gen3 k3s nodes on chimaera (cloned from template 911). memory in MB, data_disk_gb optional (Longhorn disk on fast-ssd)."
+  type = map(object({
+    vmid         = number
+    ip           = string
+    cores        = number
+    memory       = number
+    data_disk_gb = optional(number)
+  }))
+  default = {
+    "tf-prod-k3s-controller-3" = { vmid = 215, ip = "192.168.6.45", cores = 2, memory = 3072 }
+    "tf-prod-k3s-worker-3"     = { vmid = 216, ip = "192.168.6.46", cores = 4, memory = 6144, data_disk_gb = 100 }
+  }
+}

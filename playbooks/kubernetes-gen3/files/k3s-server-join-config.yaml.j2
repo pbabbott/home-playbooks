@@ -1,0 +1,38 @@
+# Managed by Ansible (playbooks/kubernetes-gen3). JOIN config for additional embedded-etcd servers. Why each setting: see README.md.
+server: https://{{ hostvars[groups['kubernetes_controllers'][0]]['ansible_host'] }}:6443
+token: "{{ hostvars[groups['kubernetes_controllers'][0]]['k3s_node_token'].content | b64decode | trim }}"
+node-ip: {{ ansible_host }}
+tls-san:
+{% for h in groups['kubernetes_controllers'] %}
+  - {{ hostvars[h]['ansible_host'] }}
+  - {{ h }}
+{% endfor %}
+write-kubeconfig-mode: "0600"
+
+# Calico replaces flannel and its policy controller (gen2 parity: 10.244.0.0/16, VXLAN).
+flannel-backend: none
+disable-network-policy: true
+cluster-cidr: 10.244.0.0/16
+disable:
+  - traefik        # Istio is the ingress (NodePort 30080/30443 via HAProxy)
+  - servicelb      # no LoadBalancer services; HAProxy LXC fronts NodePorts
+  - local-storage  # Longhorn is the default StorageClass
+  - metrics-server # installed by Flux (home-kubernetes infra/base/metrics-server)
+
+# Incident-driven tuning carried over from gen2 (2026-05-10 etcd fragmentation, 2026-10-12 leader-election losses)
+etcd-arg:
+  - auto-compaction-mode=periodic
+  - auto-compaction-retention=1h
+  - quota-backend-bytes=2147483648
+kube-controller-manager-arg:
+  - leader-elect-lease-duration=60s
+  - leader-elect-renew-deadline=40s
+  - leader-elect-retry-period=10s
+kube-scheduler-arg:
+  - leader-elect-lease-duration=60s
+  - leader-elect-renew-deadline=40s
+  - leader-elect-retry-period=10s
+
+# Built-in etcd snapshots (local, /var/lib/rancher/k3s/server/db/snapshots). Off-host copy to the NAS: TODO.
+etcd-snapshot-schedule-cron: "0 */6 * * *"
+etcd-snapshot-retention: 20

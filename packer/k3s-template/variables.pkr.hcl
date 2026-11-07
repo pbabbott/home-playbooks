@@ -53,3 +53,14 @@ variable "ssh_timeout" {
   type    = string
   default = "10m"
 }
+
+variable "cloud_init_storage_pool" {
+  type        = string
+  default     = "local-lvm"
+  description = "Proxmox pool for the cloud-init drive of the build VM/template"
+}
+
+variable "bridge" {
+  type    = string
+  default = "vmbr0"
+}
