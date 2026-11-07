@@ -52,3 +52,9 @@ variable "started" {
   type        = bool
   default     = true
 }
+
+variable "bridge" {
+  description = "Network bridge"
+  type        = string
+  default     = "vmbr0"
+}

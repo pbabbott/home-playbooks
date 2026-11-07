@@ -33,7 +33,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   }
 
   network_device {
-    bridge = "vmbr0"
+    bridge = var.bridge
     model  = "virtio"
   }
 

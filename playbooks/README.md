@@ -10,6 +10,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `redis/` | live | Shared Redis (Docker) on the NAS `room_of_requirement`, no auth by design (LAN only). Harbor is the first consumer. | physical |
 | `prometheus/` | live, incomplete | node_exporter / windows_exporter on physical hosts. Prometheus itself lives in `home-kubernetes`; nothing here configures it. | physical |
 | `workstation/` | live | DNS + Docker on `marauders_map`, the hand-made dev VM. | physical |
+| `k3s-template/` | new | Provisions the gen3 k3s node template `901` on `hogwarts` (run by Packer from `packer/k3s-template/`). | none (Packer) |
 | `ansible-template-ubuntu-noble/` | legacy | Builds Proxmox VM template `901` (Ubuntu 24.04) on `chimaera`; gen2 VMs are cloned from it. Reference for gen3. | physical |
 | `proxmox-chimaera/` | legacy | One-shot SSD/power tuning for `chimaera` only (not `hogwarts`); kept to document its disk layout. No `main.yml`. | physical |
 | `shutdown/` | unfinished | Power off k8s nodes ahead of an outage. Not verified against the current fleet. | prod/nonprod |
