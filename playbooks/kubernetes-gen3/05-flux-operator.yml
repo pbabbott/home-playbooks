@@ -46,6 +46,7 @@
 
     - name: Copy key, create secret, then destroy key
       when: flux_secret_check.rc != 0
+      run_once: true  # the cluster is shared; one controller creates the secret
       block:
         - name: Copy SSH private key to controller
           ansible.builtin.copy:
@@ -93,6 +94,7 @@
 
     - name: Pause - verify deploy key is added to GitHub
       when: flux_secret_check.rc != 0
+      run_once: true
       ansible.builtin.pause:
         prompt: |
           Verify this deploy key exists at GitHub before continuing.
@@ -108,8 +110,10 @@
         src: ./files/flux-instance.yaml.j2
         dest: "{{ flux_instance_dest }}"
         mode: "0644"
+      run_once: true
 
     - name: Apply FluxInstance
+      run_once: true
       ansible.builtin.command: kubectl apply -f {{ flux_instance_dest }}
       register: flux_instance_result
       changed_when: "'configured' in flux_instance_result.stdout or 'created' in flux_instance_result.stdout"
