@@ -1,0 +1,34 @@
+---
+# Shared by the template build and playbooks/kubernetes-gen3/00-time.yml. Requires become.
+- name: Install chrony
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: true
+
+- name: Remove systemd-timesyncd (chrony replaces it)
+  ansible.builtin.apt:
+    name: systemd-timesyncd
+    state: absent
+
+- name: Configure chrony
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../k3s-template/files/chrony.conf"
+    dest: /etc/chrony/chrony.conf
+    mode: "0644"
+  notify: Restart chrony
+
+# IPv4 only (IPv6 is disabled everywhere).
+- name: Run chronyd IPv4 only
+  ansible.builtin.copy:
+    dest: /etc/default/chrony
+    mode: "0644"
+    content: |
+      DAEMON_OPTS="-F 1 -4"
+  notify: Restart chrony
+
+- name: Enable and start chrony
+  ansible.builtin.systemd:
+    name: chrony
+    enabled: true
+    state: started

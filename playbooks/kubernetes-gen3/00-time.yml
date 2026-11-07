@@ -1,0 +1,15 @@
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/00-time.yml
+# Converges running nodes to the same chrony setup as template 901 (hogwarts LAN NTP + public backup).
+- name: Configure chrony
+  hosts:
+    - kubernetes_controllers
+    - kubernetes_workers
+  become: true
+  handlers:
+    - name: Restart chrony
+      ansible.builtin.systemd:
+        name: chrony
+        state: restarted
+  tasks:
+    - name: Time sync tasks (shared with the template)
+      ansible.builtin.include_tasks: ../k3s-template/tasks/chrony.yml

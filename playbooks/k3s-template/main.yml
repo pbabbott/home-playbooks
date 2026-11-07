@@ -50,11 +50,8 @@
       community.general.timezone:
         name: "{{ host_tz }}"
 
-    - name: Configure timesyncd
-      ansible.builtin.copy:
-        src: timesyncd.conf
-        dest: /etc/systemd/timesyncd.conf
-        mode: "0644"
+    - name: Time sync (chrony, hogwarts LAN server plus public sources)
+      ansible.builtin.include_tasks: tasks/chrony.yml
 
     # Kernel cmdline only: with ipv6.disable=1 the sysctl keys do not exist (sysctl.d would log errors at boot).
     - name: Disable IPv6 on kernel cmdline
@@ -118,6 +115,10 @@
       failed_when: false
 
   handlers:
+    - name: Restart chrony
+      ansible.builtin.systemd:
+        name: chrony
+        state: restarted
     - name: Update grub
       ansible.builtin.command: update-grub
       changed_when: true

@@ -48,3 +48,6 @@ The prefix was first noted as `196.168.0.0/16`. That is almost certainly a typo 
 (`chimaera` `4.192`, `hogwarts` `4.196`, NAS `4.124`, `bananapi` `4.144`, `dumbledore` `4.157`, `elder_wand` `5.142`, `marauders_map` `5.91`).
 They keep their address only through eero DHCP reservations. If a reservation is lost, a guest device can be given that address.
 Moving them into the static space would need their eero reservations, DNS records, and any hardcoded references (for example `ssh root@192.168.4.192`) updated.
+
+## Time
+NTP (UDP 123) is served by hogwarts (`192.168.4.196`) to the LAN; k3s nodes prefer it, public pools are backup.

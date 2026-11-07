@@ -1,6 +1,9 @@
 # ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/main.yml
 # No vault needed: key auth, and the k3s join token is read from the controller at run time.
 ---
+- name: Configure time sync (chrony)
+  ansible.builtin.import_playbook: 00-time.yml
+
 - name: Configure node DNS resolution
   ansible.builtin.import_playbook: 00-dns.yml
 

@@ -41,6 +41,9 @@ for i in 0 1; do
   check "$ip" "agent + iscsid"    "systemctl is-active qemu-guest-agent iscsid | tr '\n' ' '" "^active active "
   check "$ip" "multipathd masked" "systemctl is-enabled multipathd 2>&1" "masked"
   check "$ip" "nfs/iscsi tools"   "which mount.nfs iscsiadm | wc -l" "^2$"
+  check "$ip" "chrony active"     "systemctl is-active chrony" "^active$"
+  check "$ip" "no timesyncd"      "dpkg -s systemd-timesyncd 2>&1 | grep -c 'is not installed'" "^1$"
+  check "$ip" "chrony uses hogwarts" "chronyc -n sources | grep -c 192.168.4.196" "^1$"
   check "$ip" "no failed units"   "systemctl --failed --no-legend | wc -l" "^0$"
   mid[$i]=$(ssh "${SSH_OPTS[@]}" "firebolt@$ip" 'cat /etc/machine-id')
   hk[$i]=$(ssh "${SSH_OPTS[@]}" "firebolt@$ip" 'sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub | cut -d" " -f2')

@@ -1,0 +1,26 @@
+# ansible-playbook -i inventories/physical playbooks/time-server/main.yml
+# Makes hogwarts (already a chrony client of the Debian pool) serve NTP to the LAN so the k3s nodes (and later chimaera,
+# dumbledore) share one time source even if the internet is down. Only adds a conf.d drop-in; Proxmox config is untouched.
+- name: hogwarts LAN NTP server
+  hosts: hogwarts
+  become: true
+  handlers:
+    - name: Restart chrony
+      ansible.builtin.systemd:
+        name: chrony
+        state: restarted
+  tasks:
+    - name: Serve NTP to the LAN
+      ansible.builtin.copy:
+        dest: /etc/chrony/conf.d/lan-server.conf
+        mode: "0644"
+        content: |
+          # Managed by Ansible (playbooks/time-server)
+          allow 192.168.4.0/22
+      notify: Restart chrony
+
+    - name: Ensure chrony is running
+      ansible.builtin.systemd:
+        name: chrony
+        enabled: true
+        state: started

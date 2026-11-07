@@ -35,3 +35,5 @@ packer build .
 - Always set `scsi_controller` (plugin defaults to `lsi`, which breaks boot of the clone) and `cloud_init = true` (otherwise the cloud-init drive is dropped and clones never get network/ssh keys).
 - `build_ip` is on the VM range (192.168.6.x) and must be unused.
 - The base image is pinned to an Ubuntu release and checksum in `terraform/hogwarts/templates.tf` and downloaded by Terraform (needs the `TerraformSysModify` role, see `terraform/README.md`). To update the image: change `url` + `checksum` there, apply, rebuild 901.
+
+Time sync is chrony (hogwarts LAN NTP + public backup), see `playbooks/k3s-template/README.md`; `scripts/verify-k3s-template.sh` checks it.

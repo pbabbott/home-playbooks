@@ -13,3 +13,6 @@ Only `hogwarts` has this template so far. Plan for also building it on `chimaera
 
 ## Required variables
 None. `host_tz` defaults to `America/Chicago` (see `main.yml`). Packer supplies the SSH connection.
+
+## Time sync
+chrony (not timesyncd): `tasks/chrony.yml` + `files/chrony.conf`. Prefers hogwarts (192.168.4.196, serves NTP via `playbooks/time-server/`), with public pools as backup. The same tasks converge running nodes via `playbooks/kubernetes-gen3/00-time.yml`.
