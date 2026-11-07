@@ -1,41 +1,65 @@
 # Terraform state backend
 
-State for `terraform/hogwarts/` is stored in Postgres on the NAS (`room_of_requirement`, `nas.local.abbottland.io:5432`,
-no SSL, LAN only), using the Terraform `pg` backend. One database, one schema per root (`hogwarts`; `chimaera` and
-`cloudflare` still use local state). Locking uses Postgres advisory locks.
+Where Terraform state lives, how to use it, and how to recover it.
 
-## One-time setup (manual)
-Connect as `postgres` (admin password is in the 1Password item `harbor-db-secret`) and run:
+## Summary
 
+| Root | State location |
+|---|---|
+| `terraform/hogwarts/` | **Postgres on the NAS** (`pg` backend): db `terraform_state`, schema `hogwarts` |
+| `terraform/chimaera/` | local file (gitignored) — not migrated yet |
+| `terraform/cloudflare/` | local file (gitignored) — not migrated yet |
+
+- Server: `room_of_requirement` NAS, `nas.local.abbottland.io:5432` (Postgres 16, no SSL, LAN only).
+- One database (`terraform_state`), one schema per root. Locking uses Postgres advisory locks.
+- Dedicated role `terraform`, owner of `terraform_state` and nothing else. Its credentials are the 1Password item
+  `terraform-state-db` (Homelab vault). The `postgres` admin (item `harbor-db-secret`) is only for one-time setup/repair.
+- Connection string is never in git: `scripts/tfstate-env.sh` builds it into `PG_CONN_STR` from 1Password.
+
+## Daily use
+```sh
+cd terraform/hogwarts
+source ../../scripts/tfstate-env.sh     # sets PG_CONN_STR (prints a confirmation; check it did not error)
+terraform init                          # first time on a machine
+terraform plan
+```
+Terraform for the hogwarts root also needs `terraform.tfvars` (`../../scripts/tfvars-hogwarts.sh`) for the Proxmox API token.
+Run `source` and `terraform` as **separate** commands, not chained with `;`, so a failed lookup stops you
+(otherwise Terraform runs with no backend connection).
+
+## One-time setup (done; kept for rebuilds) — manual
+There is no script on purpose: the Connect token is read-only and this is a one-off. As `postgres`:
 ```sql
 CREATE ROLE terraform LOGIN PASSWORD '<password>';
 CREATE DATABASE terraform_state OWNER terraform;
 REVOKE ALL ON DATABASE terraform_state FROM PUBLIC;
 ```
+Then create a Login item `terraform-state-db` in the `Homelab` vault: username `terraform`, the same password.
+(No `psql` in the devcontainer: `docker run --rm -it postgres:17-alpine psql -h nas.local.abbottland.io -U postgres`.)
 
-Then create a 1Password Login item `terraform-state-db` in the `Homelab` vault with username `terraform` and that password.
-(The Connect token is read-only, so items can't be created by script.)
+## Moving another root onto the backend (chimaera, cloudflare)
+1. Add `backend.tf` to the root with its own schema (copy `terraform/hogwarts/backend.tf`, change `schema_name`).
+2. Copy the local state somewhere safe (`cp terraform.tfstate ~/backup/`).
+3. `source ../../scripts/tfstate-env.sh`, then `terraform init -migrate-state`.
+4. Verify: `terraform state list` matches, `terraform plan` shows no changes. Confirm you were the `terraform` role (see gotcha).
+5. Update the table above and `terraform/CLAUDE.md`.
 
-## Use
-```sh
-cd terraform/hogwarts
-source ../../scripts/tfstate-env.sh   # exports PG_CONN_STR from the 1Password item
-terraform init                        # first time on a root with existing local state: terraform init -migrate-state
-```
+## Gotchas
+- **Always init as the `terraform` role.** The backend creates its schema, `states` table and the shared sequence
+  `public.global_states_id_seq` on first init. If that is run as `postgres` (e.g. wrong username in the 1Password item), they are
+  owned by `postgres`: reads/plan work but state **writes fail at the end of an apply**. Check who you are:
+  `sed -E 's#^postgres://([^:]+):.*#\1#' <<<"$PG_CONN_STR"` must print `terraform`. Repair as `postgres`, connected to `terraform_state`:
+  ```sql
+  ALTER SCHEMA <schema> OWNER TO terraform;
+  ALTER TABLE <schema>.states OWNER TO terraform;
+  ALTER SEQUENCE public.global_states_id_seq OWNER TO terraform;
+  ```
+- **Lost the `terraform` password?** As `postgres`: `ALTER ROLE terraform PASSWORD '<new>';` and put the same value in the 1Password item.
+- **New 1Password items take a minute to appear** to Connect; `scripts/tfstate-env.sh` fails with "Found 0 item(s)" until they do.
+- **Stuck lock** (a crashed run): `terraform force-unlock <id>` (the id is in the error message).
 
-The `terraform` role can only reach `terraform_state`; no other app databases. Back up this database with the NAS Postgres backups.
-
-## Gotcha: always init as the `terraform` role
-The backend creates its schema, `states` table and the shared sequence `public.global_states_id_seq` on first init. If that
-first init is run as `postgres` (e.g. wrong username in the 1Password item), those objects are owned by `postgres` and the
-`terraform` role gets "permission denied" (reads work, state *writes* fail at the end of an apply). Fix as `postgres`, in `terraform_state`:
-
-```sql
-ALTER SCHEMA <schema> OWNER TO terraform;
-ALTER TABLE <schema>.states OWNER TO terraform;
-ALTER SEQUENCE public.global_states_id_seq OWNER TO terraform;
-```
-Check who you are connected as: `echo $PG_CONN_STR | sed -E 's#^postgres://([^:]+):.*#\1#'` (should print `terraform`).
-
-## Recover / inspect
-State is in `<schema>.states` (column `data`). `terraform state pull > backup.tfstate` takes a copy.
+## Backup and recovery
+- State is in `<schema>.states` (column `data`). Take an ad-hoc copy any time: `terraform state pull > backup.tfstate`.
+- This database is the only copy of the state. It should be covered by the NAS's Postgres backups (confirm this is configured).
+- If the state is lost, VMs still exist in Proxmox; rebuild state with `terraform import` (e.g.
+  `terraform import proxmox_virtual_environment_vm.tpl_ubuntu_noble_base hogwarts/900`).

@@ -7,7 +7,8 @@ Be brief.
 - Legacy `archive/` (old per-app Ansible playbooks, pre-k8s) was deleted 2026-11-06. See `docs/ARCHIVE.md`; the code lives at git tag `archive-final`.
 - `./playbooks/` - Current ansible playbooks (index: `playbooks/README.md`)
 - `./inventories/{prod,nonprod,physical}` - k8s gen2 fleets and physical hosts (default inventory: physical; group/host vars live in `inventories/physical`)
-- `./terraform` - one Terraform root per host: `chimaera/` (gen2 prod/non-prod vms + ha proxy lxc), `hogwarts/` (gen3, scaffold only), `cloudflare/`; shared `modules/`.
+- `./terraform` - one Terraform root per host: `chimaera/` (gen2 prod/non-prod vms + ha proxy lxc), `hogwarts/` (gen3: base template 900, no fleet yet), `cloudflare/`; shared `modules/`.
+- `./packer/k3s-template/` - Packer build of the gen3 k3s node template (hogwarts VMID 901, clone of 900); end to end: `scripts/build-k3s-template.sh`. Provisioned by `playbooks/k3s-template/`.
 
 
 ### Important playbooks
@@ -30,5 +31,7 @@ Proxmox host can be accessed in this way: `ssh root@192.168.4.192`
 Most `ansible-playbook`/`ansible` commands need vault vars: pass `-e @./vault.yml`. Without it, plays referencing `{{ inventoryPasswords.* }}` or other vaulted vars fail with "undefined variable".
 
 ### Cloudflare / Terraform
+
+Terraform state: `hogwarts/` uses a Postgres backend on the NAS. Before any terraform command there run `source scripts/tfstate-env.sh` (separate command, not chained) and confirm it succeeded. `chimaera/` and `cloudflare/` are still local. Details, setup, gotchas, recovery: `docs/TERRAFORM-STATE.md`.
 
 DNS is managed by `external-dns` — do NOT manage DNS records in Terraform Cloudflare resources. Terraform Cloudflare is for everything else (WAF, page rules, zone settings, etc).
