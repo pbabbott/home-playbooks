@@ -1,8 +1,17 @@
 # Base VM template 900 (stock Ubuntu 24.04 cloud image + cloud-init). Never booted.
-# Prereq (token lacks Sys.Modify for URL downloads), once per host / image refresh:
-#   ssh root@192.168.4.196 "wget -O /var/lib/vz/import/noble-server-cloudimg-amd64.qcow2 \
-#     https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+# The image is pinned to an Ubuntu release and verified by checksum. To update: pick a newer dir at
+# https://cloud-images.ubuntu.com/releases/noble/, update the url + checksum (from its SHA256SUMS), apply, rebuild 901.
 # Layer 2 (901, tpl-k3s-noble) is built from this by packer/k3s-template.
+
+resource "proxmox_virtual_environment_download_file" "ubuntu_noble" {
+  content_type       = "import"
+  datastore_id       = "local"
+  node_name          = var.proxmox_node
+  url                = "https://cloud-images.ubuntu.com/releases/noble/release-20261017/ubuntu-24.04-server-cloudimg-amd64.img"
+  file_name          = "noble-server-cloudimg-amd64.qcow2"
+  checksum           = "04e8f2461a16a44e78a370284471f29616cdd9baf1893df25807b71f985b6c94"
+  checksum_algorithm = "sha256"
+}
 
 resource "proxmox_virtual_environment_vm" "tpl_ubuntu_noble_base" {
   name          = "tpl-ubuntu-noble-base"
@@ -14,6 +23,7 @@ resource "proxmox_virtual_environment_vm" "tpl_ubuntu_noble_base" {
   tags          = ["template", "ubuntu-noble"]
   scsi_hardware = "virtio-scsi-single"
   boot_order    = ["scsi0"]
+  depends_on    = [proxmox_virtual_environment_download_file.ubuntu_noble]
 
   agent {
     enabled = true

@@ -5,7 +5,6 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 PVE=root@192.168.4.196
 
-./scripts/hogwarts-fetch-ubuntu-image.sh
 ./scripts/tfvars-hogwarts.sh
 # shellcheck disable=SC1091
 source ./scripts/tfstate-env.sh

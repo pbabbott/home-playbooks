@@ -6,9 +6,9 @@ Where Terraform state lives, how to use it, and how to recover it.
 
 | Root | State location |
 |---|---|
-| `terraform/hogwarts/` | **Postgres on the NAS** (`pg` backend): db `terraform_state`, schema `hogwarts` |
-| `terraform/chimaera/` | local file (gitignored) — not migrated yet |
-| `terraform/cloudflare/` | local file (gitignored) — not migrated yet |
+| `terraform/hogwarts/` | Postgres on the NAS (`pg` backend): db `terraform_state`, schema `hogwarts` |
+| `terraform/chimaera/` | same database, schema `chimaera` (migrated from local file 2026-11-07, content verified identical) |
+| `terraform/cloudflare/` | same database, schema `cloudflare` (no resources yet; state starts empty) |
 
 - Server: `room_of_requirement` NAS, `nas.local.abbottland.io:5432` (Postgres 16, no SSL, LAN only).
 - One database (`terraform_state`), one schema per root. Locking uses Postgres advisory locks.
@@ -23,7 +23,7 @@ source ../../scripts/tfstate-env.sh     # sets PG_CONN_STR (prints a confirmatio
 terraform init                          # first time on a machine
 terraform plan
 ```
-Terraform for the hogwarts root also needs `terraform.tfvars` (`../../scripts/tfvars-hogwarts.sh`) for the Proxmox API token.
+The hogwarts root also needs `terraform.tfvars` (`../../scripts/tfvars-hogwarts.sh`) for the Proxmox API token.
 Run `source` and `terraform` as **separate** commands, not chained with `;`, so a failed lookup stops you
 (otherwise Terraform runs with no backend connection).
 
@@ -37,12 +37,15 @@ REVOKE ALL ON DATABASE terraform_state FROM PUBLIC;
 Then create a Login item `terraform-state-db` in the `Homelab` vault: username `terraform`, the same password.
 (No `psql` in the devcontainer: `docker run --rm -it postgres:17-alpine psql -h nas.local.abbottland.io -U postgres`.)
 
-## Moving another root onto the backend (chimaera, cloudflare)
-1. Add `backend.tf` to the root with its own schema (copy `terraform/hogwarts/backend.tf`, change `schema_name`).
-2. Copy the local state somewhere safe (`cp terraform.tfstate ~/backup/`).
-3. `source ../../scripts/tfstate-env.sh`, then `terraform init -migrate-state`.
-4. Verify: `terraform state list` matches, `terraform plan` shows no changes. Confirm you were the `terraform` role (see gotcha).
-5. Update the table above and `terraform/CLAUDE.md`.
+## Adding a new root (or migrating a local one)
+Keep it simple: same database, same `terraform` role, **new schema per root**. No new roles or databases.
+1. Add `backend.tf` to the root (copy `terraform/hogwarts/backend.tf`, change `schema_name`).
+2. If the root has a local state, copy it somewhere safe first (`cp terraform.tfstate <backup dir>`).
+3. `source ../../scripts/tfstate-env.sh` (check the user it prints is `terraform`), then `terraform init -migrate-state`.
+4. Verify: `terraform state list` matches, `terraform plan` shows no changes. A migrated state gets a new serial/lineage; that is normal.
+5. Update the table above.
+
+The old local `terraform.tfstate` files (gitignored) are left empty after a migration; `terraform.tfstate.backup` keeps the last copy. Delete them once you are happy.
 
 ## Gotchas
 - **Always init as the `terraform` role.** The backend creates its schema, `states` table and the shared sequence
@@ -60,6 +63,6 @@ Then create a Login item `terraform-state-db` in the `Homelab` vault: username `
 
 ## Backup and recovery
 - State is in `<schema>.states` (column `data`). Take an ad-hoc copy any time: `terraform state pull > backup.tfstate`.
-- This database is the only copy of the state. It should be covered by the NAS's Postgres backups (confirm this is configured).
+- This database is the only copy of all state (hogwarts, chimaera, cloudflare). It should be covered by the NAS's Postgres backups (confirm this is configured).
 - If the state is lost, VMs still exist in Proxmox; rebuild state with `terraform import` (e.g.
   `terraform import proxmox_virtual_environment_vm.tpl_ubuntu_noble_base hogwarts/900`).

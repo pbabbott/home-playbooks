@@ -4,11 +4,10 @@ resource "proxmox_virtual_environment_vm" "vm" {
   vm_id     = var.vmid != 0 ? var.vmid : null # null = auto-assign
   started   = var.started
 
-  # Avoid in-place updates touching ide2 (cloud-init CDROM); Proxmox rejects "unable to change media type".
-  # To change SSH keys, ip_config, or cloudinit_username, destroy and recreate the VM or temporarily remove this block.
-  # Disks come from the template clone; do not manage disk blocks here or Terraform may try to reconcile them away.
+  # Disks come from the template clone; the module declares none, so ignore them or Terraform would try to reconcile them away.
+  # cloud-init (`initialization`) is managed, so changing ip / user / keys is a normal in-place update.
   lifecycle {
-    ignore_changes = [initialization, disk]
+    ignore_changes = [disk]
   }
 
   clone {

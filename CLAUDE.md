@@ -32,6 +32,6 @@ Most `ansible-playbook`/`ansible` commands need vault vars: pass `-e @./vault.ym
 
 ### Cloudflare / Terraform
 
-Terraform state: `hogwarts/` uses a Postgres backend on the NAS. Before any terraform command there run `source scripts/tfstate-env.sh` (separate command, not chained) and confirm it succeeded. `chimaera/` and `cloudflare/` are still local. Details, setup, gotchas, recovery: `docs/TERRAFORM-STATE.md`.
+Terraform state: all roots (`hogwarts/`, `chimaera/`, `cloudflare/`) use a Postgres backend on the NAS. Before any terraform command run `source scripts/tfstate-env.sh` (separate command, not chained) and confirm it succeeded. Details, setup, gotchas, recovery: `docs/TERRAFORM-STATE.md`.
 
 DNS is managed by `external-dns` — do NOT manage DNS records in Terraform Cloudflare resources. Terraform Cloudflare is for everything else (WAF, page rules, zone settings, etc).
