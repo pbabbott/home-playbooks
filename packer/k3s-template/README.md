@@ -30,7 +30,7 @@ packer build .
 - The template carries **no SSH key**. Each VM gets its user/key from its own cloud-init (Terraform `ssh_public_keys` in `terraform/modules/vm`), so key rotation never needs a template rebuild.
 - IPv6 is disabled on the kernel cmdline only (a sysctl would just log errors at boot). `multipathd` is masked (conflicts with Longhorn/iSCSI).
 - `unattended-upgrades` stays at Ubuntu defaults: security patches install, nothing reboots automatically. Reboot/drain nodes deliberately.
-- Terraform state for `terraform/hogwarts` is local and gitignored. 900 can be re-imported (`terraform import`) if the state is lost.
+- Terraform state for `terraform/hogwarts` is in the NAS Postgres (`pg` backend); run `source scripts/tfstate-env.sh` before terraform in that root.
 
 ## Gotchas (proxmox-clone plugin)
 - Always set `scsi_controller` (plugin defaults to `lsi`, which breaks boot of the clone) and `cloud_init = true` (otherwise the cloud-init drive is dropped and clones never get network/ssh keys).

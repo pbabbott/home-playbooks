@@ -7,6 +7,8 @@ PVE=root@192.168.4.196
 
 ./scripts/hogwarts-fetch-ubuntu-image.sh
 ./scripts/tfvars-hogwarts.sh
+# shellcheck disable=SC1091
+source ./scripts/tfstate-env.sh
 terraform -chdir=terraform/hogwarts init -input=false >/dev/null
 terraform -chdir=terraform/hogwarts apply -input=false -auto-approve -target=proxmox_virtual_environment_vm.tpl_ubuntu_noble_base
 
