@@ -1,6 +1,6 @@
 
 variable "vmid" {
-  description = "Proxmox VM ID. Use 0 to auto-assign. Convention: 200=production, 300=non-prod, 500=dev workstations."
+  description = "Proxmox VM ID. Use 0 to auto-assign. Convention: 200s=production, 300s=non-prod, 500s=dev workstations, 900s=templates."
   type        = number
 }
 
@@ -10,7 +10,7 @@ variable "name" {
 }
 
 variable "ip_address" {
-  description = "Cloud-init ip_address string: Simply 192.168.6.31, 192.168.6.32 etc. Subnet mask will be added automatically."
+  description = "Static IPv4 address, e.g. 192.168.6.41. Subnet mask will be added automatically."
   type        = string
 }
 variable "template_id" {
@@ -69,4 +69,25 @@ variable "username" {
   description = "Cloud-init user (only used when ssh_public_keys is set)"
   type        = string
   default     = "firebolt"
+}
+
+variable "datastore_id" {
+  description = "Proxmox datastore for the cloned root disk, extra data disks and the cloud-init drive. null = template's datastore (gen2 behaviour)."
+  type        = string
+  default     = null
+}
+
+variable "data_disks" {
+  description = "Extra data disks (scsi1, scsi2, ...), create-time only. size in GB; datastore_id defaults to var.datastore_id."
+  type = list(object({
+    size         = number
+    datastore_id = optional(string)
+  }))
+  default = []
+}
+
+variable "dns_servers" {
+  description = "Cloud-init DNS servers. Empty = no dns block (template/DHCP default)."
+  type        = list(string)
+  default     = []
 }

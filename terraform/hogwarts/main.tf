@@ -1,13 +1,20 @@
-# gen3 k8s fleet on hogwarts. No VMs defined yet.
-# Reuse the shared module, e.g.:
-#
-# module "prod_vm" {
-#   for_each    = var.prod_vms
-#   source      = "../modules/vm"
-#   vmid        = each.value.vmid
-#   name        = each.key
-#   target_node = var.proxmox_node
-#   ip_address  = each.value.ip
-#   template_id = <hogwarts template ID>
-#   memory      = each.value.memory
-# }
+# gen3 k3s fleet on hogwarts: clones template 901 (tpl-k3s-noble) via the shared VM module.
+# Identity (user + key) is injected via cloud-init; the template carries none.
+
+module "prod_vm" {
+  for_each = var.prod_vms
+  source   = "../modules/vm"
+
+  vmid         = each.value.vmid
+  name         = each.key
+  target_node  = var.proxmox_node
+  ip_address   = each.value.ip
+  template_id  = 901
+  cores        = each.value.cores
+  memory       = each.value.memory
+  datastore_id = each.value.datastore_id
+  data_disks   = each.value.data_disk_gb == null ? [] : [{ size = each.value.data_disk_gb }]
+
+  dns_servers     = ["192.168.4.144", "1.1.1.1"]
+  ssh_public_keys = [trimspace(file(pathexpand("~/.ssh/id_ed25519.pub")))]
+}

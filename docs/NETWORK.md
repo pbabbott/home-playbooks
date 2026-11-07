@@ -37,6 +37,7 @@ The prefix was first noted as `196.168.0.0/16`. That is almost certainly a typo 
 | `192.168.6.24` – `6.27` | gen2 prod k8s (controller `.24`, workers `.25`–`.27`) |
 | `192.168.6.28` | HAProxy LXC |
 | `192.168.6.31` – `6.34` | gen2 non-prod k8s (powered off) |
+| `192.168.6.41` – `6.43` | gen3 prod k3s on hogwarts (controller `.41`, workers `.42`–`.43`) |
 | `192.168.6.91` | VM template (gen2, chimaera) |
 | `192.168.6.250` | Packer build VM for gen3 template 901 (temporary; only exists during `packer build`) |
 | `192.168.6.251` – `6.252` | Template verify clones (temporary; only exist during `scripts/verify-k3s-template.sh`) |

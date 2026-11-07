@@ -7,3 +7,8 @@ output "vm_name" {
   description = "VM name"
   value       = proxmox_virtual_environment_vm.vm.name
 }
+
+output "ip_address" {
+  description = "Static IPv4 address"
+  value       = var.ip_address
+}
