@@ -1,0 +1,32 @@
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/01-data-disk.yml
+# Longhorn data disk (scsi1 from Terraform `data_disks`, 100G) -> /mnt/ssd (same path as gen2).
+- name: Format and mount data disk
+  hosts:
+    - kubernetes_workers
+  become: true
+  vars:
+    data_disk_device: /dev/sdb
+    data_disk_mount: /mnt/ssd
+  tasks:
+    - name: Check the data disk exists and is not the root disk
+      ansible.builtin.command: lsblk -ndo NAME,SIZE,MOUNTPOINTS {{ data_disk_device }}
+      register: data_disk_info
+      changed_when: false
+
+    - name: Create ext4 filesystem (never overwrites an existing filesystem)
+      community.general.filesystem:
+        fstype: ext4
+        dev: "{{ data_disk_device }}"
+
+    - name: Get filesystem UUID
+      ansible.builtin.command: blkid -s UUID -o value {{ data_disk_device }}
+      register: data_disk_uuid
+      changed_when: false
+
+    - name: Mount by UUID and persist in fstab
+      ansible.posix.mount:
+        path: "{{ data_disk_mount }}"
+        src: "UUID={{ data_disk_uuid.stdout }}"
+        fstype: ext4
+        opts: defaults,noatime
+        state: mounted

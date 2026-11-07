@@ -1,0 +1,20 @@
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/main.yml
+# No vault needed: key auth, and the k3s join token is read from the controller at run time.
+---
+- name: Configure node DNS resolution
+  ansible.builtin.import_playbook: 00-dns.yml
+
+- name: Format and mount the Longhorn data disk on workers
+  ansible.builtin.import_playbook: 01-data-disk.yml
+
+- name: Install k3s server (controller)
+  ansible.builtin.import_playbook: 02-k3s-server.yml
+
+- name: Install Calico (CNI), CoreDNS custom config
+  ansible.builtin.import_playbook: 03-cluster-addons.yml
+
+- name: Join k3s agents (workers)
+  ansible.builtin.import_playbook: 04-k3s-agents.yml
+
+- name: Bootstrap Flux Operator
+  ansible.builtin.import_playbook: 05-flux-operator.yml

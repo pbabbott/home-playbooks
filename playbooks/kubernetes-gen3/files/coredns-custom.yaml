@@ -1,0 +1,21 @@
+# k3s CoreDNS imports /etc/coredns/custom/*.server from this ConfigMap (the stock Corefile is rewritten by k3s on restart,
+# so never patch the `coredns` ConfigMap itself as gen2 did).
+# Pods resolving *.local.abbottland.io go to Pi-hole; everything else uses the default upstream.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  local.server: |
+    local.abbottland.io:53 {
+      errors
+      hosts {
+        192.168.4.124 nas.local.abbottland.io
+        fallthrough
+      }
+      forward . 192.168.4.144 {
+        max_concurrent 1000
+      }
+      cache 30
+    }

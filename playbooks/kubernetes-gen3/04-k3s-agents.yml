@@ -1,0 +1,64 @@
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/04-k3s-agents.yml
+# Needs the controller's k3s_node_token fact: run via main.yml, or after 02-k3s-server.yml in the same invocation.
+- name: Join k3s agents
+  hosts:
+    - kubernetes_workers
+  become: true
+  vars:
+    k3s_version: v1.35.10+k3s1
+  handlers:
+    - name: Restart k3s-agent
+      ansible.builtin.systemd:
+        name: k3s-agent
+        state: restarted
+  pre_tasks:
+    - name: Read join token from controller when running this play alone
+      when: hostvars[groups['kubernetes_controllers'][0]]['k3s_node_token'] is not defined
+      delegate_to: "{{ groups['kubernetes_controllers'][0] }}"
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: token_alone
+      no_log: true
+
+    - name: Share the token as a controller fact
+      when: token_alone is not skipped
+      ansible.builtin.set_fact:
+        k3s_node_token: "{{ token_alone }}"
+      delegate_to: "{{ groups['kubernetes_controllers'][0] }}"
+      delegate_facts: true
+      run_once: true
+      no_log: true
+  tasks:
+    - name: Create k3s config dir
+      ansible.builtin.file:
+        path: /etc/rancher/k3s
+        state: directory
+        mode: "0755"
+
+    - name: Write k3s agent config
+      ansible.builtin.template:
+        src: ./files/k3s-agent-config.yaml.j2
+        dest: /etc/rancher/k3s/config.yaml
+        mode: "0600"
+      no_log: true
+      notify: Restart k3s-agent
+
+    - name: Download k3s install script
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /usr/local/bin/k3s-install.sh
+        mode: "0755"
+
+    - name: Install k3s agent
+      ansible.builtin.command: /usr/local/bin/k3s-install.sh
+      args:
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        INSTALL_K3S_EXEC: agent
+
+    - name: Ensure k3s-agent is running
+      ansible.builtin.systemd:
+        name: k3s-agent
+        state: started
+        enabled: true

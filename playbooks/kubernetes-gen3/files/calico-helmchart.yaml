@@ -1,0 +1,25 @@
+# Same install as gen2 (tigera-operator v3.27.3, VXLAN, pod CIDR 10.244.0.0/16), via k3s's HelmChart CRD.
+# VXLAN MTU: patch FelixConfiguration vxlanMTU=1450 after first install (see README; gen2 did this by hand).
+# NOTE: k3s keeps CNI bin/conf under /var/lib/rancher/k3s/{data/current/bin,agent/etc/cni/net.d};
+# verify nodes go Ready on first run, and adjust the chart values if the CNI plugin install path needs overriding.
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: calico
+  namespace: kube-system
+spec:
+  repo: https://docs.tigera.io/calico/charts
+  chart: tigera-operator
+  version: v3.27.3
+  targetNamespace: tigera-operator
+  createNamespace: true
+  valuesContent: |-
+    installation:
+      kubernetesProvider: ""
+      cni:
+        type: Calico
+      calicoNetwork:
+        bgp: Disabled
+        ipPools:
+          - cidr: 10.244.0.0/16
+            encapsulation: VXLAN

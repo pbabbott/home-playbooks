@@ -1,0 +1,35 @@
+# ansible-playbook -i inventories/gen3 ./playbooks/kubernetes-gen3/03-cluster-addons.yml
+# Dropped into k3s's auto-deploy manifests dir (applied by the embedded helm/deploy controllers); no helm binary needed.
+- name: Calico and CoreDNS customisation
+  hosts:
+    - kubernetes_controllers
+  become: true
+  tasks:
+    - name: Calico (tigera-operator) HelmChart
+      ansible.builtin.copy:
+        src: ./files/calico-helmchart.yaml
+        dest: /var/lib/rancher/k3s/server/manifests/calico.yaml
+        mode: "0644"
+
+    - name: CoreDNS custom config (Pi-hole for local.abbottland.io, nas host entry)
+      ansible.builtin.copy:
+        src: ./files/coredns-custom.yaml
+        dest: /var/lib/rancher/k3s/server/manifests/coredns-custom.yaml
+        mode: "0644"
+
+    - name: Wait for the Calico Installation CRD
+      ansible.builtin.command: k3s kubectl wait --for=condition=established crd/installations.operator.tigera.io --timeout=300s
+      register: calico_crd
+      until: calico_crd.rc == 0
+      retries: 12
+      delay: 10
+      changed_when: false
+
+    - name: Set explicit Calico VXLAN MTU (host MTU 1500 - 50)
+      ansible.builtin.command: >
+        k3s kubectl patch felixconfiguration default --type=merge -p '{"spec":{"vxlanMTU":1450}}'
+      register: mtu_patch
+      until: mtu_patch.rc == 0
+      retries: 30
+      delay: 10
+      changed_when: "'patched' in mtu_patch.stdout"

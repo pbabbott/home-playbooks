@@ -1,0 +1,8 @@
+# Managed by Ansible (playbooks/kubernetes-gen3).
+server: https://{{ hostvars[groups['kubernetes_controllers'][0]]['ansible_host'] }}:6443
+token: "{{ hostvars[groups['kubernetes_controllers'][0]]['k3s_node_token'].content | b64decode | trim }}"
+node-ip: {{ ansible_host }}
+kubelet-arg:
+  - kube-reserved=cpu=250m,memory=256Mi
+  - system-reserved=cpu=100m,memory=100Mi
+  - eviction-hard=memory.available<200Mi
