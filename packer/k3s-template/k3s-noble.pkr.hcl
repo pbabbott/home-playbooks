@@ -26,6 +26,7 @@ source "proxmox-clone" "k3s" {
   template_name        = var.template_name
   template_description = "k3s-ready Ubuntu 24.04 (built by packer/k3s-template)"
 
+  tags                    = "template;ubuntu-noble;k3s"
   qemu_agent              = true
   cloud_init              = true
   cloud_init_storage_pool = "local-lvm"
