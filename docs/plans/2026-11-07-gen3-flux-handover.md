@@ -1,6 +1,6 @@
-# gen3 Flux handover to home-kubernetes (plan; not started)
+# gen3 Flux handover to home-kubernetes (Flux bootstrapped 2026-11-07; home-kubernetes layers in progress, see home-kubernetes/docs/plans/2026-11-08-gen2-to-gen3-migration.md)
 
-State: k3s cluster up on hogwarts (VMs 210–212, `~/.kube/gen3-config`), Calico + CoreDNS custom in place. Flux Operator NOT installed; `playbooks/kubernetes-gen3/05-flux-operator.yml` is written but unrun.
+State: k3s cluster up (3 controllers + 3 workers, `~/.kube/gen3-config`), Calico + CoreDNS custom in place, Flux Operator installed via `05-flux-operator.yml` (podinfo only).
 
 ## home-kubernetes work (separate effort)
 - Add `clusters/prod-gen3/` (00-crds, 01-infra, 02-apps, 03-flux-gitops kustomizations) and `crds|infra|applications/prod-gen3/` overlays on `base/`; update the hostname patches in `flux-gitops/kustomization.yaml`. Decide which `infra/base` components gen3 takes (sealed-secrets, onepassword, cert-manager, istio, longhorn, nas-storage, kube-prometheus-stack, pihole, external-dns).

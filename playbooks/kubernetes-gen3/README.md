@@ -32,7 +32,7 @@ Key auth as `firebolt`; no vault needed (the join token is read from the control
 ## Before / when first running
 - Calico's HelmChart needs `bootstrap: true` (install job must run on the NotReady node). CNI paths needed no override; nodes went Ready.
 - `home-kubernetes` `clusters/prod-gen3` currently has only `apps-ks` (podinfo). Still needed for real workloads: `crds|infra` layers and overlays, istio-cni k3s paths, prometheus control-plane scrape tweaks, re-sealed `op-credentials`.
-- HAProxy LXC needs gen3 backends (workers .42/.43, NodePorts 30080/30443) before traffic can reach gen3.
+- HAProxy gen3 LXC (`192.168.6.29`) is deployed with backends (workers .42/.43, NodePorts 30080/30443); verified 2026-11-08 it answers 503 with backends DOWN until Istio ingress exists.
 - Off-host etcd snapshot copy (NAS) not configured; only local snapshots every 6h.
 - Etcd is 3 members: controller-1 (`cluster-init`), controller-2 (hogwarts), controller-3 (chimaera). `02-k3s-server.yml` joins the others one at a time with `server:` + token (`files/k3s-server-join-config.yaml.j2`). Retire controller-2 when dumbledore (ARM) joins. Losing hogwarts still loses quorum.
 - Workers still register against controller-1 only; if it is down, running agents keep working but new joins fail.
