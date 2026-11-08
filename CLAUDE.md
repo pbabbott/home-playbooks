@@ -14,7 +14,7 @@ Be brief.
 ### Important playbooks
 
 - `./playbooks/kubernetes-gen2/` - This is where my current gen2 prod and non-prod clusters are bootstrapped.
-- `./playbooks/kubernetes-gen3/` - k3s bootstrap for the hogwarts fleet (`-i inventories/gen3`; written, not yet run).
+- `./playbooks/kubernetes-gen3/` - k3s bootstrap for the hogwarts fleet (`-i inventories/gen3`; written, not yet run). **Adding/replacing a worker needs manual steps after the plays (Longhorn node label `node.longhorn.io/create-default-disk=true`): see the "After joining a worker" section of its README and `home-kubernetes/docs/ai-reference-gen3-manual-steps.md`.**
 - `./playbooks/dns` - These playbooks manage pihole, my preferred dns server.
 
 ### Preferences

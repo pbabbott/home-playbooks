@@ -29,6 +29,14 @@ Key auth as `firebolt`; no vault needed (the join token is read from the control
 - Incident tuning kept as k3s args: etcd compaction/quota, leader-election timeouts (60/40/10s), worker kubelet reservations.
 - CoreDNS: gen2 patched the `coredns` ConfigMap; k3s rewrites it, so gen3 uses `coredns-custom` (`local.abbottland.io` → Pi-hole, `nas.local.abbottland.io` → 192.168.4.124). Other names use the default upstream (gen2 forwarded everything to Pi-hole).
 
+## After joining a worker: MANUAL steps (not done by these plays)
+The plays only get the node into k3s (`01-data-disk.yml` gives workers `/mnt/ssd`). Longhorn gets NO disk on the node until you label it:
+```
+kubectl --context prod-gen3 label node <node> node.longhorn.io/create-default-disk=true
+kubectl --context prod-gen3 -n longhorn-system get nodes.longhorn.io   # node Ready, disk at /mnt/ssd
+```
+Controllers are deliberately unlabeled (no `/mnt/ssd`). A re-created node loses the label. Full checklist (open-iscsi, NFS client, NAS dirs, replica count, 1Password): `home-kubernetes/docs/ai-reference-gen3-manual-steps.md`.
+
 ## Before / when first running
 - Calico's HelmChart needs `bootstrap: true` (install job must run on the NotReady node). CNI paths needed no override; nodes went Ready.
 - `home-kubernetes` `clusters/prod-gen3` currently has only `apps-ks` (podinfo). Still needed for real workloads: `crds|infra` layers and overlays, istio-cni k3s paths, prometheus control-plane scrape tweaks, re-sealed `op-credentials`.
