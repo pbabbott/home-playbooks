@@ -27,6 +27,5 @@ module "prod_vm" {
   memory      = each.value.memory
 }
 
-module "haproxy" {
-  source = "../modules/haproxy"
-}
+# The gen2 HAProxy LXC (192.168.6.28, VMID 208) was retired in Phase 9 (stopped 2026-11-09) and its module removed here.
+# Applying this destroys the LXC. Gen3 ingress is terraform/hogwarts (LXC 213, .29), which still uses ../modules/haproxy.
