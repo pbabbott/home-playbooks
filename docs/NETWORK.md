@@ -34,8 +34,8 @@ The prefix was first noted as `196.168.0.0/16`. That is almost certainly a typo 
 | Range | Use |
 |---|---|
 | `192.168.4.1` | eero gateway |
-| `192.168.6.24` – `6.27` | gen2 prod k8s (controller `.24`, workers `.25`–`.27`) |
-| `192.168.6.28` | HAProxy LXC (gen2, chimaera; LAN-only since 2026-11-09, to be retired) |
+| `192.168.6.24` – `6.27` | gen2 prod k8s (controller `.24`, workers `.25`–`.27`; powered off 2026-11-09) |
+| `192.168.6.28` | HAProxy LXC (gen2, chimaera; stopped 2026-11-09, LXC 208 kept until removed from Terraform) |
 | `192.168.6.29` | HAProxy LXC (gen3, hogwarts; public 80/443 ingress, eero forward since 2026-11-09) |
 | `192.168.6.31` – `6.34` | gen2 non-prod k8s (powered off) |
 | `192.168.6.41` – `6.43` | gen3 prod k3s on hogwarts (controller-1 `.41`, workers `.42`–`.43`) |

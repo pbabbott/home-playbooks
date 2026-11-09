@@ -23,13 +23,13 @@ Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. g
 
 | Host | IP | Runs on | Role | Managed by | Playbooks |
 |---|---|---|---|---|---|
-| `tf-prod-k8s-controller-1` | 192.168.6.24 | `chimaera` | Prod gen2 k8s control plane | Terraform + Ansible | `kubernetes-gen2/` |
-| `tf-prod-k8s-worker-1..3` | 192.168.6.25-27 | `chimaera` | Prod gen2 k8s workers | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-prod-k8s-controller-1` | 192.168.6.24 | `chimaera` | Prod gen2 k8s control plane. **Powered off 2026-11-09** (gen2 retired; kept as rollback to about 2026-12-07, then destroy) | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-prod-k8s-worker-1..3` | 192.168.6.25-27 | `chimaera` | Prod gen2 k8s workers. **Powered off 2026-11-09** (see controller-1) | Terraform + Ansible | `kubernetes-gen2/` |
 | `tf-nonprod-k8s-controller-1` | 192.168.6.31 | `chimaera` | Non-prod control plane. **Powered off** (`chimaera` out of resources) | Terraform + Ansible | `kubernetes-gen2/` |
 | `tf-nonprod-k8s-worker-1..3` | 192.168.6.32-34 | `chimaera` | Non-prod workers. **Powered off** | Terraform + Ansible | `kubernetes-gen2/` |
 | `marauders_map` | 192.168.5.91 | `chimaera` | Dev/workstation VM (Ubuntu 24). Reach over SSH from the LAN or via Tailscale | hand-made | `workstation/`, `tailscale/` |
 | `ansible-template-ubuntu-noble` | 192.168.6.91 | `chimaera` | Proxmox VM template (ID 901, Ubuntu 24.04), cloned into k8s nodes | Ansible | `ansible-template-ubuntu-noble/` |
-| HAProxy LXC | 192.168.6.28 | `chimaera` | Gen2 load balancer, LAN-only ingress for the remaining gen2 `*.local` names since 2026-11-09 (public traffic moved to `.29`; to be retired in Phase 9). Stats page at http://192.168.6.28:8404/; runtime API `/var/run/api.sock` (`ssh root@192.168.6.28`, key `~/.ssh/id_ed25519`). Defined in `terraform/modules/haproxy`, applied from `terraform/chimaera` | Terraform | none |
+| HAProxy LXC | 192.168.6.28 | `chimaera` | **Stopped 2026-11-09 (LXC 208 `tf-haproxy-lb`, not destroyed; `pct start 208` brings it back).** Was the gen2 load balancer; traffic moved to `.29`. Still defined in `terraform/modules/haproxy`, applied from `terraform/chimaera`: remove it there (a `terraform apply` would destroy it) after the rollback window | Terraform | none |
 | HAProxy LXC (gen3) | 192.168.6.29 | `hogwarts` | Ingress for the gen3 k3s workers (NodePorts 30080/30443, PROXY v2); LXC 213, config `terraform/hogwarts/haproxy.cfg`, stats http://192.168.6.29:8404/. Public ingress (eero 80/443 forward points here since 2026-11-09); ACL = LAN + Cloudflare IPv4 ranges. Replaces the chimaera one | Terraform | none |
 
 Prod and non-prod k8s workloads are deployed by Flux from `home-kubernetes`.
