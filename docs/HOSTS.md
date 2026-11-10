@@ -23,13 +23,8 @@ Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. g
 
 | Host | IP | Runs on | Role | Managed by | Playbooks |
 |---|---|---|---|---|---|
-| `tf-prod-k8s-controller-1` | 192.168.6.24 | `chimaera` | Prod gen2 k8s control plane. **Powered off 2026-11-09** (gen2 retired; kept as rollback to about 2026-12-07, then destroy) | Terraform + Ansible | `kubernetes-gen2/` |
-| `tf-prod-k8s-worker-1..3` | 192.168.6.25-27 | `chimaera` | Prod gen2 k8s workers. **Powered off 2026-11-09** (see controller-1) | Terraform + Ansible | `kubernetes-gen2/` |
-| `tf-nonprod-k8s-controller-1` | 192.168.6.31 | `chimaera` | Non-prod control plane. **Powered off** (`chimaera` out of resources) | Terraform + Ansible | `kubernetes-gen2/` |
-| `tf-nonprod-k8s-worker-1..3` | 192.168.6.32-34 | `chimaera` | Non-prod workers. **Powered off** | Terraform + Ansible | `kubernetes-gen2/` |
+| `tf-*-k8s-*` (gen2 prod + non-prod) | 192.168.6.24-27, .31-34 | `chimaera` | **Destroyed 2026-11-10** when chimaera was reinstalled (PVE 9.2.2). Playbooks in `kubernetes-gen2/` and `inventories/{prod,nonprod}` are kept for reference only | Terraform (removed) | `kubernetes-gen2/` |
 | `marauders_map` | 192.168.5.91 | `hogwarts` | Dev/workstation VM (Ubuntu 24), VM 500 on `vm-nvme-01`. **Powered off, `onboot: 0`**; kept as a reference (`~/code` holds old repo clones). Moved from chimaera 2026-11-10 via vzdump/qmrestore with the MAC (`BC:24:11:38:A4:04`) preserved, so the eero DHCP reservation still gives it this IP. Reach over SSH from the LAN or via Tailscale when running | hand-made | `workstation/`, `tailscale/` |
-| `ansible-template-ubuntu-noble` | 192.168.6.91 | `chimaera` | Proxmox VM template (ID 901, Ubuntu 24.04), cloned into k8s nodes | Ansible | `ansible-template-ubuntu-noble/` |
-| HAProxy LXC | 192.168.6.28 | `chimaera` | **Stopped 2026-11-09 (LXC 208 `tf-haproxy-lb`, not destroyed; `pct start 208` brings it back).** Was the gen2 load balancer; traffic moved to `.29`. The module is removed from `terraform/chimaera` (the shared `terraform/modules/haproxy` stays, used by `terraform/hogwarts`); the next `terraform apply` in `terraform/chimaera` destroys LXC 208 (no more `pct start` rollback after that) | Terraform | none |
 | HAProxy LXC (gen3) | 192.168.6.29 | `hogwarts` | Ingress for the gen3 k3s workers (NodePorts 30080/30443, PROXY v2); LXC 213, config `terraform/hogwarts/haproxy.cfg`, stats http://192.168.6.29:8404/. Public ingress (eero 80/443 forward points here since 2026-11-09); ACL = LAN + Cloudflare IPv4 ranges. Replaces the chimaera one | Terraform | none |
 
 Prod and non-prod k8s workloads are deployed by Flux from `home-kubernetes`.
