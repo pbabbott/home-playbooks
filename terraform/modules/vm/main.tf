@@ -3,6 +3,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   node_name = var.target_node
   vm_id     = var.vmid != 0 ? var.vmid : null # null = auto-assign
   started   = var.started
+  on_boot   = var.on_boot
 
   # The root disk comes from the template clone; ignore `disk` or Terraform would try to reconcile it away. This also means
   # data_disks are create-time only (resizing/adding later is done by hand or by recreating the VM).

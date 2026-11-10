@@ -53,6 +53,12 @@ variable "started" {
   default     = true
 }
 
+variable "on_boot" {
+  description = "Whether the VM starts when the Proxmox host boots"
+  type        = bool
+  default     = true
+}
+
 variable "bridge" {
   description = "Network bridge"
   type        = string
