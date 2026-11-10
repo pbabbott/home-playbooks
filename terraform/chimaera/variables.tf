@@ -40,7 +40,7 @@ variable "k3s_vms" {
     data_disk_gb = optional(number)
   }))
   default = {
-    "tf-prod-k3s-controller-3" = { vmid = 215, ip = "192.168.6.45", cores = 2, memory = 3072, datastore_id = "local-lvm" }
-    "tf-prod-k3s-worker-3"     = { vmid = 216, ip = "192.168.6.46", cores = 4, memory = 6144, datastore_id = "nvme-fast", data_disk_gb = 100 }
+    "tf-prod-k3s-controller-3" = { vmid = 215, ip = "192.168.6.45", cores = 2, memory = 4096, datastore_id = "local-lvm" }
+    "tf-prod-k3s-worker-3"     = { vmid = 216, ip = "192.168.6.46", cores = 8, memory = 32768, datastore_id = "nvme-fast", data_disk_gb = 100 }
   }
 }
