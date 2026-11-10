@@ -52,6 +52,7 @@ source "proxmox-clone" "k3s" {
   ssh_username         = "firebolt"
   ssh_private_key_file = var.ssh_private_key_file
   ssh_timeout          = var.ssh_timeout
+  task_timeout         = "30m" # full clone of the 60 GB base disk onto the SATA SSD takes minutes
 }
 
 build {

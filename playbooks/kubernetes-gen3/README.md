@@ -1,7 +1,7 @@
 # kubernetes-gen3
 
 k3s on VMs from `terraform/hogwarts` (210 controller-1, 211/212 workers, 214 controller-2; template 901) and `terraform/chimaera` (215 controller-3, 216 worker-3; template 911), then Flux hands over to `home-kubernetes`.
-**2026-11-10: controller-3 and worker-3 (chimaera) were detached for a Proxmox reinstall (nodes deleted, etcd member removed, Longhorn node removed, `terraform/chimaera` state emptied; VMs 215/216 still exist until the wipe). Cluster is 2 controllers + 2 workers until rebuilt; etcd quorum is 2 of 2. Inventory keeps both hosts for the rejoin.**
+**2026-11-10: chimaera was reinstalled (PVE 9.2.2; OS + controller-3 on the SATA SSD, worker-3 root + Longhorn disk on the NVMe pool `nvme-fast`); controller-3 and worker-3 were rebuilt and rejoined (3 etcd members, 6 nodes Ready). Both are cordoned as before; worker-3 is labelled for Longhorn but unschedulable until uncordoned.**
 **Status: plays 00–04 run 2026-11-07, then extended to 3 controllers + 3 workers (controller-2/3 and worker-3 joined with `--limit controller-1,<new nodes>`; all Ready, Calico + CoreDNS custom verified). `05-flux-operator.yml` run 2026-11-07 against `home-kubernetes` `clusters/prod-gen3` (podinfo only) and verified with a full teardown + rebuild ([plan](../../docs/plans/2026-11-07-gen3-flux-handover.md)).**
 
 ```

@@ -27,79 +27,20 @@ variable "proxmox_node" {
 }
 
 ########################################################
-# VM Fleets
-
-variable "nonprod_vms" {
-  type = map(object({
-    vmid   = number
-    ip     = string
-    memory = number
-  }))
-  default = {
-    "tf-nonprod-k8s-controller-1" = {
-      vmid   = 301
-      ip     = "192.168.6.31"
-      memory = 3072
-    }
-    "tf-nonprod-k8s-worker-1" = {
-      vmid   = 302
-      ip     = "192.168.6.32"
-      memory = 4096
-    }
-    "tf-nonprod-k8s-worker-2" = {
-      vmid   = 303
-      ip     = "192.168.6.33"
-      memory = 4096
-    }
-    "tf-nonprod-k8s-worker-3" = {
-      vmid   = 304
-      ip     = "192.168.6.34"
-      memory = 4096
-    }
-  }
-}
-
-variable "prod_vms" {
-  type = map(object({
-    vmid   = number
-    ip     = string
-    memory = number
-  }))
-  default = {
-    "tf-prod-k8s-controller-1" = {
-      vmid   = 204
-      ip     = "192.168.6.24"
-      memory = 6144
-    }
-    "tf-prod-k8s-worker-1" = {
-      vmid   = 205
-      ip     = "192.168.6.25"
-      memory = 15360
-    }
-    "tf-prod-k8s-worker-2" = {
-      vmid   = 206
-      ip     = "192.168.6.26"
-      memory = 15360
-    }
-    "tf-prod-k8s-worker-3" = {
-      vmid   = 207
-      ip     = "192.168.6.27"
-      memory = 15360
-    }
-  }
-}
+# gen3 k3s nodes
 
 variable "k3s_vms" {
-  description = "gen3 k3s nodes on chimaera (cloned from template 911). memory in MB, data_disk_gb optional (Longhorn disk on fast-ssd)."
+  description = "gen3 k3s nodes on chimaera (cloned from template 911). memory in MB, datastore_id = storage for the root disk, cloud-init and the data disk (controller on local-lvm = SATA SSD with the OS; worker on nvme-fast = NVMe). data_disk_gb optional (Longhorn disk)."
   type = map(object({
     vmid         = number
     ip           = string
     cores        = number
     memory       = number
+    datastore_id = string
     data_disk_gb = optional(number)
   }))
   default = {
-    "tf-prod-k3s-controller-3" = { vmid = 215, ip = "192.168.6.45", cores = 2, memory = 3072 }
-    "tf-prod-k3s-worker-3"     = { vmid = 216, ip = "192.168.6.46", cores = 4, memory = 6144, data_disk_gb = 100 }
+    "tf-prod-k3s-controller-3" = { vmid = 215, ip = "192.168.6.45", cores = 2, memory = 3072, datastore_id = "local-lvm" }
+    "tf-prod-k3s-worker-3"     = { vmid = 216, ip = "192.168.6.46", cores = 4, memory = 6144, datastore_id = "nvme-fast", data_disk_gb = 100 }
   }
 }
