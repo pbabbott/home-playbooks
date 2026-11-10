@@ -1,0 +1,76 @@
+# After hogwarts is back on the network (all guests have onboot: 1 and start by themselves).
+# ansible-playbook -i inventories/physical -i inventories/gen3 -e @./vault.yml playbooks/hogwarts-shutdown/startup.yml
+- name: Verify hogwarts and guests
+  hosts: hogwarts
+  gather_facts: false
+  tasks:
+    - name: Wait for the host
+      ansible.builtin.wait_for_connection:
+        timeout: 900
+
+    - name: Wait until guests are running
+      ansible.builtin.shell: "qm list | awk '$3==\"running\"' | wc -l; pct list | awk '$2==\"running\"' | wc -l"
+      register: running
+      until: running.stdout_lines == ['4', '1']
+      retries: 40
+      delay: 15
+      changed_when: false
+
+    - name: Check NIC offloads are still off (e1000e hang workaround)
+      ansible.builtin.shell: ethtool -k nic0 | grep -E '^(tcp-segmentation|generic-segmentation|generic-receive)-offload'
+      register: offloads
+      changed_when: false
+      failed_when: "' on' in offloads.stdout"
+
+- name: Bring gen3 back
+  hosts: tf-prod-k3s-controller-1
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for the API
+      ansible.builtin.command: k3s kubectl get nodes
+      register: api
+      until: api.rc == 0
+      retries: 60
+      delay: 10
+      changed_when: false
+
+    - name: Wait for all nodes Ready
+      ansible.builtin.shell: k3s kubectl wait --for=condition=Ready node --all --timeout=600s
+      changed_when: false
+
+    - name: Uncordon all nodes
+      ansible.builtin.shell: k3s kubectl uncordon $(k3s kubectl get nodes -o name)
+      changed_when: true
+
+    - name: Wait for Longhorn nodes Ready
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system wait --for=condition=Ready nodes.longhorn.io --all --timeout=600s
+      changed_when: false
+      failed_when: false
+
+    # Cold boot is slow: the Longhorn CSI plugins crash-loop ~10 min (CSI socket not up when the sidecars start),
+    # which holds volume-backed pods in ContainerCreating until they re-register. Wait it out.
+    - name: Wait for all pods to be Running/Completed (up to 20 min)
+      ansible.builtin.shell: k3s kubectl get pods -A --no-headers | grep -vE 'Running|Completed' || true
+      register: bad
+      until: bad.stdout | trim | length == 0
+      retries: 80
+      delay: 15
+      changed_when: false
+      failed_when: false
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: "{{ 'All pods Running/Completed' if bad.stdout | trim | length == 0 else bad.stdout_lines }}"
+
+    - name: Longhorn volume summary
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system get volumes.longhorn.io --no-headers
+        -o custom-columns=S:.status.state,R:.status.robustness | sort | uniq -c
+      register: vols
+      changed_when: false
+
+    - name: Show volume summary
+      ansible.builtin.debug:
+        var: vols.stdout_lines
