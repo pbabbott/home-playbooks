@@ -13,7 +13,7 @@ Key auth as `firebolt`; no vault needed (the join token is read from the control
 |---|---|
 | `00-dns.yml` | systemd-resolved routes `~local.abbottland.io` to Pi-hole (same as gen2) |
 | `01-data-disk.yml` | workers: ext4 on `/dev/sdb` (Terraform data disk) mounted at `/mnt/ssd` for Longhorn |
-| `02-k3s-server.yml` | k3s `v1.35.10+k3s1`, embedded etcd: controller-1 `cluster-init` (`files/k3s-server-config.yaml.j2`), other controllers join one at a time (`files/k3s-server-join-config.yaml.j2`); fetches kubeconfig to `~/.kube/gen3-config` |
+| `02-k3s-server.yml` | k3s `v1.35.10+k3s1`, embedded etcd: controller-1 `cluster-init` (`files/k3s-server-config.yaml.j2`), other controllers join one at a time (`files/k3s-server-join-config.yaml.j2`); controller-2/3 carry the `node-role.kubernetes.io/control-plane:NoSchedule` taint (`node-taint` in the join config); controller-1 is deliberately untainted and also runs workloads; fetches kubeconfig to `~/.kube/gen3-config` |
 | `03-cluster-addons.yml` | Calico (tigera-operator 3.27.3, VXLAN, MTU 1450) and CoreDNS custom config, via k3s's auto-deploy manifests dir |
 | `04-k3s-agents.yml` | workers join with kubelet reservations |
 | `05-flux-operator.yml` | Flux Operator + deploy-key secret + FluxInstance → `clusters/prod-gen3` |
