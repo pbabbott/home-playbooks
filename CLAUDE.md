@@ -72,7 +72,7 @@ Most `ansible-playbook`/`ansible` commands need vault vars: pass `-e @./vault.ym
 
 Key playbooks (all in `playbooks/`, status of the rest in its README):
 
-- `kubernetes-gen3/` - k3s bootstrap + Flux for the running prod cluster (`-i inventories/gen3`). **Adding/replacing a worker needs manual steps after the plays (Longhorn node label `node.longhorn.io/create-default-disk=true`): see the "After joining a worker" section of its README and `home-kubernetes/docs/ai-reference-gen3-manual-steps.md`.**
+- `kubernetes-gen3/` - k3s bootstrap + Flux for the running prod cluster (`-i inventories/gen3`). **Adding/replacing a worker needs manual steps after the plays (Longhorn node label `node.longhorn.io/create-default-disk=true`): see the "After joining a worker" section of its README and `home-kubernetes/docs/ai-reference/gen3-manual-steps.md`.**
 - `k3s-template/` - provisions the gen3 node template (run by Packer, `packer/k3s-template/`).
 - `dns/` - Pi-hole on `bananapi`, my preferred DNS server.
 - `hogwarts-shutdown/`, `chimaera-shutdown/` - clean power-off and restart of a Proxmox host and its k3s nodes.

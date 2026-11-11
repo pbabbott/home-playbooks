@@ -36,7 +36,7 @@ The plays only get the node into k3s (`01-data-disk.yml` gives workers `/mnt/ssd
 kubectl --context prod-gen3 label node <node> node.longhorn.io/create-default-disk=true
 kubectl --context prod-gen3 -n longhorn-system get nodes.longhorn.io   # node Ready, disk at /mnt/ssd
 ```
-Controllers are deliberately unlabeled (no `/mnt/ssd`). A re-created node loses the label. Full checklist (open-iscsi, NFS client, NAS dirs, replica count, 1Password): `home-kubernetes/docs/ai-reference-gen3-manual-steps.md`.
+Controllers are deliberately unlabeled (no `/mnt/ssd`). A re-created node loses the label. Full checklist (open-iscsi, NFS client, NAS dirs, replica count, 1Password): `home-kubernetes/docs/ai-reference/gen3-manual-steps.md`.
 
 ## Before / when first running
 - Calico's HelmChart needs `bootstrap: true` (install job must run on the NotReady node). CNI paths needed no override; nodes went Ready.

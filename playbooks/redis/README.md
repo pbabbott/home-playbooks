@@ -24,10 +24,10 @@ ansible-playbook -e @./vault.yml playbooks/redis/main.yml
 
 | App | Where configured | DB indexes |
 |---|---|---|
-| Harbor prod | `home-kubernetes/applications/prod-gen2/harbor/kustomization.yaml` | 3, 4, 5, 6, 11, 12 |
-| Harbor non-prod | `home-kubernetes/applications/non-prod-gen2/harbor/kustomization.yaml` | 8, 9, 10, 13, 14, 15 |
+| Harbor prod | `home-kubernetes/apps/prod-gen3/ci-registry/harbor/kustomization.yaml` | 3, 4, 5, 6, 11, 12 |
+| Harbor non-prod (retired gen2) | git tag `archive-gen2-nonprod`: `applications/non-prod-gen2/harbor/kustomization.yaml` | 8, 9, 10, 13, 14, 15 |
 
-Base values in `applications/base/harbor/helmrelease.yaml` (0, 1, 2, 5, 6, 7) are the old gen1 defaults, overridden per cluster. Harbor uses six DBs per environment, so prod and non-prod each get their own set to avoid collisions.
+Base values in `home-kubernetes/apps/base/ci-registry/harbor/helmrelease.yaml` (0, 1, 2, 5, 6, 7) are the old gen1 defaults, overridden per cluster. Harbor uses six DBs per environment, so prod and non-prod each get their own set to avoid collisions.
 
 ## Why things are the way they are
 
