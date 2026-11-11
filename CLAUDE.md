@@ -11,7 +11,7 @@ Ansible, Terraform and Packer for the homelab. Overview and setup: `README.md` (
 | `inventories/gen3` | gen3 k3s fleet |
 | `terraform/` | One root per host: `chimaera/` (gen3 controller-3 + worker-3, templates 910/911), `hogwarts/` (gen3: templates 900/901, fleet VMs 210–214), `cloudflare/`; shared `modules/` |
 | `packer/k3s-template/` | Packer build of the gen3 k3s node template (hogwarts VMID 901, clone of 900). End to end: `scripts/build-k3s-template.sh` |
-| `scripts/` | Setup, vault, Terraform-state and template-build helpers (see `README.md` Layout) |
+| `scripts/` | Helpers for setup, vault, Terraform state/tfvars and k3s template builds. Manifest: `scripts/CLAUDE.md` |
 | `docs/` | Hosts, network, storage, Terraform state, incidents, plans, runbooks. Removed code: `docs/ARCHIVE.md` (old `archive/` was deleted 2026-11-06; tag `archive-final`) |
 
 ## Hosts
@@ -42,6 +42,21 @@ Full detail: `docs/HOSTS.md` (keep it updated when hosts change). Hosts have Har
 - Created by Terraform (`terraform/hogwarts/`, `terraform/chimaera/`) from the Packer k3s template; configured by `playbooks/kubernetes-gen3/` (`-i inventories/gen3`, user `firebolt`, SSH key, passwordless sudo); workloads come from Flux (`home-kubernetes`).
 - Workers carry a Longhorn data disk. controller2 is to be retired once `dumbledore` joins as a controller.
 - Day-to-day power-off: `hogwarts-shutdown/` and `chimaera-shutdown/`.
+
+## Scripts
+
+Prefer these over hand-rolled commands (details and the full manifest: `scripts/CLAUDE.md`, keep it updated when scripts change):
+
+- First-time setup: `./scripts/setup.sh`, then `./scripts/vault-pass.sh`.
+- Terraform: `source scripts/tfstate-env.sh` first; `NODE_ARG=<node> ./scripts/tfvars-node.sh` if `terraform.tfvars` is missing.
+- Rebuild a k3s template: `./scripts/build-k3s-template.sh [hogwarts|chimaera]` (verifies at the end).
+
+Notes:
+
+- Scripts named `*-env.sh` must be `source`d, not executed (they export env vars); run `source scripts/tfstate-env.sh` as its own command, not chained.
+- Everything needing credentials reads 1Password via `op` (Homelab vault). Per-node settings (IPs, template IDs, pools) live only in `scripts/node-env.sh`; chimaera 900/901 are legacy gen2 templates and the scripts refuse to touch them.
+- `build-k3s-template.sh` replaces the existing template on the node (it only destroys a VM named `tpl-k3s-noble`), and `verify-k3s-template.sh` creates temporary VMs 9998/9999. Don't run either casually against a live host.
+- When you add or change a script, update `scripts/CLAUDE.md` in the same commit; a pre-commit hook (`scripts/check-manifest.sh`) checks the manifest.
 
 ## Network
 

@@ -16,6 +16,12 @@ repos:
       entry: python ./scripts/vault-protect.py
       language: python
       files: vault.yml
+    - id: scripts-manifest
+      name: scripts manifest (scripts/CLAUDE.md)
+      entry: bash ./scripts/check-manifest.sh
+      language: system
+      files: ^scripts/
+      pass_filenames: false
 # TODO: setup ansible-lint as pre-commit hook
 # https://blog.emedeiros.me/archives/2020/03/20/ansible-best-practices-checker-with-pre-commit-and-ansible-lint.html
 # - repo: https://github.com/ansible/ansible-lint

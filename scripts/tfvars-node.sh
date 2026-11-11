@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Generates terraform/hogwarts/terraform.tfvars (gitignored) from 1Password.
+# Generates terraform/<node>/terraform.tfvars (gitignored) from 1Password. Node is NODE_ARG (hogwarts|chimaera, default hogwarts).
 #
 # Usage:
-#   ./scripts/tfvars-hogwarts.sh            # skip if terraform.tfvars already exists
-#   ./scripts/tfvars-hogwarts.sh --force    # overwrite
+#   ./scripts/tfvars-node.sh                        # hogwarts; skip if terraform.tfvars already exists
+#   NODE_ARG=chimaera ./scripts/tfvars-node.sh      # chimaera
+#   ./scripts/tfvars-node.sh --force                # overwrite
 #
 # Requires the `op` CLI authenticated (OP_CONNECT_HOST / OP_CONNECT_TOKEN in the devcontainer) and jq.
-# Item: "hogwarts-proxmox-terraform-key" in the Homelab vault.
+# Item per node (OP_ITEM in node-env.sh), e.g. "hogwarts-proxmox-terraform-key" in the Homelab vault.
 #   username = Proxmox API token ID (e.g. terraform@pve!terraform)
 #   password = Proxmox API token secret
 

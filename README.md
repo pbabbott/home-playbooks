@@ -34,7 +34,7 @@ Network is IPv4 only (LAN `192.168.4.0/22`). Hosts have Harry Potter names; see 
 | `playbooks/` | Playbooks, one dir per concern. Index: [`playbooks/README.md`](playbooks/README.md) |
 | `terraform/` | One root per host: `hogwarts/`, `chimaera/` (Proxmox VMs, HAProxy LXC) and `cloudflare/`; shared `modules/`. See `terraform/README.md`; state: `docs/TERRAFORM-STATE.md` |
 | `packer/` | VM template builds (`k3s-template/`, gen3 template `901` on hogwarts, `911` on chimaera) |
-| `scripts/` | Helpers, run from the repo root: `setup.sh` (install roles/collections), `vault-pass.sh` / `vault-protect.sh` (vault), `tfstate-env.sh` (Terraform state env, `source` it), `tfvars-node.sh` (generate tfvars from 1Password), `packer-env.sh` / `node-env.sh` / `build-k3s-template.sh` / `verify-k3s-template.sh` (k3s template build and smoke test) |
+| `scripts/` | Helpers (setup, vault, Terraform state/tfvars, k3s template build). Run from the repo root; what each does: [`scripts/CLAUDE.md`](scripts/CLAUDE.md) |
 | `docs/` | [`HOSTS.md`](docs/HOSTS.md), [`NETWORK.md`](docs/NETWORK.md), [`HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md), [`TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md), plus [`runbooks/`](docs/runbooks/), [`incidents/`](docs/incidents/), [`plans/`](docs/plans/), [`claude-sessions/`](docs/claude-sessions/). [`ARCHIVE.md`](docs/ARCHIVE.md) lists removed code and the tags that preserve it |
 | `requirements.yml` | Pinned third-party roles + collections |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
@@ -52,4 +52,8 @@ The repo mixes three tools. Run each from its own place; setup and usage live ne
 | Terraform | Creates Proxmox VMs/LXCs and Cloudflare settings (`terraform/`) | [`terraform/README.md`](terraform/README.md); state: `source scripts/tfstate-env.sh` first ([`docs/TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md)) |
 | Packer | Builds the gen3 k3s VM templates (`packer/`) | [`packer/k3s-template/README.md`](packer/k3s-template/README.md) |
 
-Secrets come from 1Password (`op`) via `scripts/`; `vault.yml` holds the Ansible vault.
+Secrets come from 1Password (`op`) via `scripts/`; `vault.yml` holds the Ansible vault. Common workflows (full manifest in [`scripts/CLAUDE.md`](scripts/CLAUDE.md)):
+
+- **First-time setup:** `./scripts/setup.sh`, then `./scripts/vault-pass.sh`.
+- **Terraform:** `source scripts/tfstate-env.sh`, then `NODE_ARG=<hogwarts|chimaera> ./scripts/tfvars-node.sh` if `terraform.tfvars` is missing.
+- **Rebuild a k3s template:** `./scripts/build-k3s-template.sh [hogwarts|chimaera]`.

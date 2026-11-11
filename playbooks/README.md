@@ -24,7 +24,7 @@ ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
 ansible-playbook -e @./vault.yml -i inventories/gen3 playbooks/kubernetes-gen3/main.yml
 ```
 
-Use `scripts/vault-protect.sh` / the `encrypt`/`decrypt` aliases for `vault.yml`.
+Use the `encrypt`/`decrypt` aliases (devcontainer) for `vault.yml`; a pre-commit hook rejects commits with it unencrypted.
 
 `elder_wand` (Windows) is managed over WinRM; see its vars in `inventories/physical/hosts.yml`.
 

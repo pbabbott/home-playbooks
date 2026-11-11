@@ -28,7 +28,7 @@ For a smoother first run, skim these docs in order:
    cp terraform.tfvars.example terraform.tfvars
    # Edit terraform.tfvars: API URL/token, node, template settings, storage, SSH key path, etc.
    ```
-   For `hogwarts`, generate it from 1Password instead: `./scripts/tfvars-hogwarts.sh` (from the repo root; `--force` to overwrite).
+   For `hogwarts`, generate it from 1Password instead: `./scripts/tfvars-node.sh` (from the repo root; `NODE_ARG=chimaera` for chimaera, `--force` to overwrite).
 
 3. **Initialize the working directory**
    ```bash

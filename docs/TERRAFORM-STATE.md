@@ -23,7 +23,7 @@ source ../../scripts/tfstate-env.sh     # sets PG_CONN_STR (prints a confirmatio
 terraform init                          # first time on a machine
 terraform plan
 ```
-The hogwarts root also needs `terraform.tfvars` (`../../scripts/tfvars-hogwarts.sh`) for the Proxmox API token.
+The hogwarts root also needs `terraform.tfvars` (`../../scripts/tfvars-node.sh`) for the Proxmox API token.
 Run `source` and `terraform` as **separate** commands, not chained with `;`, so a failed lookup stops you
 (otherwise Terraform runs with no backend connection).
 
