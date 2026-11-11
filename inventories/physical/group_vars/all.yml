@@ -1,4 +1,1 @@
 host_tz: "America/Chicago"
-
-docker_registry_host: registry.nas.local.abbottland.io
-

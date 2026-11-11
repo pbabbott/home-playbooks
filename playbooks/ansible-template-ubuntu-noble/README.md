@@ -32,7 +32,7 @@ Two kinds of plays, targeting two different hosts:
 - `start-vm-template.yml` -> `start-vm.sh`: boot the VM.
 - `finalize-template.yml` -> `finalize-template.sh`: enable the guest agent, mark as template.
 
-**Against the template VM** (inventory group `ansible-template-ubuntu-noble`, temporary IP 192.168.6.91) - `configure-vm.yml` imports, in order:
+**Against the template VM** (inventory group `ansible-template-ubuntu-noble`, temporary IP 192.168.6.91; **removed from `inventories/physical`**, re-add a temporary host entry to run these) - `configure-vm.yml` imports, in order:
 1. `01-qemu-guest-agent.yml` - install the agent
 2. `02-memory-ballooning.yml` - verify `virtio_balloon` is present (check only)
 3. `03-ssd-disks.yml` (+ `_format-and-mount-disk.yml`) - format and mount the two SSDs by UUID, with size sanity checks guarding against swapped device order

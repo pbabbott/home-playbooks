@@ -1,6 +1,6 @@
 # playbooks/proxmox-chimaera
 
-> **Obsolete since 2026-11-10:** chimaera was reinstalled (PVE 9.2.2). The OS and `local-lvm` are on the SATA SSD and `nvme-fast` is on the NVMe, so `repartition-ssd.yml` and the `etcd-ssd`/`fast-ssd` layout below no longer apply (do not run it). Only `disable-ssd-power-mgmt.yml` is still relevant. Current layout: `docs/HOSTS.md`, previous config: `docs/CHIMAERA-PRE-REINSTALL.md`.
+> **Obsolete since 2026-11-10:** chimaera was reinstalled (PVE 9.2.2). The OS and `local-lvm` are on the SATA SSD and `nvme-fast` is on the NVMe, so `repartition-ssd.yml` and the `etcd-ssd`/`fast-ssd` layout below no longer apply (do not run it). Only `disable-ssd-power-mgmt.yml` is still relevant. Current layout: `docs/HOSTS.md`, previous config: in git history (deleted `docs/CHIMAERA-PRE-REINSTALL.md`).
 
 One-shot SSD playbooks for the Proxmox host `chimaera` (`192.168.4.192`), which runs the prod gen2 cluster. Renamed from `proxmox-host` because there is now a second Proxmox host, `hogwarts`; **these plays are not meant for `hogwarts`.**
 

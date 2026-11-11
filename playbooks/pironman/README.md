@@ -2,7 +2,7 @@
 
 Sets up the [SunFounder Pironman case](https://www.sunfounder.com/products/raspberry-pi-4-case) on `dumbledore` (Raspberry Pi 4, `inventories/physical`). The case has an LCD panel on the front and an internal LED; both need SunFounder's software on the Pi.
 
-**Status: partly working, untidy.** The install and the LED monitor work. `change_color.yml` does not. Not reviewed in a long time (last change March 2025). Dead-code cleanup is a TODO.
+**Status: unfinished, partly working, untidy.** `dumbledore` is currently offline. The install and the LED monitor work. `change_color.yml` does not. Not reviewed in a long time (last change March 2025). Dead-code cleanup is a TODO.
 
 ## How the LED color works
 

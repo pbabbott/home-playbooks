@@ -1,5 +1,13 @@
 # home-playbooks
-Ansible playbooks (and Terraform) for home infra.
+Ansible playbooks, Terraform and Packer builds for the homelab: Proxmox hosts, the k3s cluster, DNS, remote access and the NAS services.
+
+- **Kubernetes (gen3):** a k3s cluster (3 controllers, 3 workers) on Proxmox VMs across `hogwarts` (primary) and `chimaera`. Terraform creates the VMs from Packer-built templates, Ansible installs k3s and bootstraps Flux, and Flux then deploys workloads from the separate `home-kubernetes` repo. The gen2 kubeadm clusters are retired (VMs destroyed 2026-11-10); their playbooks stay for reference.
+- **Ingress and DNS:** an HAProxy LXC fronts the cluster (public via Cloudflare + LAN); Pi-hole on `bananapi` serves internal DNS; Tailscale gives remote access. Public DNS records come from `external-dns` in k8s, not from Terraform here.
+- **Stateful services:** the NAS `room_of_requirement` holds Redis, Postgres (including all Terraform state), NFS and media, so clusters can be rebuilt without data loss.
+- **Day-2 operations:** runbooks as playbooks, e.g. clean power-off and restart of `hogwarts` or `chimaera` and their k3s nodes (`hogwarts-shutdown/`, `chimaera-shutdown/`).
+- **Out of scope:** `home_assistant` and the `eero` router are documented but not managed from here.
+
+Network is IPv4 only (LAN `192.168.4.0/22`). Hosts have Harry Potter names; see [`docs/HOSTS.md`](docs/HOSTS.md).
 
 ## Start here
 

@@ -20,9 +20,9 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `proxmox-no-nag/` | live (run 2026-11-11) | Removes the "no valid subscription" popup on `chimaera` + `hogwarts`: patches `proxmoxlib.js` (re-applied by an apt hook), disables enterprise repos, enables `pve-no-subscription`. | physical |
 | `host_updates/` | unfinished | Apt upgrades for `dumbledore` and `bananapi` with Pushover notifications. Untouched since Jan 2024. | physical |
 | `pironman/` | partly working | SunFounder Pironman case (LCD + LED) on `dumbledore`; LED color driven from a k8s API. `change_color.yml` broken. | physical |
-| `ping/` | unreviewed | Connectivity checks; no README. | physical |
+| `ping/` | unfinished | Connectivity checks (linux, sudo, windows; `k8s_hosts.yml` not imported). Untouched since July 2024. | physical |
 
-`host_updates/`, `ping/` and `pironman/` are candidates for removal (untouched since 2024–25).
+`host_updates/`, `ping/` and `pironman/` are unfinished; kept on purpose (see each README).
 
 ## Hosts
 

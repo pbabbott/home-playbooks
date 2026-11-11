@@ -55,7 +55,7 @@ All hosts: user `firebolt`, groups `kubernetes_controllers` / `kubernetes_worker
 4. Workers: create a join token on the controller and `kubeadm join` (skipped if `/etc/kubernetes/kubelet.conf` exists).
 5. Controller: re-assert etcd auto-compaction, etcd quota (2 GiB) and memory request, and leader-election timeouts in the static pod manifests (`lineinfile`). Workers: kubelet reserved resources.
 
-Step 5's settings are also in `kubeadm-config.yml.j2`. The patches were fixes made along the way to already-running clusters (related: `docs/2026-05-10-etcd-maintenance-report.md`).
+Step 5's settings are also in `kubeadm-config.yml.j2`. The patches were fixes made along the way to already-running clusters (related: `docs/incidents/2026-05-10-etcd-fragmentation.md`).
 
 ## Files
 
