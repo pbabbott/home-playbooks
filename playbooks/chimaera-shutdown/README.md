@@ -35,4 +35,4 @@ ansible-playbook -i inventories/physical -i inventories/gen3 -e @./vault.yml pla
 | controller-1 access | key auth as `firebolt` (`inventories/gen3`) |
 
 ## Status
-Written 2026-11-11, not yet run. Update this section after the first real run.
+`shutdown.yml` verified 2026-11-11 (first real run, no hangs; box confirmed powered off, cluster stayed healthy on the other 4 nodes). `startup.yml` written but not yet run.
