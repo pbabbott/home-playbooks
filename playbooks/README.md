@@ -1,10 +1,38 @@
 # Playbooks
 
-Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventories/physical`.
+Ansible part of the repo. Run everything from the repo root, not from here.
+
+## Setup
+
+Requires python3, `ansible-core` (2.17 in the devcontainer), `paramiko`, `pywinrm`, `sshpass`.
+
+```sh
+./scripts/setup.sh        # installs pinned roles + collections into .ansible/
+./scripts/vault-pass.sh   # writes vault_pass.txt from 1Password (item ansible_vault_pass, Homelab vault)
+```
+
+To update a dependency: bump its version in `requirements.yml`, re-run `scripts/setup.sh`.
+
+## Running
+
+Most playbooks need vault vars: add `-e @./vault.yml` (`alias apv="ansible-playbook -e @./vault.yml"`). Inventory defaults to `inventories/physical`.
+
+```sh
+# physical hosts (default inventory)
+ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
+# gen3 k3s fleet
+ansible-playbook -e @./vault.yml -i inventories/gen3 playbooks/kubernetes-gen3/main.yml
+```
+
+Use `scripts/vault-protect.sh` / the `encrypt`/`decrypt` aliases for `vault.yml`.
+
+`elder_wand` (Windows) is managed over WinRM; see its vars in `inventories/physical/hosts.yml`.
+
+## Playbook index
 
 | Dir | Status | Summary | Inventory |
 |---|---|---|---|
-| `kubernetes-gen2/` | live | Installs kubeadm k8s on the Terraform-created VMs of the gen2 prod/non-prod clusters, then bootstraps Flux so `home-kubernetes` takes over. `main.yml` runs 00–07 in order. Non-prod is currently powered off. | `-i inventories/prod` or `nonprod` |
+| `kubernetes-gen2/` | retired | Installed kubeadm k8s on the gen2 prod/non-prod clusters (VMs destroyed 2026-11-10), then bootstrapped Flux. Reference only; its inventories were removed. | none (removed) |
 | `kubernetes-gen3/` | 00–05 run (cluster up, Flux bootstrapped; podinfo only) | k3s on hogwarts + chimaera VMs (3 controllers, 3 workers): DNS, Longhorn disk, k3s server/agents, Calico, CoreDNS custom, Flux Operator. See its README. | `-i inventories/gen3` |
 | `time-server/` | new | Makes hogwarts serve NTP (chrony `allow 192.168.4.0/22`) to the LAN; k3s nodes use it first. | `-i inventories/physical -e @./vault.yml` |
 | `dns/` | live | Pi-hole (Docker) on `bananapi`, the homelab DNS. Opt-in per device; also serves `*.local.abbottland.io`. | physical |

@@ -2,36 +2,24 @@
 
 Installs Kubernetes (kubeadm) onto the Terraform-created Ubuntu VMs of the **gen2** clusters (prod and non-prod), then bootstraps Flux so [`home-kubernetes`](https://github.com/pbabbott/home-kubernetes) takes over.
 
-**Status: live.** Runs both gen2 clusters. Gen3 will lean on k3s to simplify install and upgrades; this directory is the reference for what gen2 does. The non-prod cluster is currently powered off (Proxmox `chimaera` ran out of resources), so nothing here has been run recently against it.
+**Status: retired, reference only.** The gen2 VMs were destroyed 2026-11-10 and their `inventories/prod` and `inventories/nonprod` were removed (recover with `git log -- inventories/prod`), so these playbooks cannot run as-is. Gen3 uses k3s instead ([`../kubernetes-gen3/`](../kubernetes-gen3/README.md)).
 
 ## Where it fits
 
 1. [`ansible-template-ubuntu-noble`](../ansible-template-ubuntu-noble/README.md) builds the Proxmox VM template on `chimaera`.
 2. `terraform/` clones it into the fleet of VMs.
-3. **This directory** installs k8s on each VM, using the matching inventory.
+3. **This directory** installed k8s on each VM, using the matching inventory.
 4. Flux (via `home-kubernetes`) deploys everything else.
 
 ## Result
 
 After `main.yml` the cluster should be live and ready to host workloads: the controller is initialized, workers are joined, Calico is running, Flux is syncing `clusters/prod-gen2` or `clusters/non-prod-gen2`. A few steps are still manual, see [Manual steps](#manual-steps).
 
-## Run
+## Run (historical)
 
-From the repo root. Inventory choice is required (the default is `physical`, which has no k8s hosts):
+Ran from the repo root with `-i inventories/prod` or `-i inventories/nonprod` (both removed). Each numbered playbook could also run alone; order matters, e.g. Helm installs need a cluster.
 
-```sh
-ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/main.yml
-ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/main.yml
-```
-
-Each numbered playbook can also be run alone (same flags). Order matters, e.g. Helm installs need a cluster.
-
-| Inventory | Controller | Workers |
-|---|---|---|
-| `inventories/prod` | `tf-prod-k8s-controller-1` (192.168.6.24) | `tf-prod-k8s-worker-1..3` (192.168.6.25-27) |
-| `inventories/nonprod` | `tf-nonprod-k8s-controller-1` (192.168.6.31) | `tf-nonprod-k8s-worker-1..3` (192.168.6.32-34) |
-
-All hosts: user `firebolt`, groups `kubernetes_controllers` / `kubernetes_workers`.
+Hosts were `tf-prod-k8s-controller-1` (192.168.6.24) + workers `1..3` (.25-27), and `tf-nonprod-k8s-controller-1` (192.168.6.31) + workers `1..3` (.32-34). All used user `firebolt`, groups `kubernetes_controllers` / `kubernetes_workers`.
 
 ## Playbooks
 
@@ -71,8 +59,8 @@ Most values are hardcoded at the top of each play or in the templates. This is d
 
 | Variable | Source |
 |---|---|
-| `inventoryPasswords.kubernetes_node` | Vault (`vault.yml`). Used as SSH and sudo password for the hosts in both inventories (same password and keys for prod and nonprod). |
-| `ansible_host`, `ansible_user` | `inventories/{prod,nonprod}/hosts.yml` |
+| `inventoryPasswords.kubernetes_node` | Vault (`vault.yml`). Was the SSH and sudo password for the gen2 hosts (same for prod and nonprod). |
+| `ansible_host`, `ansible_user` | the removed `inventories/{prod,nonprod}/hosts.yml` |
 | `cluster_path` | Play var in `07`: `clusters/non-prod-gen2` if the hostname contains `nonprod`, else `clusters/prod-gen2`. |
 | `flux_operator_version`, Calico `chart_version`, k8s repo version | Hardcoded in `07`, `06`, `04`. |
 | `~/.ssh/id_ed25519(.pub)` on the control machine | Flux deploy key, copied to the controller temporarily. |

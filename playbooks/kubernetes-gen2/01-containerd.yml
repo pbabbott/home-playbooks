@@ -1,8 +1,4 @@
 
-# Example commands
-# ansible-playbook -e @./vault.yml -i inventories/nonprod ./playbooks/kubernetes-gen2/01-containerd.yml
-# ansible-playbook -e @./vault.yml -i inventories/prod ./playbooks/kubernetes-gen2/01-containerd.yml
-
 - name: Install containerd.io
   hosts:
     - kubernetes_controllers

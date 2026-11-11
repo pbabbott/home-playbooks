@@ -1,7 +1,7 @@
 # Hosts
 
 The homelab's machines and what each does. Source of truth for connection details is
-`inventories/physical/hosts.yml` (physical + standalone VMs) and `inventories/{prod,nonprod}` (k8s VMs).
+`inventories/physical/hosts.yml` (physical + standalone VMs) and `inventories/gen3` (k3s VMs).
 Playbook dirs are in [`playbooks/README.md`](../playbooks/README.md). Keep this file updated when a host is added, removed or changes role.
 
 Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. guest DHCP vs static ranges and allocations: [`NETWORK.md`](NETWORK.md).
@@ -23,7 +23,7 @@ Network: IPv4 only, LAN `192.168.4.0/22`, local names `*.local.abbottland.io`. g
 
 | Host | IP | Runs on | Role | Managed by | Playbooks |
 |---|---|---|---|---|---|
-| `tf-*-k8s-*` (gen2 prod + non-prod) | 192.168.6.24-27, .31-34 | `chimaera` | **Destroyed 2026-11-10** when chimaera was reinstalled (PVE 9.2.2). Playbooks in `kubernetes-gen2/` and `inventories/{prod,nonprod}` are kept for reference only | Terraform (removed) | `kubernetes-gen2/` |
+| `tf-*-k8s-*` (gen2 prod + non-prod) | 192.168.6.24-27, .31-34 | `chimaera` | **Destroyed 2026-11-10** when chimaera was reinstalled (PVE 9.2.2). Playbooks in `kubernetes-gen2/` are kept for reference only (their `inventories/prod` and `nonprod` were removed; see git history) | Terraform (removed) | `kubernetes-gen2/` |
 | `marauders_map` | 192.168.5.91 | `hogwarts` | Dev/workstation VM (Ubuntu 24), VM 500 on `vm-nvme-01`. **Powered off, `onboot: 0`**; kept as a reference (`~/code` holds old repo clones). Moved from chimaera 2026-11-10 via vzdump/qmrestore with the MAC (`BC:24:11:38:A4:04`) preserved, so the eero DHCP reservation still gives it this IP. Reach over SSH from the LAN or via Tailscale when running | hand-made | `workstation/`, `tailscale/` |
 | HAProxy LXC (gen3) | 192.168.6.29 | `hogwarts` | Ingress for the gen3 k3s workers (NodePorts 30080/30443, PROXY v2); LXC 213, config `terraform/hogwarts/haproxy.cfg`, stats http://192.168.6.29:8404/. Public ingress (eero 80/443 forward points here since 2026-11-09); ACL = LAN + Cloudflare IPv4 ranges. Replaces the chimaera one | Terraform | none |
 

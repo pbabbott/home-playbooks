@@ -24,39 +24,27 @@ Network is IPv4 only (LAN `192.168.4.0/22`). Hosts have Harry Potter names; see 
 
 | Path | Purpose |
 |---|---|
-| `inventories/prod`, `inventories/nonprod` | Terraform-managed gen2 k8s VMs (`kubernetes_controllers`, `kubernetes_workers`) |
-| `inventories/physical` | Physical hosts + standalone VMs (proxmox `chimaera`, `bananapi`, `dumbledore`, ...). Default inventory in `ansible.cfg`. Holds `group_vars/` and `host_vars/` |
-| `playbooks/` | Playbooks, one dir per concern — see [`playbooks/README.md`](playbooks/README.md) |
+| `inventories/physical` | Physical hosts + standalone VMs (`chimaera`, `hogwarts`, `bananapi`, `dumbledore`, ...). Default inventory in `ansible.cfg`. Holds `group_vars/` and `host_vars/` |
+| `inventories/gen3` | gen3 k3s fleet (`tf-prod-k3s-*` VMs on hogwarts + chimaera); use with `-i inventories/gen3` |
+| `playbooks/` | Playbooks, one dir per concern. Index: [`playbooks/README.md`](playbooks/README.md) |
+| `terraform/` | One root per host: `hogwarts/`, `chimaera/` (Proxmox VMs, HAProxy LXC) and `cloudflare/`; shared `modules/`. See `terraform/README.md`; state: `docs/TERRAFORM-STATE.md` |
+| `packer/` | VM template builds (`k3s-template/`, gen3 template `901` on hogwarts, `911` on chimaera) |
+| `scripts/` | Helpers, run from the repo root: `setup.sh` (install roles/collections), `vault-pass.sh` / `vault-protect.sh` (vault), `tfstate-env.sh` (Terraform state env, `source` it), `tfvars-node.sh` (generate tfvars from 1Password), `packer-env.sh` / `node-env.sh` / `build-k3s-template.sh` / `verify-k3s-template.sh` (k3s template build and smoke test) |
+| `docs/` | Host roles (`HOSTS.md`), LAN/DHCP layout (`NETWORK.md`), disks (`HOGWARTS-STORAGE.md`), Terraform state (`TERRAFORM-STATE.md`), plus `incidents/`, `plans/`, `runbooks/`, `claude-sessions/`. `ARCHIVE.md` lists removed code and the tags that preserve it |
 | `requirements.yml` | Pinned third-party roles + collections |
-| `.ansible/` (gitignored) | Installed Galaxy roles/collections |
-| `terraform/` | Proxmox VMs (`chimaera/`, `hogwarts/`) + Cloudflare (`cloudflare/`) (see `terraform/README.md`; state: `docs/TERRAFORM-STATE.md`) |
-| `packer/` | VM template builds (`k3s-template/` → hogwarts template 901) |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
-| `docs/` | Host roles (`HOSTS.md`), LAN/DHCP layout (`NETWORK.md`), Terraform state (`TERRAFORM-STATE.md`), plans, runbooks, incidents. `docs/ARCHIVE.md` lists removed code and the tags that preserve it |
+| `ansible.cfg` | Default inventory, roles/collections paths, vault password file |
+| `.ansible/`, `vault_pass.txt` | Gitignored: installed Galaxy roles/collections, and the vault password written by `scripts/vault-pass.sh` |
+| `.devcontainer/`, `.claude/`, `.pre-commit-config.yaml`, `.ansible-lint` | Dev container, Claude Code commands/skills/settings, pre-commit hooks (incl. vault-encryption check), lint config |
 
-## Setup
+## Tooling
 
-Requires python3, `ansible-core` (2.17 in the devcontainer), `paramiko`, `pywinrm`, `sshpass`.
+The repo mixes three tools. Run each from its own place; setup and usage live next to it.
 
-```sh
-./scripts/setup.sh        # installs pinned roles + collections into .ansible/
-./scripts/vault-pass.sh   # writes vault_pass.txt from 1Password (item ansible_vault_pass, Homelab vault)
-```
+| Tool | Does | Docs |
+|---|---|---|
+| Ansible | Configures hosts and installs k3s (`playbooks/`, `inventories/`) | [`playbooks/README.md`](playbooks/README.md): setup, running, vault, Windows hosts |
+| Terraform | Creates Proxmox VMs/LXCs and Cloudflare settings (`terraform/`) | [`terraform/README.md`](terraform/README.md); state: `source scripts/tfstate-env.sh` first ([`docs/TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md)) |
+| Packer | Builds the gen3 k3s VM templates (`packer/`) | [`packer/k3s-template/README.md`](packer/k3s-template/README.md) |
 
-To update a dependency: bump its version in `requirements.yml`, re-run `scripts/setup.sh`.
-
-## Running
-
-Most playbooks need vault vars (`alias apv="ansible-playbook -e @./vault.yml"`):
-
-```sh
-# physical hosts (default inventory)
-ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
-# k8s fleets
-ansible-playbook -e @./vault.yml -i inventories/prod playbooks/kubernetes-gen2/main.yml
-```
-
-Use `scripts/vault-protect.sh` / the `encrypt`/`decrypt` aliases for `vault.yml`.
-
-## Windows hosts
-`elder_wand` is managed over WinRM (see its vars in `inventories/physical/hosts.yml`).
+Secrets come from 1Password (`op`) via `scripts/`; `vault.yml` holds the Ansible vault.
