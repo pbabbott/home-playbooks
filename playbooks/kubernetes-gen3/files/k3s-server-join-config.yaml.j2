@@ -20,18 +20,23 @@ disable:
   - metrics-server # installed by Flux (home-kubernetes infra/base/metrics-server)
 
 # Incident-driven tuning carried over from gen2 (2026-05-10 etcd fragmentation, 2026-10-12 leader-election losses)
+etcd-expose-metrics: true # etcd metrics on :2381 for Prometheus
 etcd-arg:
   - auto-compaction-mode=periodic
   - auto-compaction-retention=1h
   - quota-backend-bytes=2147483648
 kube-controller-manager-arg:
+  - bind-address=0.0.0.0 # Prometheus scrape (issue home-kubernetes#53)
   - leader-elect-lease-duration=60s
   - leader-elect-renew-deadline=40s
   - leader-elect-retry-period=10s
 kube-scheduler-arg:
+  - bind-address=0.0.0.0 # Prometheus scrape (issue home-kubernetes#53)
   - leader-elect-lease-duration=60s
   - leader-elect-renew-deadline=40s
   - leader-elect-retry-period=10s
+kube-proxy-arg:
+  - metrics-bind-address=0.0.0.0:10249 # default is 127.0.0.1
 
 # Built-in etcd snapshots (local, /var/lib/rancher/k3s/server/db/snapshots). Off-host copy to the NAS: TODO.
 etcd-snapshot-schedule-cron: "0 */6 * * *"
