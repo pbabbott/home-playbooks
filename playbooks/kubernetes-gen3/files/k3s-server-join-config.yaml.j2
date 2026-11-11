@@ -2,6 +2,8 @@
 server: https://{{ hostvars[groups['kubernetes_controllers'][0]]['ansible_host'] }}:6443
 token: "{{ hostvars[groups['kubernetes_controllers'][0]]['k3s_node_token'].content | b64decode | trim }}"
 node-ip: {{ ansible_host }}
+node-taint:
+  - node-role.kubernetes.io/control-plane:NoSchedule # controller-2/3 run etcd + control plane only; controller-1 (cluster-init config, untainted) is the one controller that also runs workloads
 tls-san:
 {% for h in groups['kubernetes_controllers'] %}
   - {{ hostvars[h]['ansible_host'] }}
