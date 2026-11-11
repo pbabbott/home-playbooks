@@ -27,6 +27,7 @@ State: these were run recently and work. They are simple enough to trust, but in
 
 - **Docker on the NAS.** It is an Asustor NAS with few basic tools, and running the exporter natively hit too many snags. The role also requires systemd. Docker is the working path for Asustor services; a native install would be nicer someday.
 - **Windows firewall rule.** The Windows machine blocked everything by default, so the rule is an enablement for the internal network, not a restriction. (`192.168.4.0/22` covers 192.168.4.0-192.168.7.255.)
+- **Firewall rule applies to all profiles.** It was Private-only, but Windows can re-categorize the Ethernet NIC as Public after network/adapter changes, which silently dropped scrapes (timeouts on :9182 while WinRM still worked; seen 2026-11-11). The source is still limited to the LAN range.
 - **windows_exporter instead of node_exporter.** node_exporter needs systemd; `elder_wand` is Windows.
 
 ## Required variables

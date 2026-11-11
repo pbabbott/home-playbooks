@@ -16,7 +16,7 @@
         action: allow
         direction: in
         protocol: tcp
-        profiles: private
+        profiles: domain,private,public
         state: present
         enabled: yes
 
