@@ -17,8 +17,13 @@ Network is IPv4 only (LAN `192.168.4.0/22`). Hosts have Harry Potter names; see 
 - **`hogwarts` disk layout and Proxmox storage pools:** [`docs/HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md).
 - **Terraform state (where it lives, how to log in, recovery):** [`docs/TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md). All Terraform state is in NAS Postgres: `source scripts/tfstate-env.sh` before terraform in any root.
 - **gen3 k3s VM templates (hogwarts 900/901, chimaera 910/911):** [`packer/k3s-template/README.md`](packer/k3s-template/README.md), provisioning in [`playbooks/k3s-template/`](playbooks/k3s-template/README.md).
+- **Terraform how-tos (first-time setup, layout, VM ID/naming conventions, Proxmox storage, Cloudflare API token):** [`terraform/README.md`](terraform/README.md) and [`terraform/docs/`](terraform/docs/).
 - **Connection details / vars:** `inventories/` (see Layout below).
-- **Past work:** `docs/` (plans, runbooks, incidents).
+- **Runbooks (step-by-step procedures):** [`docs/runbooks/`](docs/runbooks/), e.g. [worker root disk resize](docs/runbooks/2026-07-13-worker-root-disk-resize-32g-60g.md). Shutdown/startup of a Proxmox host is a playbook: `hogwarts-shutdown/`, `chimaera-shutdown/`.
+- **Incidents (what broke, why, fix):** [`docs/incidents/`](docs/incidents/), e.g. [hogwarts e1000e TX hang](docs/incidents/2026-11-07-hogwarts-e1000e-tx-hang.md), [etcd fragmentation](docs/incidents/2026-05-10-etcd-fragmentation.md), [thin pool discard](docs/incidents/2026-06-10-thin-pool-discard-not-configured.md).
+- **Plans and handoffs (design notes, mostly historical):** [`docs/plans/`](docs/plans/), e.g. [gen3 Flux handover](docs/plans/2026-11-07-gen3-flux-handover.md).
+- **Claude session write-ups:** [`docs/claude-sessions/`](docs/claude-sessions/).
+- **Removed code and the git tags that preserve it:** [`docs/ARCHIVE.md`](docs/ARCHIVE.md). The retired gen2 cluster is reference only.
 
 ## Layout
 
@@ -30,7 +35,7 @@ Network is IPv4 only (LAN `192.168.4.0/22`). Hosts have Harry Potter names; see 
 | `terraform/` | One root per host: `hogwarts/`, `chimaera/` (Proxmox VMs, HAProxy LXC) and `cloudflare/`; shared `modules/`. See `terraform/README.md`; state: `docs/TERRAFORM-STATE.md` |
 | `packer/` | VM template builds (`k3s-template/`, gen3 template `901` on hogwarts, `911` on chimaera) |
 | `scripts/` | Helpers, run from the repo root: `setup.sh` (install roles/collections), `vault-pass.sh` / `vault-protect.sh` (vault), `tfstate-env.sh` (Terraform state env, `source` it), `tfvars-node.sh` (generate tfvars from 1Password), `packer-env.sh` / `node-env.sh` / `build-k3s-template.sh` / `verify-k3s-template.sh` (k3s template build and smoke test) |
-| `docs/` | Host roles (`HOSTS.md`), LAN/DHCP layout (`NETWORK.md`), disks (`HOGWARTS-STORAGE.md`), Terraform state (`TERRAFORM-STATE.md`), plus `incidents/`, `plans/`, `runbooks/`, `claude-sessions/`. `ARCHIVE.md` lists removed code and the tags that preserve it |
+| `docs/` | [`HOSTS.md`](docs/HOSTS.md), [`NETWORK.md`](docs/NETWORK.md), [`HOGWARTS-STORAGE.md`](docs/HOGWARTS-STORAGE.md), [`TERRAFORM-STATE.md`](docs/TERRAFORM-STATE.md), plus [`runbooks/`](docs/runbooks/), [`incidents/`](docs/incidents/), [`plans/`](docs/plans/), [`claude-sessions/`](docs/claude-sessions/). [`ARCHIVE.md`](docs/ARCHIVE.md) lists removed code and the tags that preserve it |
 | `requirements.yml` | Pinned third-party roles + collections |
 | `vault.yml` | Encrypted secrets (`inventoryPasswords.*`, ...) |
 | `ansible.cfg` | Default inventory, roles/collections paths, vault password file |
