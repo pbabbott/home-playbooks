@@ -16,7 +16,6 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `ansible-template-ubuntu-noble/` | legacy | Builds Proxmox VM template `901` (Ubuntu 24.04) on `chimaera`; gen2 VMs are cloned from it. Reference for gen3. | physical |
 | `proxmox-chimaera/` | legacy | One-shot SSD/power tuning for `chimaera` only (not `hogwarts`); kept to document its disk layout. No `main.yml`. | physical |
 | `hogwarts-shutdown/` | live (run 2026-11-10) | Clean power-off of `hogwarts` for a physical move (etcd snapshot, cordon/drain, ordered guest shutdown, poweroff) and `startup.yml` to verify, uncordon and wait for pods afterwards. | physical + gen3 (`-i` both) |
-| `shutdown/` | unfinished | Power off k8s nodes ahead of an outage. Not verified against the current fleet. | prod/nonprod |
 | `host_updates/` | unfinished | Apt upgrades for `dumbledore` and `bananapi` with Pushover notifications. Untouched since Jan 2024. | physical |
 | `pironman/` | partly working | SunFounder Pironman case (LCD + LED) on `dumbledore`; LED color driven from a k8s API. `change_color.yml` broken. | physical |
 | `ping/` | unreviewed | Connectivity checks; no README. | physical |
