@@ -35,4 +35,4 @@ ansible-playbook -i inventories/physical -i inventories/gen3 -e @./vault.yml pla
 | controller-1 access | key auth as `firebolt` (`inventories/gen3`) |
 
 ## Status
-`shutdown.yml` verified 2026-11-11 (first real run, no hangs; box confirmed powered off, cluster stayed healthy on the other 4 nodes). `startup.yml` written but not yet run.
+Verified end to end 2026-11-11. `shutdown.yml`: no hangs, cluster stayed healthy on the other 4 nodes. `startup.yml`: both VMs came up, nodes Ready, worker-3 uncordoned (controller-3 left cordoned), Longhorn rebuilt in about 1.5 min, all pods Running/Completed, 3 etcd members.
