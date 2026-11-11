@@ -17,6 +17,7 @@ Run from the repo root. Add `-e @./vault.yml`. Inventory defaults to `inventorie
 | `proxmox-chimaera/` | legacy | One-shot SSD/power tuning for `chimaera` only (not `hogwarts`); kept to document its disk layout. No `main.yml`. | physical |
 | `hogwarts-shutdown/` | live (run 2026-11-10) | Clean power-off of `hogwarts` for a physical move (etcd snapshot, cordon/drain, ordered guest shutdown, poweroff) and `startup.yml` to verify, uncordon and wait for pods afterwards. | physical + gen3 (`-i` both) |
 | `chimaera-shutdown/` | live (run 2026-11-11) | Clean power-off of `chimaera` for a physical move (cordon/drain worker-3 + controller-3, Longhorn gate, ordered VM shutdown, poweroff) and `startup.yml` to verify, uncordon worker-3 and wait for rebuilds. Rest of gen3 stays up. | physical + gen3 (`-i` both) |
+| `proxmox-no-nag/` | live (run 2026-11-11) | Removes the "no valid subscription" popup on `chimaera` + `hogwarts`: patches `proxmoxlib.js` (re-applied by an apt hook), disables enterprise repos, enables `pve-no-subscription`. | physical |
 | `host_updates/` | unfinished | Apt upgrades for `dumbledore` and `bananapi` with Pushover notifications. Untouched since Jan 2024. | physical |
 | `pironman/` | partly working | SunFounder Pironman case (LCD + LED) on `dumbledore`; LED color driven from a k8s API. `change_color.yml` broken. | physical |
 | `ping/` | unreviewed | Connectivity checks; no README. | physical |

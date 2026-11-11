@@ -1,0 +1,61 @@
+# ansible-playbook -i inventories/physical playbooks/proxmox-no-nag/main.yml -e @./vault.yml
+# Homelab (no subscription): removes the "You do not have a valid subscription" login popup on chimaera + hogwarts,
+# disables the enterprise apt repos (they 401 without a key) and enables pve-no-subscription.
+# The JS patch is overwritten when proxmox-widget-toolkit updates, so an apt post-invoke hook re-applies it.
+- name: Proxmox without a subscription
+  hosts: chimaera,hogwarts
+  become: true
+  vars:
+    js_file: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    patch_script: /usr/local/bin/pve-no-nag.sh
+  tasks:
+    - name: Disable enterprise repos (pve + ceph)
+      ansible.builtin.shell: |
+        set -e
+        changed=no
+        for f in /etc/apt/sources.list.d/pve-enterprise.sources /etc/apt/sources.list.d/ceph.sources \
+                 /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/ceph.list; do
+          [ -f "$f" ] || continue
+          case "$f" in
+            *.sources) grep -q '^Enabled: no' "$f" || { echo 'Enabled: no' >> "$f"; changed=yes; } ;;
+            *.list)    grep -q '^deb' "$f" && { sed -i 's/^deb/#deb/' "$f"; changed=yes; } ;;
+          esac
+        done
+        echo "$changed"
+      register: enterprise
+      changed_when: enterprise.stdout.strip() == 'yes'
+
+    - name: Enable pve-no-subscription repo
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/pve-no-subscription.sources
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: http://download.proxmox.com/debian/pve
+          Suites: trixie
+          Components: pve-no-subscription
+          Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+
+    - name: Install the nag-patch script
+      ansible.builtin.copy:
+        dest: "{{ patch_script }}"
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          # Managed by Ansible (playbooks/proxmox-no-nag)
+          f={{ js_file }}
+          [ -f "$f" ] || exit 0
+          grep -q "res.data.status.toLowerCase() !== 'active'" "$f" || exit 0
+          sed -i "s/res.data.status.toLowerCase() !== 'active'/false/" "$f"
+          systemctl try-restart pveproxy
+
+    - name: Re-apply the patch after every apt run
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/99-pve-no-nag
+        mode: "0644"
+        content: |
+          DPkg::Post-Invoke { "{{ patch_script }}"; };
+
+    - name: Apply the patch now
+      ansible.builtin.command: "{{ patch_script }}"
+      changed_when: false
