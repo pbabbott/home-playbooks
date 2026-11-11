@@ -1,0 +1,101 @@
+# Cleanly power off chimaera for a physical move. See README.md.
+# ansible-playbook -i inventories/physical -i inventories/gen3 -e @./vault.yml playbooks/chimaera-shutdown/shutdown.yml -e confirm_shutdown=true
+# The rest of gen3 (hogwarts) keeps running; only worker-3 and controller-3 go away.
+
+- name: Pre-flight and quiesce chimaera's k3s nodes (gen3)
+  hosts: tf-prod-k3s-controller-1
+  become: true
+  gather_facts: false
+  vars:
+    chimaera_nodes: [tf-prod-k3s-worker-3, tf-prod-k3s-controller-3]
+    drain_timeout: 120s
+  tasks:
+    - name: Require explicit confirmation
+      ansible.builtin.assert:
+        that: confirm_shutdown | default(false) | bool
+        fail_msg: "Removes worker-3 + controller-3 from gen3 (etcd drops to 2 of 3 members). Re-run with -e confirm_shutdown=true"
+
+    - name: Other controllers Ready (etcd must keep quorum with controller-3 gone)
+      ansible.builtin.shell: >-
+        k3s kubectl get nodes tf-prod-k3s-controller-1 tf-prod-k3s-controller-2
+        --no-headers | awk '$2!="Ready"'
+      register: ctl
+      failed_when: ctl.stdout | trim | length > 0
+      changed_when: false
+
+    - name: Pre-flight, every Longhorn volume must be healthy (else losing worker-3's replicas could fault one)
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system get volumes.longhorn.io
+        -o jsonpath='{range .items[?(@.status.robustness!="healthy")]}{.metadata.name}={.status.robustness}{"\n"}{end}'
+      register: unhealthy
+      failed_when: unhealthy.stdout | trim | length > 0 and not (allow_degraded | default(false) | bool)
+      changed_when: false
+
+    - name: Save an etcd snapshot
+      ansible.builtin.command: k3s etcd-snapshot save --name pre-chimaera-shutdown
+      changed_when: true
+
+    - name: Cordon chimaera nodes (controller-3 is normally cordoned already; startup.yml leaves it that way)
+      ansible.builtin.command: k3s kubectl cordon {{ item }}
+      loop: "{{ chimaera_nodes }}"
+      changed_when: true
+
+    # Same reasoning as hogwarts-shutdown: Longhorn instance-manager PDBs never allow eviction, so skip them and
+    # delete the rest directly. Workloads reschedule onto workers 1/2 (the gate below checks Longhorn).
+    - name: Drain chimaera nodes except Longhorn instance-managers
+      ansible.builtin.command: >-
+        k3s kubectl drain {{ item }} --ignore-daemonsets --delete-emptydir-data --force
+        --disable-eviction --pod-selector='longhorn.io/component!=instance-manager' --timeout={{ drain_timeout }}
+      loop: "{{ chimaera_nodes }}"
+      changed_when: true
+
+    # Gate: no volume may still be attached to worker-3 (its engine would die with the VM).
+    - name: Wait until no Longhorn volume is attached to worker-3
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system get volumes.longhorn.io
+        -o jsonpath='{range .items[?(@.status.currentNodeID=="tf-prod-k3s-worker-3")]}{.metadata.name}{"\n"}{end}'
+      register: attached
+      until: attached.stdout | trim | length == 0
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: Gate, other replicas of every volume must be healthy (volumes may be rescheduled and rebuilt)
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system get volumes.longhorn.io
+        -o jsonpath='{range .items[?(@.status.state=="attached")]}{.metadata.name}={.status.robustness}{"\n"}{end}'
+        | grep -v '=healthy' || true
+      register: vol
+      until: vol.stdout | trim | length == 0
+      retries: 30
+      delay: 10
+      changed_when: false
+
+- name: Shut down guests and chimaera
+  hosts: chimaera
+  gather_facts: false
+  vars:
+    vm_order: [216, 215]   # worker first, then controller
+    shutdown_timeout: 180
+  tasks:
+    - name: Shut down VMs in order (ACPI, force-stop after the timeout)
+      ansible.builtin.command: qm shutdown {{ item }} --timeout {{ shutdown_timeout }} --forceStop 1
+      loop: "{{ vm_order }}"
+      register: qm
+      failed_when: qm.rc != 0 and 'not running' not in qm.stderr
+
+    - name: Confirm nothing is still running
+      ansible.builtin.shell: "qm list | awk '$3==\"running\"'; pct list | awk '$2==\"running\"'"
+      register: still
+      changed_when: false
+      failed_when: still.stdout | trim | length > 0
+
+    - name: Flush disks
+      ansible.builtin.command: sync
+      changed_when: false
+
+    - name: Power off chimaera (connection drops)
+      ansible.builtin.shell: sleep 2 && systemctl poweroff
+      async: 1
+      poll: 0
+      changed_when: true

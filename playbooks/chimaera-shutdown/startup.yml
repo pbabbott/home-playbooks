@@ -1,0 +1,74 @@
+# After chimaera is back on the network (VMs 215/216 have onboot: 1 and start by themselves).
+# ansible-playbook -i inventories/physical -i inventories/gen3 -e @./vault.yml playbooks/chimaera-shutdown/startup.yml
+- name: Verify chimaera and guests
+  hosts: chimaera
+  gather_facts: false
+  tasks:
+    - name: Wait for the host
+      ansible.builtin.wait_for_connection:
+        timeout: 900
+
+    - name: Wait until both VMs are running
+      ansible.builtin.shell: "qm list | awk '$3==\"running\"' | wc -l"
+      register: running
+      until: running.stdout | trim == '2'
+      retries: 40
+      delay: 15
+      changed_when: false
+
+- name: Bring chimaera's k3s nodes back
+  hosts: tf-prod-k3s-controller-1
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Wait for both nodes to register Ready
+      ansible.builtin.shell: >-
+        k3s kubectl get nodes tf-prod-k3s-worker-3 tf-prod-k3s-controller-3 --no-headers | awk '$2 !~ /^Ready/'
+      register: nr
+      until: nr.rc == 0 and nr.stdout | trim | length == 0
+      retries: 60
+      delay: 10
+      changed_when: false
+
+    # controller-3 intentionally stays cordoned (etcd member only, SATA SSD).
+    - name: Uncordon worker-3 only
+      ansible.builtin.command: k3s kubectl uncordon tf-prod-k3s-worker-3
+      changed_when: true
+
+    - name: Wait for Longhorn nodes Ready
+      ansible.builtin.command: k3s kubectl -n longhorn-system wait --for=condition=Ready nodes.longhorn.io --all --timeout=600s
+      changed_when: false
+      failed_when: false
+
+    - name: Wait for Longhorn volumes to be healthy again (replica rebuild, up to 30 min)
+      ansible.builtin.shell: >-
+        k3s kubectl -n longhorn-system get volumes.longhorn.io --no-headers
+        -o custom-columns=N:.metadata.name,S:.status.state,R:.status.robustness | grep -E 'attached' | grep -v healthy || true
+      register: deg
+      until: deg.stdout | trim | length == 0
+      retries: 120
+      delay: 15
+      changed_when: false
+      failed_when: false
+
+    - name: Report degraded volumes (empty = all healthy)
+      ansible.builtin.debug:
+        var: deg.stdout_lines
+
+    - name: Pods not Running/Completed
+      ansible.builtin.shell: k3s kubectl get pods -A --no-headers | grep -vE 'Running|Completed' || true
+      register: bad
+      changed_when: false
+
+    - name: Report pods
+      ansible.builtin.debug:
+        msg: "{{ 'All pods Running/Completed' if bad.stdout | trim | length == 0 else bad.stdout_lines }}"
+
+    - name: etcd members (expect 3 started)
+      ansible.builtin.shell: k3s kubectl get nodes -l node-role.kubernetes.io/etcd --no-headers
+      register: etcd
+      changed_when: false
+
+    - name: Show control-plane nodes
+      ansible.builtin.debug:
+        var: etcd.stdout_lines
