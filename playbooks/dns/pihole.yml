@@ -43,12 +43,10 @@
         #     src: ./files/pihole/05-pihole-custom-cname.conf
         #     dest: "{{ pihole_config_dir }}/etc-dnsmasq.d/05-pihole-custom-cname.conf"
 
-        - name: Copy custom.list to remote
-          notify:
-            - Restart pihole
-          ansible.builtin.copy:
-            src: ./files/pihole/custom.list
-            dest: "{{ pihole_config_dir }}/etc-pihole/custom.list"
+        # custom.list is deliberately NOT managed here (home-playbooks#35). Pi-hole v5 stores every local DNS record in
+        # /etc/pihole/custom.list, and external-dns (home-kubernetes, policy=sync, registry=noop) owns that file's
+        # contents: copying a file over it wipes all external-dns records until the next sync, and external-dns deletes
+        # any static line it does not own. Add host records as DNSEndpoints in home-kubernetes instead.
 
         - name: Copy internal dnsmasq config remote
           notify:
