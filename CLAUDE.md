@@ -89,7 +89,7 @@ Terraform state: all roots (`hogwarts/`, `chimaera/`, `cloudflare/`) use a Postg
 Two layers, both IPv4 only:
 
 - **Public** (Cloudflare, `abbottland.io`): records are created by `external-dns` from k8s resources in `home-kubernetes`, never by Terraform or by hand. Traffic enters via eero (80/443) to HAProxy `192.168.6.29`, which only accepts LAN + Cloudflare IPs.
-- **Internal** (Pi-hole on `bananapi`, `playbooks/dns/`): opt-in per device (eero does not hand it out) and serves `*.local.abbottland.io`. Static host records live in `playbooks/dns/files/pihole/custom.list`; cluster-related entries come from `external-dns`. Remote clients reach it over Tailscale (`bananapi` subnet router).
+- **Internal** (Pi-hole on `bananapi`, `playbooks/dns/`): opt-in per device (eero does not hand it out) and serves `*.local.abbottland.io`. All records come from `external-dns` (HTTPRoutes and `DNSEndpoint`s in `home-kubernetes`); there are no static records, and `pihole.yml` does not manage `custom.list` (#35). Remote clients reach it over Tailscale (`bananapi` subnet router).
 
 For questions about how a hostname resolves, why a record is missing or wrong, how to expose an app publicly or on the LAN, or for drafting a new public/internal DNS entry, use the `dns-expert` agent instead of working it out here.
 

@@ -4,7 +4,7 @@ Pi-hole (Docker) on `bananapi`, the homelab DNS server.
 
 - `bananapi` is a low-power device kept separate from the k8s clusters and other physical infra, so DNS stays up independently of them.
 - **Opt-in DNS:** the wifi router does *not* hand out this DNS server (ad-blocking sometimes gets in the way). The owner sets it manually on their own devices only, not on family devices.
-- Also resolves local names like `<service-or-host>.local.abbottland.io`. The k8s `external-dns` service manages the cluster-related entries (see TODOs).
+- Also resolves local names like `<service-or-host>.local.abbottland.io`. All records, including physical hosts such as `nas`, come from the k8s `external-dns` (see TODOs).
 - IPv4 only. Do not add IPv6 config.
 
 ## Playbooks
@@ -26,7 +26,6 @@ ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
 
 ## Files
 
-- `files/pihole/custom.list`: static A records for physical hosts (`*.local.abbottland.io`).
 - `files/pihole/02-internal.conf`: dnsmasq settings (listen address, `dns-forward-max`).
 - `files/pihole_backup.sh`, `files/remove_old_backups.sh`: cron scripts.
 
@@ -43,7 +42,7 @@ ansible-playbook -e @./vault.yml playbooks/dns/pihole.yml
 
 ## TODO / open questions
 
-- **external-dns overlap (check before running):** `pihole.yml` overwrites `custom.list` and restarts Pi-hole. Verify whether this wipes records external-dns created, and which records belong in `custom.list` vs external-dns. Do not run against `bananapi` until confirmed.
+- **Records are owned by external-dns, not this repo.** `pihole.yml` no longer touches `custom.list` (removed 2026-11-13, [#35](https://github.com/pbabbott/home-playbooks/issues/35)): Pi-hole v5 keeps all local DNS records in that file, external-dns writes them via the API, and with `policy=sync` + `registry=noop` it deletes anything it does not own. To add a host record, create a labelled `DNSEndpoint` (or an HTTPRoute for web UIs) in `home-kubernetes`; see the `dns-expert` agent. Running `pihole.yml` is now safe for DNS records, but it still recreates the container with the pinned image and may drift from the live state: use `--check --diff` first.
 - Verify the exact working commands; goal is that `main.yml` runs end-to-end.
 - Name and locate all vault variables and confirm where each required var comes from.
 - **Backups are unfinished, state unknown:** the NFS mount to the NAS (`192.168.4.124:/volume1/Backups/pihole`) is commented out in `pihole.yml`; `pihole_backups.yml` is not in `main.yml`; `pihole_backup.sh` uses `docker exec -it`, which may fail under cron (no TTY). Verify before relying on it.
