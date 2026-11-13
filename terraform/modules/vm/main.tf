@@ -47,6 +47,10 @@ resource "proxmox_virtual_environment_vm" "vm" {
 
   memory {
     dedicated = var.memory
+    # floating == dedicated turns the balloon device on with no reclaim, so
+    # Proxmox reads real guest memory use instead of the QEMU RSS (which sits
+    # at 100% once the guest page cache fills RAM). Never shrinks the guest.
+    floating = var.memory
   }
 
   network_device {
