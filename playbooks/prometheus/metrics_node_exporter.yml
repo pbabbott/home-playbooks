@@ -25,6 +25,7 @@
   hosts:
     - bananapi
     - chimaera
+    - hogwarts
     - marauders_map
   roles:
     - role: prometheus.prometheus.node_exporter

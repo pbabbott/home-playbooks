@@ -18,7 +18,7 @@ ansible-playbook -e @./vault.yml playbooks/prometheus/main.yml
 |---|---|---|
 | `main.yml` | | Imports the two playbooks below, in order. |
 | `metrics_node_exporter.yml` | `room_of_requirement` (NAS) | node-exporter in Docker (`quay.io/prometheus/node-exporter:latest`, :9100, host rootfs mounted read-only). |
-| | `bananapi`, `chimaera`, `marauders_map` | `prometheus.prometheus.node_exporter` role (native, systemd). |
+| | `bananapi`, `chimaera`, `hogwarts`, `marauders_map` | `prometheus.prometheus.node_exporter` role (native, systemd). |
 | `metrics_windows_exporter.yml` | `elder_wand` (Windows, WinRM) | `windows_exporter` via Chocolatey on :9182; thermalzone collector enabled; firewall rule allowing TCP 9182 from 192.168.4.0/22 on the private profile. |
 
 State: these were run recently and work. They are simple enough to trust, but incomplete in host coverage.
