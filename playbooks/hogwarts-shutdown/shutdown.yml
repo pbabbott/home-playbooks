@@ -7,7 +7,7 @@
   become: true
   gather_facts: false
   vars:
-    drain_timeout: 120s
+    drain_timeout: 30s
   tasks:
     - name: Require explicit confirmation
       ansible.builtin.assert:
@@ -46,11 +46,22 @@
     # --disable-eviction deletes pods directly: PDBs (e.g. Longhorn csi-provisioner, unsatisfiable once the
     # replacements sit Pending on cordoned nodes) are meaningless for a full shutdown. The gate below is the safety net.
     # Cordoned nodes mean evicted pods (Flux, operators included) stay Pending and nothing gets recreated.
-    - name: Drain all nodes except Longhorn instance-managers (fatal if it fails)
-      ansible.builtin.command: >-
-        k3s kubectl drain {{ item }} --ignore-daemonsets --delete-emptydir-data --force
-        --disable-eviction --pod-selector='longhorn.io/component!=instance-manager' --timeout={{ drain_timeout }}
-      loop: "{{ workers.stdout_lines + controllers.stdout_lines }}"
+    # Nodes that are already off (e.g. chimaera's after chimaera-shutdown/) can never confirm pod deletion, so a drain
+    # just burns the timeout: only drain Ready nodes, all in parallel.
+    - name: Ready nodes (drain targets)
+      ansible.builtin.shell: >-
+        k3s kubectl get nodes --no-headers | awk '$2 ~ /^Ready/ {print "node/"$1}'
+      register: ready_nodes
+      changed_when: false
+
+    - name: Drain Ready nodes in parallel, except Longhorn instance-managers (fatal if one fails)
+      ansible.builtin.shell: |
+        set -o pipefail
+        printf '%s\n' {{ ready_nodes.stdout_lines | join(' ') }} | xargs -P 6 -I{} \
+          k3s kubectl drain {} --ignore-daemonsets --delete-emptydir-data --force \
+          --disable-eviction --pod-selector='longhorn.io/component!=instance-manager' --timeout={{ drain_timeout }}
+      args:
+        executable: /bin/bash
       changed_when: true
 
     # Gate: do not touch any VM until every volume is detached (no in-flight I/O, replicas consistent).
@@ -64,26 +75,50 @@
       delay: 10
       changed_when: false
 
+# Stop k3s + containerd (and unmount their volumes) ourselves, in parallel, before asking Proxmox to power the VMs
+# off. Left to systemd this took the full 180 s ACPI timeout per VM on 2026-11-23 (then a force-stop).
+# Only the hogwarts VMs: chimaera's are already off or are not ours to touch here.
+- name: Stop k3s on the hogwarts nodes (workers first, then controllers)
+  hosts: tf-prod-k3s-worker-1:tf-prod-k3s-worker-2
+  become: true
+  gather_facts: false
+  tasks:
+    - name: k3s-killall (stops k3s, kills containers, unmounts)
+      ansible.builtin.command: /usr/local/bin/k3s-killall.sh
+      changed_when: true
+      ignore_unreachable: true
+
+- name: Stop k3s on the hogwarts controllers
+  hosts: tf-prod-k3s-controller-1:tf-prod-k3s-controller-2
+  become: true
+  gather_facts: false
+  tasks:
+    - name: k3s-killall (stops k3s, kills containers, unmounts)
+      ansible.builtin.command: /usr/local/bin/k3s-killall.sh
+      changed_when: true
+      ignore_unreachable: true
+
 - name: Shut down guests and hogwarts
   hosts: hogwarts
   gather_facts: false
   vars:
-    # Order matters: workers, then controller-2, then controller-1 (cluster-init node), then the HAProxy LXC.
-    vm_order: [212, 211, 214, 210]
+    vm_ids: [212, 211, 214, 210]
     lxc_ids: [213]
-    shutdown_timeout: 180
+    shutdown_timeout: 60
   tasks:
-    - name: Shut down VMs in order (ACPI, waits up to the timeout, then forces stop)
-      ansible.builtin.command: qm shutdown {{ item }} --timeout {{ shutdown_timeout }} --forceStop 1
-      loop: "{{ vm_order }}"
-      register: qm
-      failed_when: qm.rc != 0 and 'not running' not in qm.stderr
-
-    - name: Shut down LXCs
-      ansible.builtin.command: pct shutdown {{ item }} --timeout 60 --forceStop 1
-      loop: "{{ lxc_ids }}"
-      register: pct
-      failed_when: pct.rc != 0 and 'not running' not in pct.stderr
+    # All guests in parallel (k3s is already stopped, so there is no ordering left to respect).
+    - name: Shut down VMs and LXCs in parallel (ACPI, force-stop after the timeout)
+      ansible.builtin.shell: |
+        for id in {{ vm_ids | join(' ') }}; do
+          qm shutdown $id --timeout {{ shutdown_timeout }} --forceStop 1 2>&1 | grep -v 'not running' &
+        done
+        for id in {{ lxc_ids | join(' ') }}; do
+          pct shutdown $id --timeout {{ shutdown_timeout }} --forceStop 1 2>&1 | grep -v 'not running' &
+        done
+        wait
+      args:
+        executable: /bin/bash
+      changed_when: true
 
     - name: Confirm nothing is still running
       ansible.builtin.shell: "qm list | awk '$3==\"running\"'; pct list | awk '$2==\"running\"'"
